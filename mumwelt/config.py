@@ -28,7 +28,10 @@ SUMMARIES_INDEX = SUMMARIES / "index.html"  # the mws.oa.dev landing page (link 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 EMBED_DIM = 384
 RRF_K = 60                                  # reciprocal-rank-fusion constant
-STALE_HOURS = float(os.environ.get("MARIN_STALE_HOURS", "24"))
+STALE_HOURS = float(os.environ.get("MARIN_STALE_HOURS", "24"))   # past this: a refresh is worthwhile
+# Past this age the corpus is too old to trust — refresh without asking. Within it (but past
+# STALE_HOURS) a refresh is optional: ask before pulling rather than auto-pulling.
+MAX_AGE_HOURS = float(os.environ.get("MARIN_MAX_AGE_DAYS", "7")) * 24
 
 
 def token() -> str | None:

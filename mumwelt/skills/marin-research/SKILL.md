@@ -13,8 +13,12 @@ for single-shot lookups).
 ## 0. Fresh mirror
 
 ```
-mum status        # then `mum refresh` if the corpus or summaries are stale
+mum status
 ```
+If the corpus is missing, `mum refresh` (required). If it's **>7 days old**, refresh before
+relying on it. **Within 7 days, don't auto-pull** — proceed as-is, or *ask* the user first
+when the question is time-sensitive. If the user says "don't repull", honor that and use
+what's on disk. (The 7-day window is configurable via `MARIN_MAX_AGE_DAYS`.)
 
 ## 1. Orient, then decompose
 

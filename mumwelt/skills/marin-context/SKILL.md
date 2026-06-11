@@ -1,6 +1,6 @@
 ---
 name: marin-context
-description: Search and cite Marin's activity — GitHub issues/PRs/comments, Discord discussions, W&B runs, and the weekly summaries — via the local marinmirror corpus. Use whenever a question is about Marin: what was decided and why, who did what, a PR/issue/run, a Discord thread, project history, or a training run's setup/results. Refreshes the local mirror first if stale.
+description: Search and cite Marin's activity — GitHub issues/PRs/comments, Discord discussions, W&B runs, and the weekly summaries — via the local marinmirror corpus. Use whenever a question is about Marin: what was decided and why, who did what, a PR/issue/run, a Discord thread, project history, or a training run's setup/results. Checks the local mirror's freshness first (refreshing only if very stale, else asking).
 ---
 
 # marin-context — search the Marin corpus
@@ -15,12 +15,23 @@ the user asks anything about Marin. The capability is the `mum` CLI — shell ou
 ```
 mum status
 ```
-If the corpus is missing or stale (`built >24h ago`), refresh — this pulls the latest
-corpus from marinmirror **and** the latest weekly summaries from mws.oa.dev:
+Then follow this policy (the user can override it any time — if they say "don't repull"
+or similar, honor that and just use what's on disk):
+
+- **Corpus missing** → run `mum refresh` (required — you can't search without it).
+- **Built ≤ 7 days ago** → **do not auto-pull.** It's recent enough to use as-is. If
+  `mum status` flags it STALE (>24h) *and* the question is time-sensitive (recent PRs,
+  this week's runs, "what's the latest"), *ask* the user whether to refresh first, then
+  respect their answer. Otherwise just proceed.
+- **Built > 7 days ago** → refresh before relying on it; tell the user you're doing so.
+
+`mum refresh` pulls the latest corpus from marinmirror **and** the latest weekly summaries
+from mws.oa.dev:
 ```
 mum refresh
 ```
-(First corpus pull is ~150 MB; afterward it only downloads when the server has rebuilt.)
+(First corpus pull is ~150 MB; afterward it only downloads when the server has rebuilt.
+The 7-day window is configurable via the `MARIN_MAX_AGE_DAYS` env var.)
 
 ## 2. Get oriented with the weekly summaries (optional but valuable)
 

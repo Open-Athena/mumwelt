@@ -30,6 +30,13 @@ URL. The capability is the `mum` CLI; shell out to it.
 5. Synthesize a structured answer where **every claim cites a URL**; prefer primary
    sources over the weekly-summary narrative.
 
+## Publish / share a writeup
+- `mum publish [file] --title "…"` — render a Markdown report (file arg or **stdin**) to a
+  LaTeX-styled HTML page (latex.css + MathJax, all `[text](url)` links preserved), drop it
+  in a **secret** gist via `gh`, and print a `htmlpreview.github.io` link to share. Flags:
+  `--public`, `--author`, `--filename`, `--no-date`, `--open`, `--json`. A "secret" gist is
+  unlisted but anyone with the link can read it — don't publish anything sensitive.
+
 ## Auth
 `mum` talks to marinmirror with a GitHub bearer token (any Open-Athena org member,
 `read:org`). It resolves the token from `MARINMIRROR_TOKEN`, then `gh auth token`, then

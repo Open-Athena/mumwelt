@@ -7,6 +7,7 @@
     mum show <url|ref>             expand a hit to its context (discord window / github thread)
     mum run <project>/<run>        a W&B run's metadata + final summary numbers
     mum summaries [list|show|refresh|links]   the weekly overview narratives
+    mum publish [file] --title "…"            render Markdown → LaTeX-styled HTML in a secret gist + share link
     mum skills [list|print|install]           the agent skills (Claude + portable)
 """
 from __future__ import annotations
@@ -34,8 +35,14 @@ def cmd_status(a):
     if corpus.exists():
         m = corpus.meta()
         ah = _age_h(m.get("built_at_epoch"))
-        stale = " (STALE — run `mum refresh`)" if ah > config.STALE_HOURS else ""
-        print(f"corpus:    {m.get('chunks', '?')} chunks, built {ah:.0f}h ago{stale}")
+        if ah <= config.STALE_HOURS:
+            note = ""                                   # fresh — use as-is
+        elif ah <= config.MAX_AGE_HOURS:
+            note = f" (STALE — built {ah / 24:.1f}d ago; refresh optional, ASK before pulling)"
+        else:
+            note = (f" (STALE — built {ah / 24:.1f}d ago, past {config.MAX_AGE_HOURS / 24:.0f}d max; "
+                    "run `mum refresh`)")
+        print(f"corpus:    {m.get('chunks', '?')} chunks, built {ah:.0f}h ago{note}")
     else:
         print("corpus:    not downloaded — run `mum refresh`")
     periods = summaries.list_periods()
@@ -208,6 +215,13 @@ def cmd_skills(a):
     skills_pkg.dispatch(a)
 
 
+# ---- publish ----------------------------------------------------------------
+
+def cmd_publish(a):
+    from . import publish
+    publish.cmd_publish(a)
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="mum", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -246,6 +260,19 @@ def main(argv=None):
     p.add_argument("sub", nargs="?", choices=["list", "show", "refresh", "links"])
     p.add_argument("period", nargs="?"); p.add_argument("--force", action="store_true")
     p.set_defaults(fn=cmd_summaries)
+
+    p = sub.add_parser("publish", help="render Markdown research → LaTeX-styled HTML in a "
+                                       "secret gist; print a shareable htmlpreview link")
+    p.add_argument("file", nargs="?", help="Markdown file (default: read stdin)")
+    p.add_argument("--title", help="document title (default: leading # H1, else 'Research report')")
+    p.add_argument("--author", help="author line (default: your gh login)")
+    p.add_argument("--description", help="gist description (default: the title)")
+    p.add_argument("--filename", help="HTML filename in the gist (default: slug of title)")
+    p.add_argument("--public", action="store_true", help="public gist (default: secret/unlisted)")
+    p.add_argument("--no-date", action="store_true", help="omit today's date from the header")
+    p.add_argument("--open", action="store_true", help="open the preview link in a browser")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(fn=cmd_publish)
 
     p = sub.add_parser("skills")
     p.add_argument("sub", nargs="?", choices=["list", "print", "install"], default="list")
