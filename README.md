@@ -3,7 +3,8 @@
 **An agent's *Umwelt* for Marin** — the slice of Marin's world an LLM agent can perceive
 and act on. A small client toolkit (`mum`) plus portable skills that let any shell-capable
 agent keep a fresh local mirror of Marin's activity, search it well, pull W&B run facts,
-read the weekly summaries, and run multi-subagent research — all citable by URL.
+read the weekly summaries, run multi-subagent research, and publish the writeup — all
+citable by URL.
 
 It is the **client** to [`marinmirror`](https://marinmirror.exe.xyz) (the hosted,
 Open-Athena-gated corpus of GitHub + Discord + W&B activity) and to the public weekly
@@ -29,22 +30,29 @@ mum search-multi "q1" "q2" …       run several queries concurrently, merged + 
 mum show <url|ref> [--window N]    expand a hit to context (discord window / github thread)
 mum run <project>/<run>            a W&B run's metadata + final summary numbers
 mum summaries [list|show|links|refresh] [<period|latest>]
+mum publish [file] --title "…"     render Markdown → LaTeX-styled HTML in a secret gist + share link
 mum skills [list|print|install [dest]]
 ```
 
 `mum search` / `search-multi` flags: `-k N`, `--source`, `--kind`, `--since`, `--until`,
 `--fts-only` (skip the model load), `--json`.
 
+`mum publish` flags: `--title`, `--author`, `--description`, `--filename`, `--public`
+(default: secret/unlisted), `--no-date`, `--open`, `--json`. Renders via `pandoc` if
+present, else a built-in converter — no extra Python deps. Requires the `gh` CLI.
+
 Local cache lives under `~/.cache/marin/` (`corpus-index.db` + `summaries/`).
 
 ## Skills
 
-Two skills, shipped in Claude's `SKILL.md` format and as a portable [`AGENTS.md`](AGENTS.md):
+Three skills, shipped in Claude's `SKILL.md` format and as a portable [`AGENTS.md`](AGENTS.md):
 
 - **`marin-context`** — refresh + search + show + W&B + weekly summaries. The everyday
   "look something up about Marin and cite it" skill.
 - **`marin-research`** — decompose a broad question → fan out parallel searches across
   subagents (or `mum search-multi`) → verify → synthesize a cited answer.
+- **`marin-publish`** — turn a finished, cited writeup into a LaTeX-styled HTML page in a
+  secret gist, and hand back an `htmlpreview.github.io` link for easy sharing.
 
 ```bash
 mum skills install            # → ~/.claude/skills/  (Claude Code / claude.ai)
@@ -69,6 +77,9 @@ marinmirror.exe.xyz                         mws.oa.dev
         │
         ▼
    agents (marin-context / marin-research skills)
+        │
+        ▼
+   mum publish ──► secret gist (LaTeX-styled HTML) ──► htmlpreview.github.io link
 ```
 
 The agent (any LLM) reasons and synthesizes; `mum` does retrieval. Search fuses FTS5
