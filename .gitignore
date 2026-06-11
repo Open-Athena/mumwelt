@@ -1,0 +1,10 @@
+# build / env
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+
+# local cache of the corpus + summaries (regenerated via `mum refresh`)
+.cache/

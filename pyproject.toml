@@ -1,0 +1,18 @@
+[project]
+name = "mumwelt"
+version = "0.1.0"
+description = "An agent's Umwelt for Marin: pull, search, and research the marinmirror corpus from any LLM agent"
+requires-python = ">=3.10"
+dependencies = [
+    "fastembed",   # local BAAI/bge-small query embeddings (no torch) — hybrid search out of the box
+    "numpy",
+]
+
+[project.scripts]
+mum = "mumwelt.cli:main"
+
+[tool.setuptools]
+packages = ["mumwelt"]
+
+[tool.setuptools.package-data]
+mumwelt = ["skills/**/*.md"]
