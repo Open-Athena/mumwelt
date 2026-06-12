@@ -17,6 +17,11 @@ from . import config
 WINDOW = 12
 
 
+def _row(r) -> dict:
+    """A chunk row as a plain dict, minus the embedding BLOB (not JSON-serializable)."""
+    return {k: v for k, v in dict(r).items() if not isinstance(v, (bytes, bytearray))}
+
+
 def _find(con, target: str):
     """Resolve a target (canonical url, or a bare ref id) to a chunk row."""
     row = con.execute("SELECT * FROM chunks WHERE url = ? LIMIT 1", (target,)).fetchone()
@@ -57,6 +62,6 @@ def show(target: str, window: int = WINDOW) -> dict | None:
                 ctx[r["id"]] = r
 
         rows = sorted(ctx.values(), key=lambda r: (r["date"] or ""))
-        return {"focal": dict(focal), "kind": src, "context": [dict(r) for r in rows]}
+        return {"focal": _row(focal), "kind": src, "context": [_row(r) for r in rows]}
     finally:
         con.close()
