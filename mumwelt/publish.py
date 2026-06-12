@@ -160,10 +160,46 @@ def _fallback_md(md: str) -> str:
     return "\n".join(out)
 
 
+# ---- provenance footer ------------------------------------------------------
+
+# Sentinel a writeup uses to mark the start of its provenance trailer (data freshness +
+# query trace, per the marin-research skill). Everything after it renders as a muted
+# <footer>. It's an HTML comment, so it's invisible if the Markdown is shown raw, too.
+PROVENANCE_MARKER = "<!--provenance-->"
+_TRAILING_RULE = re.compile(r"(?:\n[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*)+\s*$")
+
+
+def _split_provenance(md: str) -> tuple[str, str]:
+    """Split off the provenance trailer at the sentinel. Returns (body_md, footer_md).
+
+    The body's trailing thematic break (the ``---`` the writeup puts before the trailer)
+    is dropped — the footer supplies its own rule via CSS, so we don't double it up.
+    """
+    idx = md.find(PROVENANCE_MARKER)
+    if idx == -1:
+        return md, ""
+    body = _TRAILING_RULE.sub("\n", md[:idx])
+    return body, md[idx + len(PROVENANCE_MARKER):]
+
+
 # ---- HTML document ----------------------------------------------------------
 
+# Muted, small-type trailer set off by a hairline rule. Links/blockquote inherit the
+# grey so the whole block reads as a footnote, not body copy.
+PROVENANCE_CSS = """\
+footer.provenance { margin-top: 3em; padding-top: 0.8em; border-top: 1px solid #ddd;
+  font-size: 0.8em; line-height: 1.5; color: #888; }
+footer.provenance a { color: #888; }
+footer.provenance p { margin: 0.3em 0; }
+footer.provenance blockquote { margin: 0; padding: 0; border: none; color: inherit; }"""
+
+
 def render_html(md: str, title: str, author: str, date: str) -> str:
-    body = _md_to_body(md)
+    body_md, prov_md = _split_provenance(md)
+    body = _md_to_body(body_md)
+    footer = ""
+    if prov_md.strip():
+        footer = f'\n<footer class="provenance">\n{_md_to_body(prov_md)}\n</footer>'
     author_line = f'<p class="author">{_html.escape(author)}'
     author_line += f"<br>{_html.escape(date)}</p>" if date else "</p>"
     return f"""<!DOCTYPE html>
@@ -173,6 +209,9 @@ def render_html(md: str, title: str, author: str, date: str) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{_html.escape(title)}</title>
 <link rel="stylesheet" href="{LATEX_CSS}">
+<style>
+{PROVENANCE_CSS}
+</style>
 <script>
 window.MathJax = {{ tex: {{
   inlineMath: [['$','$'], ['\\\\(','\\\\)']],
@@ -186,7 +225,7 @@ window.MathJax = {{ tex: {{
 <h1>{_html.escape(title)}</h1>
 {author_line}
 </header>
-{body}
+{body}{footer}
 </body>
 </html>
 """

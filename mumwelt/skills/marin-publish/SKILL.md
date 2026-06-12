@@ -52,6 +52,15 @@ Useful flags:
   `##`/`###` for the section structure.
 - Math: inline `$x$`, display `$$…$$` — rendered by MathJax in the preview.
 
+## Provenance footer
+
+If the Markdown contains a `<!--provenance-->` sentinel (marin-research emits one — the
+data-freshness + query-trace trailer), everything after it is split out and rendered as a
+muted `<footer>`: small, gray, set off by a hairline rule, with its links and blockquote
+inheriting the gray so it reads as a footnote rather than body copy. The redundant `---`
+the writeup puts just above the sentinel is dropped so there's only one separator. Nothing
+to do — just leave the trailer (and its marker) in the Markdown you pipe to `mum publish`.
+
 ## Sharing caveat (important)
 
 A "secret" gist is **unlisted, not private**: it isn't indexed or searchable, but **anyone

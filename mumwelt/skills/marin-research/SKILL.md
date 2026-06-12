@@ -61,6 +61,39 @@ cites a `url`**. Call out disagreements and gaps explicitly. Prefer **primary so
 (the actual PR / message / run) over the weekly-summary narrative, but use the summary's
 links as a map of what else to chase.
 
+## 5. Provenance footer
+
+End every answer with a lightweight **provenance footer**, set off from the body and in
+muted/de-emphasized text, so the reader can see *what was searched* and *how fresh it
+was*. Pull the freshness line straight from the `mum status` you already ran in §0 (run it
+again if you didn't). Two parts:
+
+1. **Data used & freshness** — corpus size + age, and the summaries period/latest week,
+   verbatim from `mum status` (e.g. "50231 chunks, built 8h ago · summaries through
+   2026-06-01_2026-06-07"). Note any refresh you triggered this run.
+2. **Query trace** — the user's **original question**, then the **sub-queries** you
+   fanned out on (the §1 decomposition).
+
+Render it after a `---` rule using a small/dim style: a blockquote of italic text, which
+the host shows muted in a terminal. Prefix it with the `<!--provenance-->` sentinel —
+invisible when the Markdown is rendered, but it tells **marin-publish** where the trailer
+starts so it can style the whole block as gray footnote text (and drop the duplicate rule).
+Put a blank `>` line between the three parts so each lands on its own line. Shape:
+
+```
+---
+<!--provenance-->
+> *Data: marinmirror — 50231 chunks, built 8h ago · summaries through 2026-06-01_2026-06-07
+> (refreshed this run).*
+>
+> *Query: "<the user's original question>"*
+>
+> *Sub-queries: "<sub-query 1>" · "<sub-query 2>" · "<sub-query 3>" · …*
+```
+
+Keep it terse — it's a trailer, not a section. If a sub-query returned nothing useful,
+still list it (a dry facet is signal too).
+
 ---
 
 **Notes**
