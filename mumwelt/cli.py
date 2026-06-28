@@ -102,7 +102,8 @@ def _print_hits(hits):
 def cmd_search(a):
     _require_corpus()
     hits = corpus.search(a.query, k=a.k, source=_csv(a.source), kind=_csv(a.kind),
-                         since=a.since, until=a.until, fts_only=a.fts_only)
+                         since=a.since, until=a.until, fts_only=a.fts_only,
+                         vec_text=getattr(a, "vec_text", None))
     print(json.dumps(hits, indent=2)) if a.json else _print_hits(hits)
 
 
@@ -237,6 +238,9 @@ def main(argv=None):
         p.add_argument("--source"); p.add_argument("--kind")
         p.add_argument("--since"); p.add_argument("--until")
         p.add_argument("--fts-only", action="store_true")
+        p.add_argument("--vec-text", action="append", metavar="DOC", dest="vec_text",
+                       help="HyDE: hypothetical-answer doc to drive the vector leg; "
+                            "repeat for N-doc averaging. FTS leg still uses the literal query.")
         p.add_argument("--json", action="store_true")
 
     p = sub.add_parser("search"); p.add_argument("query"); add_search_flags(p)

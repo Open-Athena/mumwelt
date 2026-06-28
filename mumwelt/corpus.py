@@ -74,7 +74,24 @@ def _model():
     return _MODEL
 
 
-def _vec(con, q, flt, params, limit) -> list[int]:
+def _query_vec(texts):
+    """Embed one or more query texts → a single unit query vector.
+
+    With one text this is the plain query embedding. With several (HyDE: the literal
+    query plus N hypothetical answer docs), each is L2-normalized then mean-pooled, so
+    every doc weighs equally regardless of length and per-doc noise partially cancels.
+    """
+    import numpy as np
+
+    vs = []
+    for v in _model().embed(list(texts)):
+        v = np.asarray(v, dtype=np.float32)
+        vs.append(v / (np.linalg.norm(v) + 1e-9))
+    qv = np.mean(vs, axis=0)
+    return qv / (np.linalg.norm(qv) + 1e-9)
+
+
+def _vec(con, qv, flt, params, limit) -> list[int]:
     import numpy as np
 
     rows = con.execute(
@@ -85,9 +102,7 @@ def _vec(con, q, flt, params, limit) -> list[int]:
     ids = np.array([r[0] for r in rows])
     mat = np.frombuffer(b"".join(r[1] for r in rows), dtype=np.float32).reshape(len(rows), -1)
 
-    qv = np.asarray(next(iter(_model().embed([q]))), dtype=np.float32)
     norms = np.linalg.norm(mat, axis=1) + 1e-9
-    qv = qv / (np.linalg.norm(qv) + 1e-9)
     sims = (mat @ qv) / norms
     top = np.argpartition(-sims, min(limit, len(sims) - 1))[:limit]
     top = top[np.argsort(-sims[top])]
@@ -103,14 +118,22 @@ def _rrf(*rankings) -> tuple[list[int], dict]:
 
 
 def search(query: str, k: int = 10, source=None, kind=None, since=None, until=None,
-           fts_only: bool = False, vec_only: bool = False) -> list[dict]:
-    """Return up to ``k`` fused hits as dicts (source, kind, ref, url, title, snippet, …)."""
+           fts_only: bool = False, vec_only: bool = False, vec_text=None) -> list[dict]:
+    """Return up to ``k`` fused hits as dicts (source, kind, ref, url, title, snippet, …).
+
+    ``vec_text`` (HyDE): one or more hypothetical-answer docs to drive the *vector* leg
+    instead of the literal query; their embeddings are mean-pooled (N-doc averaging). The
+    FTS leg always uses the literal ``query`` so exact identifiers (#5596, run names) are
+    never diluted. ``None`` → classic behavior (vector leg embeds the query itself).
+    """
     con = sqlite3.connect(config.CORPUS)
     try:
         flt, params = _filters(source, kind, since, until)
         pool = max(k * 4, 40)
         fts = [] if vec_only else _fts(con, query, flt, params, pool)
-        vec = [] if fts_only else _vec(con, query, flt, params, pool)
+        vec = []
+        if not fts_only:
+            vec = _vec(con, _query_vec(vec_text or [query]), flt, params, pool)
         order, score = _rrf(vec, fts)
         fset, vset = set(fts), set(vec)
         out = []
