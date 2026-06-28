@@ -146,6 +146,68 @@ def cmd_show(a):
         print(f"{mark} [{when}] {who}: {body[:300]}")
 
 
+def cmd_context(a):
+    """One-shot bulk context: search (one or more queries, optional HyDE) → expand the top
+    hits to FULL threads → optionally follow one hop of #refs → dedupe → pack. All in a single
+    process, so 'bring 100k in' costs sqlite reads (~ms each) not N cold subprocesses."""
+    _require_corpus()
+    import re as _re
+    vt = getattr(a, "vec_text", None)
+    merged = {}
+    for q in a.query:
+        for h in corpus.search(q, k=a.k, source=_csv(a.source), kind=_csv(a.kind),
+                               since=a.since, until=a.until, vec_text=vt):
+            cur = merged.get(h["url"])
+            if cur is None or h["score"] > cur["score"]:
+                merged[h["url"]] = h
+    ranked = sorted(merged.values(), key=lambda h: -h["score"])
+
+    shown, blocks, stats = set(), [], {"chars": 0}
+
+    def add(target):
+        res = context.show(target, window=a.window)
+        if not res:
+            return []
+        foc = res["focal"]
+        key = (foc["source"], foc.get("parent") or foc.get("ref"))
+        if key in shown:
+            return []
+        shown.add(key)
+        lines = [f"=== {foc.get('title') or foc['source']}  ({foc['url']}) ==="]
+        refs = []
+        for c in res["context"]:
+            t = (c.get("text") or "").strip()
+            if not t:
+                continue
+            lines.append(f"[{(c.get('date') or '')[:10]} {c.get('author') or ''}] {t}")
+            refs += _re.findall(r"#(\d{3,6})\b", t)
+        block = "\n".join(lines)[: a.per_thread_chars]
+        blocks.append(block)
+        stats["chars"] += len(block)
+        return refs
+
+    followups = []
+    for h in ranked[: a.expand]:
+        if stats["chars"] >= a.max_chars:
+            break
+        followups += add(h["url"])
+    if a.follow_links:
+        for r in dict.fromkeys(followups):          # unique, order-preserving
+            if stats["chars"] >= a.max_chars:
+                break
+            add(r)                                    # context.show accepts a bare ref
+
+    out = "\n\n".join(blocks)[: a.max_chars]
+    if a.json:
+        print(json.dumps({"queries": a.query, "threads": len(blocks),
+                          "chars": len(out), "approx_tokens": len(out) // 4,
+                          "context": out}, indent=2))
+    else:
+        print(out)
+    print(f"--- mum context: {len(blocks)} threads, {len(out)} chars "
+          f"(~{len(out)//4} tokens) ---", file=sys.stderr)
+
+
 def cmd_run(a):
     target = a.run
     import re as _re
@@ -256,6 +318,20 @@ def main(argv=None):
     p = sub.add_parser("show"); p.add_argument("target")
     p.add_argument("--window", type=int, default=context.WINDOW)
     p.add_argument("--json", action="store_true"); p.set_defaults(fn=cmd_show)
+
+    p = sub.add_parser("context", help="one-shot bulk: search + expand top hits to full "
+                                       "threads + follow #refs; pack a big cited context blob")
+    p.add_argument("query", nargs="+")
+    p.add_argument("-k", type=int, default=20, help="candidates per query")
+    p.add_argument("--expand", type=int, default=12, help="how many top hits to expand to full threads")
+    p.add_argument("--follow-links", type=int, default=0, help="hops of #ref chasing (0 or 1)")
+    p.add_argument("--per-thread-chars", type=int, default=12000, help="cap per thread (breadth)")
+    p.add_argument("--max-chars", type=int, default=400000)
+    p.add_argument("--window", type=int, default=context.WINDOW)
+    p.add_argument("--source"); p.add_argument("--kind")
+    p.add_argument("--since"); p.add_argument("--until")
+    p.add_argument("--vec-text", action="append", dest="vec_text")
+    p.add_argument("--json", action="store_true"); p.set_defaults(fn=cmd_context)
 
     p = sub.add_parser("run"); p.add_argument("run"); p.add_argument("--json", action="store_true")
     p.set_defaults(fn=cmd_run)
