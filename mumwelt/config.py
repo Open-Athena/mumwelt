@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import ssl
 import subprocess
 from pathlib import Path
 
@@ -32,6 +33,18 @@ STALE_HOURS = float(os.environ.get("MARIN_STALE_HOURS", "24"))   # past this: a 
 # Past this age the corpus is too old to trust — refresh without asking. Within it (but past
 # STALE_HOURS) a refresh is optional: ask before pulling rather than auto-pulling.
 MAX_AGE_HOURS = float(os.environ.get("MARIN_MAX_AGE_DAYS", "7")) * 24
+
+
+def ssl_context() -> ssl.SSLContext:
+    """Trust the platform CA store, falling back to certifi where it loaded nothing."""
+    ctx = ssl.create_default_context()
+    if not ctx.get_ca_certs():
+        try:
+            import certifi
+            ctx.load_verify_locations(certifi.where())
+        except ImportError:
+            pass
+    return ctx
 
 
 def token() -> str | None:

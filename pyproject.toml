@@ -6,7 +6,12 @@ requires-python = ">=3.10"
 dependencies = [
     "fastembed",   # local BAAI/bge-small query embeddings (no torch) — hybrid search out of the box
     "numpy",
+    "certifi",     # CA bundle fallback — see config.ssl_context
 ]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
 
 [project.scripts]
 mum = "mumwelt.cli:main"
