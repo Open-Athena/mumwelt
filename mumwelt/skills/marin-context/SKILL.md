@@ -1,6 +1,6 @@
 ---
 name: marin-context
-description: Search and cite Marin's activity — GitHub issues/PRs/comments, Discord discussions, W&B runs, and the weekly summaries — via the local marinmirror corpus. Use whenever a question is about Marin: what was decided and why, who did what, a PR/issue/run, a Discord thread, project history, or a training run's setup/results. Checks the local mirror's freshness first (refreshing only if very stale, else asking).
+description: "Search and cite Marin's activity — GitHub issues/PRs/comments, Discord discussions, W&B runs, and the weekly summaries — via the local marinmirror corpus. Use whenever a question is about Marin: what was decided and why, who did what, a PR/issue/run, a Discord thread, project history, or a training run's setup/results. Checks the local mirror's freshness first (refreshing only if very stale, else asking)."
 ---
 
 # marin-context — search the Marin corpus
