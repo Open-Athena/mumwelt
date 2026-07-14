@@ -175,7 +175,8 @@ def cmd_context(a):
         shown.add(key)
         lines = [f"=== {foc.get('title') or foc['source']}  ({foc['url']}) ==="]
         refs = []
-        for c in res["context"]:
+        ctx_chunks = res["context"][-a.tail:] if getattr(a, "tail", 0) else res["context"]
+        for c in ctx_chunks:
             t = (c.get("text") or "").strip()
             if not t:
                 continue
@@ -198,6 +199,9 @@ def cmd_context(a):
             add(r)                                    # context.show accepts a bare ref
 
     out = "\n\n".join(blocks)[: a.max_chars]
+    if getattr(a, "toc", False):
+        idx = "\n".join(b.split("\n", 1)[0] for b in blocks)
+        out = f"THREAD INDEX ({len(blocks)} threads):\n{idx}\n\n=====\n\n" + out
     if a.json:
         print(json.dumps({"queries": a.query, "threads": len(blocks),
                           "chars": len(out), "approx_tokens": len(out) // 4,
@@ -326,6 +330,8 @@ def main(argv=None):
     p.add_argument("--expand", type=int, default=12, help="how many top hits to expand to full threads")
     p.add_argument("--follow-links", type=int, default=0, help="hops of #ref chasing (0 or 1)")
     p.add_argument("--per-thread-chars", type=int, default=12000, help="cap per thread (breadth)")
+    p.add_argument("--tail", type=int, default=0, help="keep only the last N chunks per thread (close-out)")
+    p.add_argument("--toc", action="store_true", help="prepend a thread index (attention anchor)")
     p.add_argument("--max-chars", type=int, default=400000)
     p.add_argument("--window", type=int, default=context.WINDOW)
     p.add_argument("--source"); p.add_argument("--kind")
