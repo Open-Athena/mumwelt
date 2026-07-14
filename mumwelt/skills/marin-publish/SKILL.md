@@ -1,6 +1,6 @@
 ---
 name: marin-publish
-description: Publish a finished research answer (Markdown with inline URL citations) to a private GitHub gist, rendered as a LaTeX-styled HTML document, and return a one-click htmlpreview.github.io link for easy sharing. Use after marin-research / marin-context to hand someone a clean, readable, link-preserving writeup.
+description: Publish a finished research answer (Markdown with inline URL citations) to a private GitHub gist, rendered as a LaTeX-styled HTML document, and return a one-click htmlpreview.github.io link for easy sharing. Use after marin-research to hand someone a clean, readable, link-preserving writeup.
 ---
 
 # marin-publish — share a research writeup as a typeset, linkable page

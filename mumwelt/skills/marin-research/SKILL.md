@@ -7,8 +7,7 @@ description: Answer a broad, ambiguous, or multi-part question about Marin by de
 
 For questions too broad or multi-faceted for a single `mum search`. The pattern is
 **decompose → fan out → verify → synthesize**. *You* (the agent) do the reasoning and
-writing; the `mum` CLI does fast retrieval. This complements **marin-context** (use that
-for single-shot lookups).
+writing; the `mum` CLI does fast retrieval.
 
 ## 0. Fresh mirror
 

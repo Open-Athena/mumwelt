@@ -45,10 +45,8 @@ Local cache lives under `~/.cache/marin/` (`corpus-index.db` + `summaries/`).
 
 ## Skills
 
-Three skills, shipped in Claude's `SKILL.md` format and as a portable [`AGENTS.md`](AGENTS.md):
+Two skills, shipped in Claude's `SKILL.md` format and as a portable [`AGENTS.md`](AGENTS.md):
 
-- **`marin-context`** — refresh + search + show + W&B + weekly summaries. The everyday
-  "look something up about Marin and cite it" skill.
 - **`marin-research`** — decompose a broad question → fan out parallel searches across
   subagents (or `mum search-multi`) → verify → synthesize a cited answer.
 - **`marin-publish`** — turn a finished, cited writeup into a LaTeX-styled HTML page in a
@@ -76,7 +74,7 @@ marinmirror.exe.xyz                         mws.oa.dev
    (FTS5 ∪ vector, RRF)       (overview + link-leads)
         │
         ▼
-   agents (marin-context / marin-research skills)
+   agents (marin-research skill)
         │
         ▼
    mum publish ──► secret gist (LaTeX-styled HTML) ──► htmlpreview.github.io link
