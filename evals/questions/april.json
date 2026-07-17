@@ -1,0 +1,174 @@
+{
+  "id": "april",
+  "question": "how did we do on our april 2026 milestone?",
+  "corpus": "2026-07-16",
+  "answerable": true,
+  "skill_hint": "research",
+  "source": "loop2/config.json:questions.april (facts X1-X7) + golds/april.md",
+  "dims": [
+    "what the April milestone was (scope/goals)",
+    "infra goals & their status",
+    "modeling goals & their status",
+    "the flagship pretrain (100B-A13B 1.2T) & its status",
+    "what was achieved / shipped",
+    "what was missed / slipped",
+    "overall how it went"
+  ],
+  "citations": {
+    "must_have": [
+      "#4266",
+      "#4256",
+      "#4697",
+      "#4447",
+      "#3192",
+      "#4898",
+      "#4719",
+      "#4760",
+      "#4281",
+      "#4282",
+      "#4283",
+      "#4300",
+      "#4270",
+      "#4269",
+      "#4273",
+      "#4474",
+      "#3100"
+    ],
+    "nice_to_have": [
+      "#4268",
+      "#4379",
+      "#4271",
+      "#4272",
+      "#5319",
+      "#5184",
+      "#4569",
+      "#5330",
+      "#4963",
+      "#3800",
+      "#5117",
+      "#5369",
+      "#4662",
+      "#5377",
+      "#5379"
+    ],
+    "forbidden": [
+      "#1337",
+      "#6044"
+    ],
+    "recency_critical": []
+  },
+  "facts": {
+    "must_have": [
+      {
+        "id": "1",
+        "match": "2\\.234",
+        "note": "Final 1e23 paloma macro loss achieved (#4697), beat the pre-registered ~1%"
+      },
+      {
+        "id": "2",
+        "match": "2\\.252",
+        "note": "The pre-registered forecast (L\u221e=1.6 isoflop fit, #4447 c4225593039); NOT 2.25 alone. Answer should name this as the registered number"
+      },
+      {
+        "id": "3",
+        "match": "(pregistered|100B-A13B|1\\.2T)",
+        "note": "Milestone title: 'Kick-off pre-trained 100B-A13B 1.2T token MoE (pregistered)'"
+      },
+      {
+        "id": "4",
+        "match": "[Ss]tretch",
+        "note": "1e23 completion was an explicit STRETCH goal ('Stretch: 1e23 completed (~16 days on v4-2048)'); committed goal was launch+pre-register only"
+      },
+      {
+        "id": "5",
+        "match": "(pollute|removed from|scaffolding|deliberately)",
+        "note": "#4256/#4266 were REMOVED from the milestone and closed so they wouldn't 'pollute our completion count' \u2014 they are not the scorecard parents"
+      },
+      {
+        "id": "6",
+        "match": "(319k|94\\.5%|three attempts|all.{0,6}crashed)",
+        "note": "Three v4-1024 attempts burned 319k chip-hrs (94.5% of week's TPU) and all crashed before April end"
+      },
+      {
+        "id": "7",
+        "match": "16\\.4",
+        "note": "~16.4% MFU (crashed v4-1024 resume45207 intermediate) vs the made-up 25-30% band"
+      },
+      {
+        "id": "8",
+        "match": "good enough[\\s\\S]{0,120}(4300|MFU)|(4300|MFU)[\\s\\S]{0,120}good enough",
+        "note": "dlwh closed the MFU target #4300 as 'good enough' 2026-05-31; the 25-30% band was self-described as made up. Not a flat 'missed'"
+      },
+      {
+        "id": "9",
+        "match": "(60%|9/9|GPU canary)",
+        "note": "Canary #4270: TPU ferry 9/9 (100%) but GPU regressed to ~60% on JAX 0.9.2 \u2014 the clearest quantitative miss"
+      },
+      {
+        "id": "10",
+        "match": "(5\\.3%|0%.{0,20}(3\\.3|dose))",
+        "note": "SWE-bench dose-response on Marin-8B: 0% -> 3.3% -> 4.0% -> 5.3% (#4898) \u2014 the post-training pillar's one WIN"
+      },
+      {
+        "id": "11",
+        "match": "(52%|6\\.5M|6,5|~half)",
+        "note": "140B SWE-ZERO scale-out (#4719) reached only ~52% coverage / ~6.5M rollouts before capacity collapse"
+      },
+      {
+        "id": "12",
+        "match": "(2/87|20\\.9|10.?x|10.?\u00d7)",
+        "note": "Marin-32B TerminalCorpus (#4760): 2/87 (~2.3%) vs Qwen3-32B 18/86 (~20.9%), ~10x gap \u2014 negative result"
+      },
+      {
+        "id": "13",
+        "match": "(post-training|synthetic data|3192)",
+        "note": "The third pillar the draft omits entirely: post-training/synthetic-data (#3192)"
+      },
+      {
+        "id": "14",
+        "match": "(v4-2048|us-central2|EP8|ragged)",
+        "note": "The completed run finished on v4-2048 EP8 ragged in us-central2 (launched on v4-1024 EP4 ring)"
+      },
+      {
+        "id": "15",
+        "match": "(19T|20T)",
+        "note": "Data sources #3100: target 20T, achieved >19T \u2014 met"
+      },
+      {
+        "id": "16",
+        "match": "(never.{0,20}complete|no.{0,20}(percentage|completion)|two sweeps|05-03|06-05)",
+        "note": "No formal 'milestone complete' declaration or % in corpus; wound down issue-by-issue on 2026-05-03 and 2026-06-05"
+      },
+      {
+        "id": "17",
+        "match": "(AdamH|5184)",
+        "note": "Agentify #4282 win: AdamH-embed (#5184) first Gate-2-promotable agent-driven change; but goal was ~3 full decisions, not fully demonstrated"
+      }
+    ],
+    "nice_to_have": []
+  },
+  "traps": {
+    "superseded": [
+      "#1337 is wrong/superseded/off-platform here",
+      "#6044 is wrong/superseded/off-platform here"
+    ],
+    "overclaim": "Do not claim a clean/on-time 100% completion; must acknowledge the tail (slipped into May/June, post-training mixed/missed, no formal 'complete' declaration)."
+  },
+  "trap_checks": {
+    "superseded": {
+      "forbid_cite": [
+        "1337",
+        "6044"
+      ]
+    },
+    "overclaim": {
+      "require": [
+        "slip|slipped|May|June|spill|not (fully|cleanly)|incomplete|missed|mixed|no formal|never.{0,20}complet"
+      ]
+    }
+  },
+  "gold_prose": "# How did we do on our April 2026 milestone?\n\n**Short version.** The April 2026 GitHub milestone \u2014 [*\"Kick-off pre-trained 100B-A13B 1.2T token MoE (pregistered)\"*](https://github.com/marin-community/marin/issues/4266) \u2014 spanned **three pillars: modeling, infra, and post-training / synthetic data.** Its central scientific bet **paid off** (the pre-registered 1e23 MoE run beat its predicted loss), and most infra epics were substantially delivered. But the milestone was **never formally declared complete or given a completion percentage** in the corpus; it was wound down issue-by-issue in two sweeps (a partial one on **2026-05-03** and a final one on **2026-06-05**), with the marquee run finishing in May and a whole post-training pillar coming in **mixed-to-negative**. Net: a real win on the headline modeling bet, solid-but-tailing-into-May infra delivery, two missed quantitative sub-targets (canary pass rate, TPU MFU \u2014 both soft), and a post-training quarter that produced one genuine positive signal amid three misses plus a durable learning.\n\n---\n\n## How the milestone was actually structured (this matters for \"how did we do\")\n\nThe two \"April 2026\" issues people reach for \u2014 **[Infra April 2026 (#4256)](https://github.com/marin-community/marin/issues/4256)** and **[Modeling April 2026 (#4266)](https://github.com/marin-community/marin/issues/4266)** \u2014 are **not** the scorecard parents. Both were split into epics, then **deliberately removed from the milestone and closed** so they wouldn't distort the count. ihodes on #4256: *\"remove this issue from the milestone, so it doesn't pollute our completion count\"* ([#4256](https://github.com/marin-community/marin/issues/4256)); #4266 was likewise split, un-parented (after some reparenting churn ihodes told the agent to *\"undo that reparenting\"*), and closed ([#4266](https://github.com/marin-community/marin/issues/4266)).\n\nThe live milestone therefore holds **the epics themselves plus three additional tracking issues** \u2014 roughly a 12-epic roster, not the 9 the split alone produces:\n\n- **6 infra epics** ([#4268](https://github.com/marin-community/marin/issues/4268)\u2013[#4273](https://github.com/marin-community/marin/issues/4273))\n- **3 modeling epics** ([#4281](https://github.com/marin-community/marin/issues/4281), [#4282](https://github.com/marin-community/marin/issues/4282), [#4283](https://github.com/marin-community/marin/issues/4283))\n- **[#4474](https://github.com/marin-community/marin/issues/4474)** Levanter Store / K8s Logging / Infra Improvements\n- **[#3192](https://github.com/marin-community/marin/issues/3192)** Synthetic data (research + critical path for post-training)\n- **[#3100](https://github.com/marin-community/marin/issues/3100)** Data sources for pre-training / mid-training\n\n(Note: the frozen corpus stores issue/comment *text* only, not GitHub `state`/`closed_at`/`milestone` fields, so every \"closed / open\" call below is **inferred from close-out comments and the milestone-scoped weekly summaries**, not from metadata.)\n\n---\n\n## Pillar 1 \u2014 Modeling ([#4266](https://github.com/marin-community/marin/issues/4266) split)\n\n### The headline deliverable: the pre-registered 1e23 (compute-optimal ~130B-A16B MoE) run \u2014 *scientific win, completion slipped into May (but completion was only a STRETCH goal)*\n\nThe committed vs. stretch framing is explicit in the #4266 body:\n- **Committed:** *\"clean 'best recipe' MoE isoflop up to 1e22 completed, **1e23 launched**\"*\n- **Stretch (verbatim):** *\"**Stretch: 1e23 completed (~16 days on v4-2048)**\"*\n\nSo the milestone's committed modeling deliverable was **launch + pre-register**, not finish-by-April-30. Against that:\n\n- **Committed goal met on time.** ClassicLarry started the run **Apr 11** on a **v4-1024, EP4 ring dispatch** ([#4697](https://github.com/marin-community/marin/issues/4697)), pre-registered against the isoflop fit in [#4447](https://github.com/marin-community/marin/issues/4447). Both boxes in #4281 are checked: *\"[x] Clean 'best recipe' MoE isoflop up to 1e22 completed\"* and *\"[x] 1e23 \u2026 compute optimal launched + pre-registered\"* ([#4281](https://github.com/marin-community/marin/issues/4281)).\n- **Did not finish inside April.** As of the week of Apr 26, three attempts of `moe_1e23_d5120_bs2048_ep8_ragged_48l` on **1024 v4 chips** had burned **319k chip-hours \u2014 94.5% of the week's TPU spend and 96.5% of HW FLOPs \u2014 and all three crashed** ([summary 2026-04-26](https://mws.oa.dev/summaries/summary-2026-04-26_2026-05-02.html)). The recurring crash was bisected to `wandb.init(resume=\"allow\")` on worker 0 creating host-state divergence that surfaced as a TPU launch-id mismatch one save-step after restart; the validated fix was fresh-id-per-attempt with `resume=\"never\"` ([#5319](https://github.com/marin-community/marin/issues/5319)).\n- **Stretch goal ultimately achieved \u2014 in May.** After migrating to a **v4-2048, EP8 ragged all-to-all** setup in `us-central2` ([#4697](https://github.com/marin-community/marin/issues/4697)), the run completed. On **2026-05-20** ClassicLarry reported **final `paloma/macro_loss = 2.234, \"1% better than the initial prediction of 2.252\"**; dlwh sealed it 2026-05-21 (final W&B run `\u2026resume112662_clip15_20260518_123236`, report `Marin-1e23-MoE`, checkpoint `gs://marin-us-central2/\u2026/step-120332`).\n\n**On the \"beat\" \u2014 name the registered number and qualify it.** The **pre-registered bet was 2.252**, specifically the leave-future-out isoflop fit with **irreducible loss L\u221e fixed at 1.6** ([#4447 c4225593039](https://github.com/marin-community/marin/issues/4447#issuecomment-4225593039)); dlwh's public announcement calls exactly this number \"preregistered.\" The achieved **2.234 beats 2.252 by ~1% (0.018)** \u2014 a well-calibrated result (the same machinery predicted 1e21 at 2.598 vs. an actual 2.599). But the beat is **asymptote-assumption-dependent, not robust across every forecast on record.** ClassicLarry's own sensitivity table shows 2.234 lands exactly on the **L\u221e=1.5 row**, and the *free-asymptote best fit* in the same issue was **2.224\u20132.226 (L\u221e\u22481.447), which 2.234 does not beat** ([#4447 c4222453538](https://github.com/marin-community/marin/issues/4447#issuecomment-4222453538)). Other forecasts coexisted (Helw150's VPNLS re-forecast **2.295**, registered for Percy's ICLR talk and self-described as conservative; the AdamH-embed projection **2.251** baseline). Honest phrasing: *the run beat its pre-registered conservative estimate and landed mid-range of its own forecast envelope.*\n\n### MoE Scaling ([#4281](https://github.com/marin-community/marin/issues/4281)) \u2014 mostly met\n1e22 completed (`moe-v7-1e22-d3200` on **v4-512**: ~34.6B total / 4.7B active, 326B tokens, hidden 3200, 32 layers, 64 experts K=4; [#3800](https://github.com/marin-community/marin/issues/3800)); 1e23 launched + pre-registered. The third box \u2014 *\"Isoflop ablations on key decisions ('Good/Great 10T') up to 1e21\"* \u2014 **stayed unchecked** ([#4281](https://github.com/marin-community/marin/issues/4281)). No explicit close-out comment in corpus.\n\n### Agentify experimentation ([#4282](https://github.com/marin-community/marin/issues/4282)) \u2014 closeable for April; note the goal was ~3 *full* agent-run decisions\nThe stated goal was *\"Agents can run full 'try out a new architecture idea' end to end from smoke \u2192 tuned isoflop up to 1e20. **Prove this out on at least ~3 decisions** \u2026 coordinate this entirely through GitHub\"* ([#4282](https://github.com/marin-community/marin/issues/4282)). ihodes marked it *\"closeable for April\"* on 2026-05-03, leaning on the **first cleanly Gate-2-promotable agent-driven architecture change \u2014 AdamH-on-embed ([#5184](https://github.com/marin-community/marin/issues/5184))**, which passed Gate 2 across all four scales with a 1e23 paloma projection of **2.249 vs 2.251 baseline** and closed the long-running embed-norm-growth investigation ([#4569](https://github.com/marin-community/marin/issues/4569)) \u2014 *\"real architectural signal, not just process.\"* Supporting context: an MCP babysitter, the `agent-research` skill, and a new \"foraging\" skill to seed agent research with prior work ([#5117](https://github.com/marin-community/marin/issues/5117)). **Caveat:** the close-out leaned on that one promotable change plus a stack of negative results; whether ~3 *full* end-to-end agent-run decisions were completed is not demonstrated in-corpus, and hammer's response was to ask ihodes to turn it into a blog post rather than confirm the numeric bar. Treat as *\"morally done / closeable,\"* not a clean 3-of-3.\n\n### MoE MFU at scale ([#4283](https://github.com/marin-community/marin/issues/4283)) \u2014 mixed; TPU MFU below target but signed off \"good enough\"\nOn **H100** the JAX 0.9.2 upgrade unlocked a full **Triton fwd+bwd MoE path measuring 1.91\u00d7 faster than XLA on H100\u00d78** ([#5330](https://github.com/marin-community/marin/issues/5330)). On **TPU v4**, the target was *\"25%\u201330% MFU sustained for 100B-A13B on v4-1024\"* ([#4300](https://github.com/marin-community/marin/issues/4300)); the best documented sustained figure was **~16.4% MFU** on the crashed `resume45207_clip15` v4-1024 intermediate (487B tokens; [summary 2026-04-26](https://mws.oa.dev/summaries/summary-2026-04-26_2026-05-02.html)). **Important framing:** dlwh filed the 25\u201330% band as numbers he *\"Made \u2026 up because i don't have any TPU v4 MOE intuition yet,\"* aimed only at keeping the run *\"not too wasteful,\"* and **closed #4300 as \"good enough\" on 2026-05-31** ([#4300](https://github.com/marin-community/marin/issues/4300)). So this is an **accepted-below-target / owner-signed-off** outcome, not a hard failure \u2014 and the run it was protecting hit its loss target. (The corpus does not report a separate sustained MFU for the *completed* v4-2048 run; the 16.4% figure belongs to a crashed v4-1024 attempt.)\n\n---\n\n## Pillar 2 \u2014 Infra ([#4256](https://github.com/marin-community/marin/issues/4256) split, + [#4474](https://github.com/marin-community/marin/issues/4474))\n\n- **Single way of running jobs \u2014 off Ray ([#4269](https://github.com/marin-community/marin/issues/4269)) \u2014 met.** ihodes 2026-05-03: *\"Ray is functionally gone after the late-April delete spree\"* (#5028, #5031, #5076, #5087, #5089, #5131 \u2026); yonromai 2026-05-04: *\"Ray is code-complete from Marin's side, with one live-infra tail.\"* Post-sunset work rolled to the May infra tune-up ([#5369](https://github.com/marin-community/marin/issues/5369)).\n- **Improve Usability & Observability ([#4273](https://github.com/marin-community/marin/issues/4273)) \u2014 April scope met; closed 2026-06-05.** ihodes 2026-05-03: *\"The April scope landed end-to-end \u2014 log/stats service split (#5212, #5290, #5370), endpoint proxy + IAP (#5336, #5349), BackgroundTracker (#5332).\"* Formally *\"Closed, as this was a catch-all\"* on 2026-06-05.\n- **On-demand & reserved capacity ([#4268](https://github.com/marin-community/marin/issues/4268)) \u2014 substantially delivered (no explicit close-out comment).** Goal: *\"support reserved capacity.\"* Concrete evidence it was addressed: the 2026-03-30 codebase audit found *\"Iris has a full reservation system,\"* and **PR [#4379](https://github.com/marin-community/marin/pull/4379) landed the `CapacityType` enum (PREEMPTIBLE / ON_DEMAND / RESERVED) with the GCP queued-resource API for reserved TPUs on 2026-04-03**, followed by [#4662](https://github.com/marin-community/marin/pull/4662) expanding the v4-reserved pool to full topology sizes. No close-out text exists, so formal sign-off can't be pinned \u2014 but the capability shipped.\n- **Canonical data pipeline ([#4272](https://github.com/marin-community/marin/issues/4272)) \u2014 largely done / rolled forward.** A composable `DataPipeline` exists, sources migrated, dedup module landed; heavy source-expansion and Zephyr-perf work continued into May. No close-out comment; state indeterminate/rolled-forward.\n- **Marin-as-a-library ([#4271](https://github.com/marin-community/marin/issues/4271)) \u2014 partial.** By 2026-04-15 rjpower had *\"2 demo examples \u2026 good enough for a 'getting-started'\"* via a separate `marin-experiments` repo importing nightly artifacts \u2014 external `import marin` demonstrated, but not a full pip-installable curated API. No explicit close.\n- **Canary pass rate to 90%+ ([#4270](https://github.com/marin-community/marin/issues/4270)) \u2014 not met on the GPU side within the window.** Target = rolling pass rate \u226590%. Week of Apr 26: **TPU ferry 9/9 (100%)**, but the **GPU canary regressed to 60%** after JAX 0.9.2 exposed an NCCL all-to-all crash on CoreWeave H100 ([#5377](https://github.com/marin-community/marin/issues/5377), fix [#5379](https://github.com/marin-community/marin/issues/5379)) and a `pl.load`/`pl.store` breakage ([#5341](https://github.com/marin-community/marin/issues/5341), fix #5347), and the **datakit smoke ferry slipped to ~71%** ([summary 2026-04-26](https://mws.oa.dev/summaries/summary-2026-04-26_2026-05-02.html)). No close-out; the clearest quantitative miss at end of April.\n- **Levanter Store / K8s Logging / Infra Improvements ([#4474](https://github.com/marin-community/marin/issues/4474)) \u2014 closed \"substantially accomplished\" 2026-06-05.** ihodes: *\"fair to close as substantially accomplished?\"* \u2192 rjpower: *\"Yeah sounds good.\"* (K8s logging #4477/#4478 done; Levanter store #4445, checkpoint RAM #4475, Nemo v2 #4476 tracked.)\n\n---\n\n## Pillar 3 \u2014 Post-training / synthetic data ([#3192](https://github.com/marin-community/marin/issues/3192)) \u2014 the pillar most easily missed; **mixed-to-negative**\n\n#3192 was the top-level epic for the post-training pillar (*\"critical path for post-training\"*). ihodes scored its April scope on 2026-05-03 but did **not** close it; it drifted until 2026-06-05, when Helw150 said *\"We should close and split up into something with good definitions of done\"* \u2014 an admission it never had crisp definitions of done. The weekly rollup scored it **0/4 sub-issues closed**.\n\n- **WIN \u2014 SWE-bench dose-response on Marin-8B ([#4898](https://github.com/marin-community/marin/issues/4898)).** SFT of `marin-community/marin-8b-base` on SWE-ZERO (execution-free) trajectories, evaluated on **SWE-bench Verified** (100 tasks, mini-swe-agent v1 harness, vLLM on v6e-4, 3 runs/model): **0.0% baseline \u2192 3.3% (10K) \u2192 4.0% (50K) \u2192 5.3% \u00b1 1.5% (100K SFT)**. This is the one genuine positive signal: SWE-ZERO crossed from *\"the pipeline works\"* to a **measurable downstream capability curve**, generalizing from diverse non-Python code-edit trajectories to Python SWE-bench. (An earlier single-run \"100K regresses to 2%\" readout was retracted; with 3 runs 100K is highest, though it shows a `!!!`-repetition degeneration tied to an unemitted `<|eot_id|>` stop token.)\n- **MISS (stuck) \u2014 the 500K SFT dose-response point ([#4898](https://github.com/marin-community/marin/issues/4898)).** The next dose point never produced a real training step: the launcher iterated v5\u2192v10 fighting wrong working dirs, Levanter cross-region rejections, and v5p-16 capacity that was 0 cluster-wide, then hung on a 3-hour dataset-cache build and ended `.executor_status=FAILED` at **step-38 (init only, out of 125,000 target), listed down ~80 hours.** It was never resurrected (SFT later \"held per user direction\"). Permanent gap.\n- **MISS (~half target) \u2014 140B-token SWE-ZERO scale-out ([#4719](https://github.com/marin-community/marin/issues/4719)).** Target: 12.3M rollouts (122,910 PRs \u00d7 100) \u2248 140B tokens. Achieved **~6.5M rollouts / ~52% rollout coverage, ~51% PR coverage** before a user-authorized cutoff, when us-east5 v6e-4 capacity collapsed. Real engineering wins inside the miss: a measured **3.4\u00d7 per-worker throughput** improvement (`--enable-prefix-caching` + reduced MAX_TURNS) and a rebuild of the 13-batch pipeline into a multi-region swarm with atomic GCS shard claims (avoiding a historical $1.5K/day cross-region-write incident). A false \"crossed 140B\" (inflated by error-rollout byte counting) was caught and reverted to ~52%. Datasets `AlienKevin/SWE-ZERO-12M-trajectories` shipped.\n- **MISS (negative result) \u2014 Marin-32B TerminalCorpus midtrain ([#4760](https://github.com/marin-community/marin/issues/4760)).** SFT `marin-32b-base` on 15% of Nemotron-Terminal-Corpus, eval on Terminal-Bench 2.0 vs Qwen3-32B at comparable budget: **Marin-32B 2/87 (~2.3%) vs Qwen3-32B 18/86 (~20.9%) \u2014 roughly 10\u00d7 worse.** Salvaged a **reusable EOS-config infra fix** (a saved-checkpoint `eos_token_id` mismatch that caused degenerate `zorazora\u2026` output; OLE rate dropped 70%\u219211% after patching), but even EOS-corrected the gap held. Formally closed as a negative result 2026-06-10.\n- **Durable learning \u2014 the gap points at base pre-training, not SFT volume.** Trace-diagnostic BPB work found **marin-8b patch_gain = \u22121.43** (trace context *hurts* patch prediction) vs. **+0.16 for qwen3-8b / +0.18 for llama3.1-8b** \u2014 a base-model agentic/coding-prior deficit ([#4963](https://github.com/marin-community/marin/issues/4963), dlwh). (This \u22121.43 is an **8B** diagnostic that *explains* the 32B agentic gap; it is not a 32B metric.)\n\n---\n\n## Data sources ([#3100](https://github.com/marin-community/marin/issues/3100)) \u2014 met\n\nTarget: **20T high-quality tokens** for the large MoE runs. By 2026-04-06 the catalog stood at **17.0T tokens across 100 datasets**; ihodes closed it 2026-06-05 as *\"Substantially done, we're beyond 19T and have more than what we need for the foreseeable future.\"*\n\n---\n\n## Scorecard\n\n| Milestone element | Target | Outcome |\n|---|---|---|\n| **1e23 MoE \u2014 launch + pre-register** (#4697, #4281) | Committed: launch + pre-register | **Hit** \u2014 launched Apr 11 (v4-1024 EP4 ring), pre-registered vs #4447 |\n| **1e23 MoE \u2014 completion** (#4697) | *Stretch:* \"1e23 completed (~16 days on v4-2048)\" | **Slipped past April; achieved in May** \u2014 finished on v4-2048 EP8 ragged, sealed 2026-05-20/21 |\n| **1e23 loss vs pre-registered bet** | 2.252 (L\u221e=1.6 isoflop fit, #4447) | **Beat by ~1%** (2.234) vs the conservative registered number; *not* robust vs the 2.224\u20132.226 free-fit |\n| **1e22 isoflop** (#4281, #3800) | Clean best-recipe 1e22 completed | **Hit** (`moe-v7-1e22-d3200`, v4-512) |\n| **Isoflop ablations to 1e21** (#4281) | \"Good/Great 10T\" up to 1e21 | **Not checked** (open) |\n| **Agentify experimentation** (#4282, #5184) | ~3 full agent-run decisions, smoke\u21921e20, via GitHub | **Closeable for April** \u2014 1 clean Gate-2 promotion (AdamH-embed) + many negative results; 3-of-3 not demonstrated |\n| **TPU MFU** (#4300) | 25\u201330% sustained (\"made up\" band) | **Below target (~16.4% on crashed v4-1024), but owner closed \"good enough\" 2026-05-31** |\n| **H100 MoE MFU** (#4283, #5330) | Fast MoE on H100 | **Progress** \u2014 Triton fwd+bwd 1.91\u00d7 vs XLA on H100\u00d78 |\n| **Off Ray** (#4269) | Ray gone | **Hit** (functionally gone, code-complete May 3\u20134) |\n| **Usability & observability** (#4273) | April scope | **Hit** (April scope; closed 2026-06-05) |\n| **On-demand / reserved capacity** (#4268, #4379) | Support reserved capacity | **Substantially delivered** (CapacityType enum + queued-resource API); no explicit close-out |\n| **Canonical data pipeline** (#4272) | Composable download\u2192tokenize | **Largely done / rolled forward** |\n| **Marin-as-a-library** (#4271) | External `import marin` | **Partial** (external demos, not full pip-install) |\n| **Canary \u226590%** (#4270) | Both fleets rolling \u226590% | **Missed on GPU** \u2014 TPU 9/9 (100%), GPU ~60%, datakit ~71% |\n| **Levanter store / K8s logging** (#4474) | Infra improvements | **Hit** (\"substantially accomplished,\" 2026-06-05) |\n| **Post-training / synthetic data** (#3192) | Critical path for post-training | **Mixed-to-negative** \u2014 1 win (SWE-bench 0\u21925.3%), 3 misses (500K SFT stuck, 140B ~52%, Marin-32B ~10\u00d7 gap); no crisp DoD |\n| **Data sources** (#3100) | 20T high-quality tokens | **Hit** (>19T) |\n\n---\n\n## Bottom line\n\n- **Won:** the pre-registered 1e23 scaling bet **beat its forecast** (2.234 vs the registered 2.252 paloma macro) \u2014 a well-calibrated result from runs 333\u00d7 smaller; the off-Ray migration completed; usability/observability and Levanter-store/K8s-logging landed; reserved-capacity support shipped; the data-sources target (>19T) was met; and agentic experimentation produced a real promotable architecture change (AdamH-embed).\n- **Slipped / missed:** the marquee run **didn't finish inside April** (crash-bound on v4-1024; completed on v4-2048 in May) \u2014 though completion was only a *stretch* goal; **canary \u226590% was not achieved on GPU** (~60% after JAX 0.9.2 fallout); **TPU MFU landed ~16.4% vs a made-up 25\u201330% band** (owner-signed-off \"good enough\"); and the **post-training pillar came in mixed-to-negative** (140B generation ~half-done, 500K SFT stuck ~80h, Marin-32B ~10\u00d7 behind Qwen3-32B).\n- **Key learning:** the Marin-32B agentic underperformance is a **base-pretraining prior deficit** (patch_gain \u22121.43 on Marin-8B vs +0.16 on Qwen3), not just SFT volume \u2014 a finding that redirects post-training work upstream into pre-training.\n- **Process note:** the milestone was **never formally declared complete and no completion percentage exists** in the corpus. It was wound down in two issue-by-issue sweeps (2026-05-03 and 2026-06-05) and superseded by June work; the two \"April 2026\" tracking issues (#4256/#4266) were deliberately excluded from the count. So the honest characterization is *\"substantially delivered with a real headline win, delivered with a tail into May\u2013June rather than cleanly by April 30,\"* not *\"100% complete.\"*\n\n---\n<!--provenance-->\n> *Gold reference answer. Source: marinmirror frozen eval corpus (`evals/corpus/2026-07-16`) + milestone-scoped weekly summaries via `mws.oa.dev`. All issue/PR numbers, close-out quotes, and load-bearing numbers verified against the frozen corpus with `mum-frozen show`/`search` on 2026-07-16.*\n>\n> *Corpus caveat: the freeze stores issue/comment text only \u2014 not GitHub `state`/`closed_at`/`milestone` metadata \u2014 so all open/closed determinations are inferred from in-thread close-out comments and the milestone-scoped weekly summaries, and close dates are approximate. #4268/#4270/#4272 have no close-out comment in corpus; the \"Good \u22655% (SWE-bench)\" success bar cited elsewhere is not present verbatim in the frozen #4898 text and is omitted here.*",
+  "gold_archived": "golds-archive-2026-07-14/april.json",
+  "gold_provisional": true,
+  "review_notes": {}
+}

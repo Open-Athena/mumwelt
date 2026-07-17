@@ -1,0 +1,231 @@
+{
+  "id": "july",
+  "question": "explain our july 2026 plan",
+  "corpus": "2026-07-16",
+  "answerable": true,
+  "skill_hint": "research",
+  "source": "loop2/config.json:questions.july (facts G1-G7)",
+  "dims": [
+    "what the milestone is (name / when / who filed it)",
+    "the hero-run model: scale & which hardware it runs on",
+    "architecture & long-context plan (target length and method)",
+    "data workstreams (pretrain / SFT / RL)",
+    "loss preregistration target (the number)",
+    "MFU / perf gate before the run",
+    "schedule / sequencing & the NEXT hero run"
+  ],
+  "citations": {
+    "must_have": [
+      "#6689",
+      "#6704",
+      "#6811",
+      "#6706",
+      "#6710",
+      "#7073",
+      "#7074",
+      "#6716",
+      "#6705"
+    ],
+    "nice_to_have": [
+      "#6522",
+      "#6649",
+      "#6998",
+      "#6979",
+      "#7012",
+      "#7024",
+      "#6969",
+      "#7067",
+      "#6796",
+      "#2351",
+      "#6915",
+      "#6991",
+      "#7052",
+      "#6839",
+      "#7045",
+      "#7130",
+      "#7088",
+      "#6708",
+      "#6162",
+      "#6341",
+      "#6096",
+      "#6218",
+      "#6053",
+      "#6042",
+      "#6046",
+      "#5470",
+      "#6045",
+      "#3192",
+      "#6048",
+      "#4302",
+      "#5842",
+      "#6711",
+      "#6715",
+      "#6709",
+      "#6867",
+      "#6037",
+      "#7034",
+      "#7064",
+      "#7079",
+      "#6597",
+      "#6983",
+      "#6191"
+    ],
+    "forbidden": [
+      "#4300",
+      "#6304",
+      "#4986",
+      "#6532",
+      "#6534"
+    ],
+    "recency_critical": []
+  },
+  "facts": {
+    "must_have": [
+      {
+        "id": "1",
+        "match": "(preparation|bridge)[ -]month",
+        "note": "July is explicitly a readiness/preparation month running to mid-August, not a finish line"
+      },
+      {
+        "id": "2",
+        "match": "complete 67B",
+        "note": "milestone verbatim: complete 67B-A2B MoE; start XB-AYB MoE on B200s; start post-training Marin MoEs"
+      },
+      {
+        "id": "3",
+        "match": "placeholder",
+        "note": "must flag that headline model sizes (120B-A8B, 512B-A16B, XB-AYB) are narrator/summary placeholders, not preregistered specs; #6689 title is 'nB-AmB XT on B200s'"
+      },
+      {
+        "id": "4",
+        "match": "512B",
+        "note": "September hero run ~512B-A16B on 20T tokens when twelve NVL72 racks land ~Sept 15 (approximate, summary prose)"
+      },
+      {
+        "id": "5",
+        "match": "120B",
+        "note": "end-of-month ~120B-A8B B200 run on 2 NVL72 (approximate)"
+      },
+      {
+        "id": "6",
+        "match": "August 30|lands? in August|spill.{0,12}August",
+        "note": "67B-A2B 10T TPU v4-2048 run targeted to land ~Aug 30; at step 39,000 ~2.1T tokens (~21% of 10.07T) at ~18.6% MFU"
+      },
+      {
+        "id": "7",
+        "match": "2\\.277",
+        "note": "2T intermediate cooldown finished at 2.2772 Paloma macro-loss, favorable early read vs the 2.269 preregistered stage-1 target"
+      },
+      {
+        "id": "8",
+        "match": "2\\.269",
+        "note": "preregistered stage-1 target at 8T/80% mark, seqlen 8192, before cooldown; comparison to 2.277 is NOT apples-to-apples"
+      },
+      {
+        "id": "9",
+        "match": "23\\.8",
+        "note": "11B-A1.5B validation run on 64xH100 cleared ~23.8% MFU as a Blackwell dry run, deliberately overtrained to 500B tokens"
+      },
+      {
+        "id": "10",
+        "match": "17\\.8",
+        "note": "B200 MFU reached 17.8% single-node 8xB200 at d5120 via QuACK/SonicMoE, below the 20% bar (14.9% d2560, 12.5% H100-parity)"
+      },
+      {
+        "id": "11",
+        "match": "18\\.26",
+        "note": "separate multinode JaxPP pipeline-parallel result: mean MFU 18.26 at ~414k tok/s, 1.74 pts below 20% bar (#7024)"
+      },
+      {
+        "id": "12",
+        "match": "20%",
+        "note": "B200 20% bar (#6706, posed as a question 'Need to be at 20%+?') gates the end-of-month run; not yet met"
+      },
+      {
+        "id": "13",
+        "match": "25%",
+        "note": "distinct 25% MFU target for the September run (#6710), separate from the 20% Aug bar and the Hopper 20-25% upskilling target"
+      },
+      {
+        "id": "14",
+        "match": "GQA",
+        "note": "grouped-query attention is the one genuinely-decided September architecture element; MLA rejected on +17-20% FLOP accounting (#6522)"
+      },
+      {
+        "id": "15",
+        "match": "0\\.25",
+        "note": "post-training priced at ~0.25-0.9x the 10T pretrain in HW-FLOPs (projection, #7074), ~5-20% of the 120B run, ~5x env speedup divides by five"
+      },
+      {
+        "id": "16",
+        "match": "Nemotron",
+        "note": "post-training pipeline: RL over 10 experts THEN multi-teacher on-policy distillation (MOPD) into the student on the Nemotron path, dominated by RL leg"
+      },
+      {
+        "id": "17",
+        "match": "4/14",
+        "note": "data/arch/preregistered-loss lock for the Aug-1 B200 run (#7073) still open at 4/14 sub-issues, no decision recorded this week"
+      },
+      {
+        "id": "18",
+        "match": "Pareto",
+        "note": "curation reality check (#2351): Marin high_quality curation is NOT Pareto-dominant at compute-matched DCLM CORE, even at 3k scale"
+      },
+      {
+        "id": "19",
+        "match": "SuperBPE",
+        "note": "SuperBPE tokenizer edge reverses at scale (#6796 closed); decision trending to GPT-OSS tokenizer on OPD/pass@K ecosystem grounds, not compression"
+      },
+      {
+        "id": "20",
+        "match": "xorl|MATH500|walked back",
+        "note": "xorl cross-framework win (+12.3 MATH500) walked back July 10 by Ashwinee Panda's same-ruler audit to ~+0.8-1.4 MATH500 vs reference +8.4 (Muon-vs-AdamW confound)"
+      },
+      {
+        "id": "21",
+        "match": "14,211",
+        "note": "Executor retirement #6649 diff is +7,646/-14,211 (net ~-6.5k); -14k is deletions not net"
+      },
+      {
+        "id": "22",
+        "match": "Iris",
+        "note": "Iris cross-cluster federation went live: marin hands whole jobs to CoreWeave (#7064/#7034)"
+      },
+      {
+        "id": "23",
+        "match": "131k",
+        "note": "MarinSkyRL 131k-context RL on MoEs plumbed on CoreWeave (#7052): 30B/35B-A3B fit 64xH100 at ~2.5h/step; feasibility envelope only, no quality metric"
+      },
+      {
+        "id": "24",
+        "match": "0\\.9410",
+        "note": "mixing-via-embeddings surrogate (#6969) priced a never-swept bucket at 0.9410 uncheatable BPB, beating sweep best 0.9554; winner's-curse caveat ~0.031 BPB"
+      }
+    ],
+    "nice_to_have": []
+  },
+  "traps": {
+    "superseded": [
+      "#4300 is wrong/superseded/off-platform here",
+      "#6304 is wrong/superseded/off-platform here",
+      "#4986 is wrong/superseded/off-platform here",
+      "#6532 is wrong/superseded/off-platform here",
+      "#6534 is wrong/superseded/off-platform here"
+    ]
+  },
+  "trap_checks": {
+    "superseded": {
+      "forbid_cite": [
+        "4300",
+        "6304",
+        "4986",
+        "6532",
+        "6534"
+      ]
+    }
+  },
+  "gold_prose": "# Marin's July 2026 plan\n\n## The one-line milestone \u2014 and the fact that it is written in placeholders\n\nThe July milestone reads verbatim at the top of the weekly summaries as: **\"complete 67B\u2011A2B MoE; start XB\u2011AYB MoE on B200s; start post\u2011training Marin MoEs\"** ([summary 2026\u201107\u201106_2026\u201107\u201112](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html)). Two things must be said before any of the numbers:\n\n1. **July is a preparation month, not a finish line.** The summary is explicit: *\"The July milestone runs to mid\u2011August and is a preparation month, not a finish line.\"* None of its three headline deliverables actually *completes* inside July \u2014 the 67B run lands ~Aug 30, the B200 run only *starts* at end of month, and post\u2011training only *starts* against intermediate cuts.\n\n2. **The model sizes are narrator placeholders / weekly\u2011summary round numbers, not preregistered specs.** The milestone's own name is literally `XB\u2011AYB`. The end\u2011of\u2011month B200 run's issue [#6689](https://github.com/marin-community/marin/issues/6689) is titled **\"[Hero Run] nB\u2011AmB XT on B200s\"** \u2014 its body is a filled\u2011with\u2011`?` template (\"Architecture & scaling recipe: MoE \u2026\"; FLOP budget `?`; Tokens `?`) that fixes only the *hardware* (288 B200 = 4\u00d7NVL72 on CoreWeave; \"the last run before we train on the full **800+ B200 cluster**\") and the *strategic slot* (\"on the path to our **EOY 256\u2013500B\u2011AYB run**\"). The specific sizes **\"~120B\u2011A8B\"** (end\u2011of\u2011month B200 run), **\"~512B\u2011A16B / 20T\"** (September hero run) and **\"XB\u2011AYB\"** all originate in the **prose of the July 6\u201312 summary** \u2014 the summariser writes them with tildes (\"~512B\u2011A16B\", \"~120B\u2011A8B\"), flagging them as approximate \u2014 and appear in **no issue body**. As of the frozen week the actual shape of the Aug\u20111 run ([#7073](https://github.com/marin-community/marin/issues/7073)) is **open at 4/14 sub\u2011issues closed with \"no decision recorded this week.\"** So every headline size in this plan should be read as an *approximate working figure*, not a committed number.\n\n## What July is preparing *for*\n\nThe throughline for the rest of 2026 is the **Marin 2026 contender** hero run: when the **twelve NVL72 (B200) racks land around September 15**, the team kicks off its largest run \u2014 **a ~512B\u2011A16B model on 20T tokens** (summary prose; not preregistered). July's job is to be *ready* for that September run, and for the **~120B\u2011A8B B200 run that kicks off on 2 NVL72 at end of month**, by: finishing/cooling down the two in\u2011flight pretraining runs, getting Blackwell MFU up, locking data + architecture + a preregistered loss target, and pricing post\u2011training ([summary](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html)).\n\nThe one genuinely **decided** architecture element for the September run is the attention: **grouped\u2011query attention (GQA)**, not MLA. Larry Dial's FLOP accounting in [#6522](https://github.com/marin-community/marin/issues/6522) shows MLA adds **+17.4% training FLOPs at 4k seqlen (+19\u201330% at 8k)** while its KV\u2011cache win is mostly an inference benefit, and he flagged the risk of standing up a new MLA implementation on the JAX/XLA GPU stack before Sept 15 \u2014 so \"the working call is GQA.\"\n\n## Four workstreams (the structure of the plan)\n\nThe month is organized as four named workstreams ([summary](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html)):\n\n1. **NVL72 (B200) pretraining MFU toward 25%** for the September run.\n2. **A pretraining recipe that sets up post\u2011training well** \u2014 motivated by the pre\u2011to\u2011post feedback loop (below).\n3. **Post\u2011training infrastructure that is fast enough** (and a working definition of \"fast enough\").\n4. **A post\u2011training recipe** for the best model the available FLOPs allow.\n\nThese are carried on two structural tracks \u2014 **hero runs** (the concrete use of compute) and **commitments** (what must land to be ready) \u2014 with the bulk of the actual effort in **areas of investment** underneath.\n\n---\n\n## Hero\u2011run track: three runs in flight\n\n- **67B\u2011A2B Grug MoE on TPU v4\u20112048, 10T tokens** \u2014 the centerpiece ([#6704](https://github.com/marin-community/marin/issues/6704) tracker, logged day\u2011to\u2011day on [#6044](https://github.com/marin-community/marin/issues/6044)). Precise state (achieved): by the week of July 6 it reached **step 39,000 \u2248 2.114T tokens (~21% of the 10.07T horizon) holding MFU near 18.6%** on the `resume15k_v2` run; completion is targeted **around August 30** (so \"complete 67B\u2011A2B\" spills into mid\u2011August). Owner: **Larry Dial**.\n  - **First intermediate cooldown at ~2T** ([#6811](https://github.com/marin-community/marin/issues/6811), now **closed**): a 3,150\u2011step LR decay from the step\u201139,000 checkpoint that also stretches context 8\u00d7 (seqlen 8,192\u219265,536, batch 8\u21921,024 so tokens/step stays 67.1M) and switches to the phase\u20112 mix. It finished at **step 42,149/42,150 (33.9h wall) at Paloma macro\u2011loss 2.2772, bpb 0.8242** (achieved). That is a **strongly favorable early read against the preregistered 2.269 stage\u20111 target** \u2014 but the summary is careful it is **NOT apples\u2011to\u2011apples**: the stage\u20111 target is measured at **seqlen 8,192, at the 8T\u2011token / ~80% mark, *before* the final cooldown**, whereas this 2T cut fully decays LR, runs the phase\u20112 mix, and evaluates at 8\u00d7 context. So it **does not retire the 8T preregistration** ([#6046](https://github.com/marin-community/marin/issues/6046), the loss\u2011registration path, was formally **closed** this week). The checkpoint was verified and published to CoreWeave S3 + a v6e inference zone so mid\u2011training, SFT, RL, and inference can start against a usable model. A **second cooldown at 5T is planned for early August.** The context extension rode on a **YaRN attention\u2011scale (qk_mult) probe** \u2014 a 6\u2011arm, 20\u2011step sweep picking all\u2011layers coef=0.1 (qk_mult=1.5703); the added config field was then reverted because touching `GrugModelConfig` shifts the executor hash and breaks checkpoint auto\u2011resume.\n  - **Operational reality (often omitted):** the run's incidents this week were host/hardware, not the model. A **crash at step 31,962 + Iris restart landed a worse TPU topology and permanently slowed steps 26.1s\u219230.0s (+15%)** \u2014 David Hall traced it to topology and is adding topology logging ([#7009](https://github.com/marin-community/marin/issues/7009)). It also suffered **high\u2011preemption restarts and DEADLINE_EXCEEDED barrier\u2011timeout startup failures** on the v4\u20112048.\n\n- **End\u2011of\u2011month ~120B\u2011A8B B200 run on 2 NVL72** \u2014 the \"start XB\u2011AYB MoE on B200s\" half of the milestone ([#6689](https://github.com/marin-community/marin/issues/6689)). Its **data mix, architecture, and preregistered loss target are all still OPEN** \u2014 [#7073](https://github.com/marin-community/marin/issues/7073) \"Shape of model (arch + tokens etc) for Aug 1 run\" is at **4/14 sub\u2011issues closed, \"no decision was recorded this week,\"** with inputs actively in motion (the B200 MFU bar #6706, the post\u2011training cost estimate #7074, and the data/arch investment epics). Its launch is *gated* on B200 MFU \u2265 20%, which is **not yet met** (see below).\n\n- **11B\u2011A1.5B validation run on 64\u00d7H100** ([#6716](https://github.com/marin-community/marin/issues/6716), whose issue title is itself a placeholder, \"[Hero run] Land 8B\u2011A1B XT on H100s\"; body \"POC for multinode GPU run\"). The actual run per the summary is a **d2048 MoE, 24 layers, 64 experts top\u20114, GQA 4:1, ~1.53B active / 10.6B total**, on CoreWeave `cw\u2011us\u2011east\u201102a`. It is a **hardware\u2011and\u2011loss dry run for the Blackwell path, deliberately overtrained to 500B tokens to exercise the GPU stack, not to deliver an artifact** (Isaac Hodes: \"this is more about exercising the hardware instead of delivering an artifact\"). It **cleared ~23.8% MFU (~1.37M tok/s, ~1.53 s/step at batch 512\u00d7seq 4096)** (achieved), completion expected ~July 13\u201314.\n\n---\n\n## Commitments (what must land to be ready)\n\n### B200 MFU \u2014 and why there are *two* competing \"B200 MFU\" numbers, neither clearing the bar\n\nThe targets are **three distinct bars on three platforms**, not one clean number \u2014 do not run them together:\n\n| Platform | Target | Achieved (this week) | Source |\n|---|---|---|---|\n| **TPU v4\u20112048** | (in\u2011run) | **~18.6% MFU** on the 67B run at step 39k | [#6704](https://github.com/marin-community/marin/issues/6704) |\n| **H100 / Hopper** | 20\u201325% on 128\u2013256 H100 (GPU upskilling) | **23.8%** on the 11B validation (64\u00d7H100); full `model.py` weak\u2011scales **26.7%\u219226.5%** (8\u219264 H100) | [#6998](https://github.com/marin-community/marin/issues/6998), [#6979](https://github.com/marin-community/marin/issues/6979), [#6716](https://github.com/marin-community/marin/issues/6716) |\n| **B200 / Blackwell** | **20% bar for the end\u2011of\u2011month run** ([#6706](https://github.com/marin-community/marin/issues/6706)); **25% target for September** ([#6710](https://github.com/marin-community/marin/issues/6710)) | **not met** \u2014 see below | |\n\n**#6706's real body is \"Get B200 MFUs above X in advance of July run / Need to be at 20%+?\"** \u2014 the 20% is literally posed as a *question* with an `X` placeholder; the summary is the one that firms it to \"20% \u2026 Aug 1 run.\" **#6710** (\"B200 training MFU & perf\") is explicitly *\"Blocked by / after: Commitment #6706\"* and carries the further 25% September target.\n\nThere are **two different B200 MFU figures this week and neither clears 20%:**\n- **Single\u2011node 8\u00d7B200 = 17.8% MFU at width d5120** (achieved), via **Will Held wiring Tri Dao's QuACK SM100 grouped GEMM (the SonicMoE kernel)** into the expert MLPs ([#7012](https://github.com/marin-community/marin/issues/7012)). This number is **width\u2011dependent and must be qualified**: 12.5% at H100\u2011config parity \u2192 16.2% at d5120 (width lever, pre\u2011kernel) \u2192 **17.8% at d5120 with QuACK / 14.9% at d2560**. **Batch is a dead lever** (the workload is arithmetic\u2011intensity\u2011starved, not batch\u2011starved); **width is the live lever.** The **QuACK gated GEMM alone runs ~1,175 TFLOP/s (~52% of peak)** \u2014 the kernel is fast; the whole\u2011model MFU is the gap.\n- **Multinode JaxPP pipeline\u2011parallel = mean MFU 18.26 at ~414k tok/s** (achieved), on David Hall's `std_1f1b` JaxPP path across four 8\u00d7H100 nodes ([#7024](https://github.com/marin-community/marin/issues/7024)) \u2014 **1.74 points below the 20% bar.** This came after a *disciplined week of negative results* (latency\u2011hiding scheduler flag +0.4% within noise; XLA ring combine \u221252%; input\u2011gradient\u2011first backward split \u221229%; etc.), each gated on A/B evidence; the most promising EP\u2011local QuACK adapter cleared the perf gate but failed output parity (a ~2.6% mismatch pinned to QuACK's fused approximate SwiGLU). David Hall's read: **\"Hopper is back on the menu.\"**\n\nSo the commitment gating the ~120B\u2011A8B launch (**B200 MFU \u2265 20%, #6706**) is **unmet** as of the freeze \u2014 17.8% single\u2011node, 18.26 multinode.\n\n### Price post\u2011training ([#7074](https://github.com/marin-community/marin/issues/7074))\n\nBenjamin Feuer filled in the estimate (a **projection**, not a measurement). The pipeline is **RL over 10 experts, THEN multi\u2011teacher on\u2011policy distillation (MOPD) into the student on the Nemotron path** \u2014 *dominated by the RL leg*, whose cost scales with the experts' hosting footprint. Costed in **hardware FLOPs** (the pretraining plan's currency, so RL's **low ~1% aggregate MFU is *counted*, not hidden** \u2014 this is what inflates the HW\u2011FLOP price). Headline:\n- **~0.25\u20130.9\u00d7 the 10T pretrain in HW\u2011FLOPs** (\u2248 **1.2\u20133.9\u00d7 the cheaper 2T cut**);\n- only **~5\u201320% of the 120B big run**;\n- a **~5\u00d7 environment speedup divides all of it by five**;\n- in literal tokens it is small \u2014 **~10\u2079\u201310\u00b9\u2070, under 0.5% of a 10T pretrain** \u2014 though that undercounts, since each post\u2011training token is far costlier to produce.\n\n**Empirical tension to flag:** the only executed RL\u2011vs\u2011OPD head\u2011to\u2011head in corpus ([#6218](https://github.com/marin-community/marin/issues/6218), penfever, Leonardo A100) found **pure RL beats OPD on accuracy *and* compute** for a small solvable task (Qwen3\u20111.7B student: RL ~0.94\u20130.97 pass@8 at ~19\u201350 s/step vs OPD ~0.82\u20130.83 at 387\u2013836 s/step; \"OPD is teacher\u2011score\u2011bound \u2014 90\u201397% of every step is the 32B teacher scoring\"). Whether MOPD (multi\u2011teacher, post\u2011RL checkpoints, the plan's second leg) pays off at 67B/120B scale is unvalidated. The broader EOY plan is tracked in [#6053](https://github.com/marin-community/marin/issues/6053) (still multi\u2011document \u2014 a \"straw plan\" from Isaac Hodes/David Hall and a separate post\u2011training plan from penfever); the 67B\u2011A2B post\u2011training run itself is [#6705](https://github.com/marin-community/marin/issues/6705) (owner @penfever, \"won't begin until early (or mid?) August\").\n\n### Lock data + architecture + preregistered loss target ([#7073](https://github.com/marin-community/marin/issues/7073))\n\nStill open (above), fed by the datakit July\u2011hero release ([#6037](https://github.com/marin-community/marin/issues/6037)) and the data/architecture work below. The summary singles out the missing piece: **\"Preregistering the loss target \u2026 is the piece that turns the decision into a testable prediction\"** \u2014 and it is still undone.\n\n---\n\n## Areas of investment (where the bulk of the month's effort actually goes)\n\n### Cluster infra / reliability ([#6715](https://github.com/marin-community/marin/issues/6715)) \u2014 Russell Power\n\n- **Iris cross\u2011cluster federation went live**: marin can now hand *whole jobs* to CoreWeave and watch them from where they were launched ([#7064](https://github.com/marin-community/marin/issues/7064)), on an identity/trust layer (submitting_user principal, per\u2011cluster allowlist, Ed25519 `aud=\"federation\"` tokens; [#7034](https://github.com/marin-community/marin/issues/7034)), with placement moved off the submit path (jobs park as `QUEUED_HANDOFF` and drain to peers reporting free capacity; [#7108](https://github.com/marin-community/marin/issues/7108)).\n- **The Executor was retired for lazy ArtifactSteps** ([#6649](https://github.com/marin-community/marin/issues/6649)) \u2014 the migration off the eager import\u2011time content\u2011addressed DAG, so a code edit no longer silently forks an output path. **Accurate diff: +7,646 / \u221214,211 across 276 files (net \u2248 \u22126.5k lines)** \u2014 note the summary's \"net ~\u221214k\" is imprecise; \u221214,211 is the *deletions*, not the net.\n- Close\u2011outs this week: the long\u2011standing **coscheduler collision** (~1,100 v5p host\u2011hours wasted) was finally closed ([#5470](https://github.com/marin-community/marin/issues/5470)); server auth unified onto one deny\u2011by\u2011default EdDSA\u2011JWT stack ([#6948](https://github.com/marin-community/marin/issues/6948)).\n\n### GPU upskilling for the September large run ([#6710](https://github.com/marin-community/marin/issues/6710)) \u2014 David Hall + Larry Dial\n\n- **David Hall's GPU Upskilling Master Plan** ([#6998](https://github.com/marin-community/marin/issues/6998)): four streams \u2014 an XXB\u2011A2B **Hopper target (MFU 20\u201325% on 128\u2013256 H100)**, a Blackwell A8B smoketest, MXFP8 training on Blackwell, and a fused EP MoE kernel \u2014 naming **pipeline parallelism (PP) as the real fix** for Hopper's high\u2011sparsity/Adam/Muon HBM taxes.\n- **Larry Dial's GPU MFU Learning Path** ([#6979](https://github.com/marin-community/marin/issues/6979)) built the single\u2011node 8\u00d7H100 story bottom\u2011up (lm_head\u2011only CE 50.3% \u2192 dense d2560/26L 56.2% \u2192 full trainable `model.py` **26.7%**), and the headline multinode result: **`model.py` weak\u2011scales essentially flat 26.7% (8 GPU) \u2192 26.5% (64 H100)** because replica/DDP hides the once\u2011per\u2011step gradient all\u2011reduce over the DC network; sharding the model across nodes instead costs ~4 points. Dropping total experts 256\u219264 (still top\u20114) lets the full model fit one node \u2014 proposed as the H100 working copy.\n- **JaxPP PP MoE** ([#7024](https://github.com/marin-community/marin/issues/7024), 18.26 mean MFU, above) and David Hall's **fused EP kernel** ([#6597](https://github.com/marin-community/marin/issues/6597), Pallas Mosaic GPU source\u2011push, integrated fwd+bwd) are the named PP fixes; **Matt Wittmann's end\u2011to\u2011end fp8 wiring** ([#7079](https://github.com/marin-community/marin/issues/7079); full MoE layer 1.53\u00d7 vs bf16 at 2\u2011node EP16) closed out the original \"try fp8\" issue [#6048](https://github.com/marin-community/marin/issues/6048) and the superseded H100\u00d78 MFU tracker [#4302](https://github.com/marin-community/marin/issues/4302).\n\n### Pretraining data + tokenizer \u2014 the inputs that gate the data\u2011lock ([#7073](https://github.com/marin-community/marin/issues/7073)); heavy on *negative* results\n\nThe summary's own section title is blunt: **\"SuperBPE tokenizer edge reverses at scale; curation win isn't Pareto\u2011dominant.\"** Three sobering realities, not just the one win:\n\n- **Tokenizer decision ([#6796](https://github.com/marin-community/marin/issues/6796), Russell Power, CLOSED):** a grug\u2011MoE bake\u2011off on **feBPB** (FLOP\u2011equivalent BPB pricing each tokenizer's serving cost at the ~250B\u2011total/~20B\u2011active deployment MoE). SuperBPE first read as 5/7 arms beating Llama\u20113 at 6e19, but **the win is budget\u2011dependent and reverses at scale** \u2014 the **128k SuperBPE arms start level with Llama\u20113 and fall progressively further behind as budget grows (gap roughly doubling out to 2.6e20)**, leaving only the trained 64k\u2011fixed arm ahead and only at low budget. **The decision moved off compression entirely: Will Held's GPT\u2011OSS tokenizer proposal** on ecosystem grounds (easier pass@K forecasting, teacher\u2011student alignment for OPD; Rohith Kuditipudi: ~98% of Llama tokens have direct Qwen counterparts for regular text). Related: [#5842](https://github.com/marin-community/marin/issues/5842) (Marin\u2011vs\u2011Qwen3 coverage) **closed completed**; [#6571](https://github.com/marin-community/marin/issues/6571) digit\u2011variant sweep **stuck in draft** (wrong model size gave the digit arms an unfair ~0.03 bpb edge).\n- **Curation reality check ([#2351](https://github.com/marin-community/marin/issues/2351), Michael Ryan / XenonMolecule) \u2014 the largest omission:** at **compute\u2011matched DCLM CORE eval, Marin's `high_quality` curation is NOT Pareto\u2011dominant even at the 3k scale** \u2014 the earlier apparent win relied on scale and had been hidden by scoring only at each run's minimum uncheatable\u2011eval val\u2011loss point. Gap analysis: strong on code, on par at math/Wikipedia, **real gaps in fiction, QA benchmarks, and news.** Remediation: a 935\u2011document dev set (keep/weak\u2011keep/weak\u2011drop/drop) drawn by cross\u2011pipeline disagreement, stratified by register.\n- **The datakit quality/dedup/decontam defect wall (listed directly under #7073):** ~a dozen coordinated defect issues indicting the deployed fastText quality classifier and the domain/dedup/decontam stack \u2014 [#6849](https://github.com/marin-community/marin/issues/6849) (sorts by domain, not intrinsic quality), [#6850](https://github.com/marin-community/marin/issues/6850) (code collapses into one cluster), [#6851](https://github.com/marin-community/marin/issues/6851) (over\u2011merges templated synthetic data), [#6852](https://github.com/marin-community/marin/issues/6852) (decontam low\u2011recall on short\u2011line/embedded contamination), [#6854](https://github.com/marin-community/marin/issues/6854) (whole\u2011source dedup wipeouts, median ~76%/source), [#6855](https://github.com/marin-community/marin/issues/6855), [#6858](https://github.com/marin-community/marin/issues/6858) (over\u2011sharded, ~1 element/shard), [#6859](https://github.com/marin-community/marin/issues/6859), [#6860](https://github.com/marin-community/marin/issues/6860), plus July\u201110 additions [#7124](https://github.com/marin-community/marin/issues/7124) and [#7126](https://github.com/marin-community/marin/issues/7126).\n\n### Data\u2011selection diagnostics ([#6712](https://github.com/marin-community/marin/issues/6712)) \u2014 Rafal Wojdyla; and the pre\u2192post loop\n\n- **The one clean win: content\u2011embedding mixture surrogate** ([#6969](https://github.com/marin-community/marin/issues/6969), `mixing_via_embeddings`). It re\u2011featurizes a mixture as the token\u2011weighted histogram it induces over a frozen embedding codebook (`h = V\u00b7w`), fixing the structural weakness that mixture evidence is **bucket\u2011indexed** ([#7067](https://github.com/marin-community/marin/issues/7067)). Preregistered validation passed, then a **live test priced a genuinely never\u2011swept bucket (`dolma_starcoder`) and realized 0.9410 uncheatable\u2011eval BPB** vs olmix\u2011reuse 0.9495, token\u2011proportional 0.9759, and the sweep's own best\u2011ever 0.9554 \u2014 a **\u22120.0145 margin at ~8\u03c3** for one embedding job + minutes of CPU, no re\u2011sweep. **Preregistered caveat (do not drop it): winner's curse \u2014 the optimized point was optimistic by ~0.031 BPB**, so a trust\u2011region/LCB proposer is the flagged next step. Note the honest tension: the win is on a *code* bucket, exactly where curation is already strong and the quality classifiers are most broken.\n- **The strategic pre\u2192post feedback loop ([#6096](https://github.com/marin-community/marin/issues/6096)):** Isaac Hodes raised it for the team agenda; Rafal Wojdyla distilled it to two questions (what should pretraining hill\u2011climb to make post\u2011training easier; how should post\u2011training feed back into pretraining data). **Will Held sketched redefining \"compute\u2011optimal\" for an RL world \u2014 fit the hero\u2011run scaling ladder to pass@256 on agent\u2011relevant skills** (on the assumption pass@256 converts to pass@1 under enough RL), which lets overtraining be priced against the RL\u2011cost savings it buys. This is what motivates workstream 2 (\"a pretraining recipe that sets up post\u2011training well\"). No experiment has closed the loop yet.\n\n### Post\u2011training recipe / infra\n\n- **SFT data & Levanter \"SFT with confidence\"** ([#6714](https://github.com/marin-community/marin/issues/6714) data; [#7045](https://github.com/marin-community/marin/issues/7045) epic, Russell Power). One merged deliverable \u2014 the **Axolotl SFT backend** ([#6839](https://github.com/marin-community/marin/issues/6839), penfever), \"jinja\u2011as\u2011ground\u2011truth\" to close the chat\u2011template\u2011split footgun that produced 0% SWE\u2011bench OOD via the old LLaMA\u2011Factory save path (Delphi masking canary passed; Stage\u20116 LF\u2011vs\u2011axolotl loss\u2011match was NO\u2011GO at a 120% gap, attributed to a turn\u2011masking divergence, not a backend defect). Benjamin Feuer's precise Levanter gap cluster: **[#7130](https://github.com/marin-community/marin/issues/7130) (no config\u2011level epoch cap \u2014 the 6.5\u2011packed\u2011epoch over\u2011train that bit the Delphi 1e22 parity run when 34,722 steps \u2248 6.5 epochs and near\u2011zero loss was the symptom)**, [#7086](https://github.com/marin-community/marin/issues/7086) (`pack=\"pad\"` raises NotImplementedError), [#7087](https://github.com/marin-community/marin/issues/7087) (packed\u2011mask correctness fragility), [#7088](https://github.com/marin-community/marin/issues/7088) (DenseMixer dense\u2011forward router gradient \u2014 Feuer: \"re\u2011routing among already\u2011specialized experts is the dominant available lever in post\u2011training,\" directly tying the SFT fix to the #7074 RL\u2011over\u2011experts thesis).\n- **RL framework of the future** ([#6708](https://github.com/marin-community/marin/issues/6708)) \u2014 **decision still open**; the framework guide [#6162](https://github.com/marin-community/marin/issues/6162) and parity checklist [#6341](https://github.com/marin-community/marin/issues/6341) saw no new edits. **The week's biggest RL\u2011framework datapoint was a walk\u2011back:** last week's cross\u2011framework xorl repro of the Delphi `rlvr7500_w1` run ([#6915](https://github.com/marin-community/marin/issues/6915)) had read **+12.3 MATH500 / +8.8 gsm8k on 16 GPUs**. Russell Power **closed it July 6 as not immediately actionable**; then on **July 10 Ashwinee Panda's fidelity audit** showed it was **not a same\u2011ruler comparison** (Muon vs the reference's AdamW, a different prompt/grader pair, a more permissive grader). After closing the auditable gaps, **the parity run lands at ~+0.8 to +1.4 MATH500 vs the reference's +8.4** (and +7.6\u20138.4 gsm8k vs +4.4, AIME regressing). **What survives is the train/serve correctness result** \u2014 all 141 uninterrupted parity updates ran at `behavior_k3 = 0.0` (on\u2011policy fidelity, not an explanation for held\u2011out gains).\n- **MarinSkyRL now runs 131k\u2011context RL on MoEs on CoreWeave** ([#7052](https://github.com/marin-community/marin/issues/7052), Benjamin Feuer) \u2014 a **feasibility envelope, not a quality result**: Qwen3\u2011Coder\u201130B\u2011A3B and Qwen3.6\u201135B\u2011A3B each fit **64\u00d7H100 (8 nodes) at ~2.5 h/step, ~10M generated tokens/step**; Qwen3\u2011Next\u201180B\u2011A3B (closest analog to the incoming Marin 67B\u2011A2B) is **projected** to need 96\u2013128 H100; 131k judged \"about the hardware limit without additional cleverness.\"\n- **Zero\u2011RL on Delphi\u201125B** ([#6991](https://github.com/marin-community/marin/issues/6991), Will Held): on a weak un\u2011instruction\u2011tuned base, **\"format beats plumbing\"** \u2014 prompt/output format, not the RL algorithm, is the dominant lever. Two silent confounds fixed (default rollout **temp 1.0 is a dead zone**, temp 0.5 \u2248 triples signal; the Llama\u20113 stop token was **not an EOS token**, so generation never stopped). With few\u2011shot + temp 0.5 + stop\u2011fix: train reward ~4%\u2192~29%, MATH\u2011500 5.2%\u2192~17% (overfits past ~step 70, AIME\u201124 stays 0%). Lesson: mechanically works once format is right, but can't manufacture competence.\n- **Inference / rollout speed** ([#6709](https://github.com/marin-community/marin/issues/6709), still at the baseline\u2011establishing stage; a serving \"wedge\" turned out to be a 4096\u2011token position\u2011limit NaN/HTTP\u2011400 bug [#6983](https://github.com/marin-community/marin/issues/6983)) and the July Grug inference epic ([#6867](https://github.com/marin-community/marin/issues/6867)); **EP8 serving of a real GrugMoE checkpoint passed on CoreWeave/H100** ([#6042](https://github.com/marin-community/marin/issues/6042), **closed**).\n\n---\n\n## Close\u2011outs / state transitions this week (do not present these as open)\n\nFormally closed or passed this week: **[#6046](https://github.com/marin-community/marin/issues/6046)** (loss\u2011registration path), **[#6042](https://github.com/marin-community/marin/issues/6042)** (GPU EP8 GrugMoE serving, passed), **[#6048](https://github.com/marin-community/marin/issues/6048)** (fp8 training, done), **[#4302](https://github.com/marin-community/marin/issues/4302)** (H100\u00d78 MFU tracker), **[#3192](https://github.com/marin-community/marin/issues/3192)** (synthetic\u2011data tracker, July 7), **[#6045](https://github.com/marin-community/marin/issues/6045)** (10T datamix, July 7), **[#6796](https://github.com/marin-community/marin/issues/6796)** & **[#5842](https://github.com/marin-community/marin/issues/5842)** (tokenizer), **[#5470](https://github.com/marin-community/marin/issues/5470)** (coscheduler collision), **[#6811](https://github.com/marin-community/marin/issues/6811)** (2T cooldown), **[#6915](https://github.com/marin-community/marin/issues/6915)** (xorl repro, closed then audited). The Executor migration **[#6649](https://github.com/marin-community/marin/issues/6649)** landed.\n\n## Named owners\n\nLarry Dial (67B run + 2T cooldown + YaRN/qk_mult sweep), Will Held (B200 QuACK wiring #7012, zero\u2011RL Delphi #6991, GPT\u2011OSS tokenizer), David Hall (GPU Upskilling Master Plan #6998 + JaxPP PP #7024 + fused EP kernel #6597 + topology logging), Russell Power (Iris federation #7064/#7034, Executor retirement #6649, tokenizer bake\u2011off #6796, \"SFT with confidence\" #7045), Benjamin Feuer / @penfever (post\u2011training cost #7074, MarinSkyRL 131k #7052, Levanter SFT gaps, Axolotl backend #6839, hero post\u2011training run #6705), Matt Wittmann (fp8 #7079), Rafal Wojdyla (mixing\u2011via\u2011embeddings #6969, datakit defect wall), Michael Ryan/XenonMolecule (curation reality check #2351), Tri Dao (QuACK/SonicMoE B200 kernel), Isaac Hodes (planning issues, pre\u2192post loop #6096).\n\n## Bottom line\n\nJuly 2026 is a **readiness / preparation month** whose stated milestone \u2014 complete the 67B\u2011A2B MoE (landing ~Aug 30), start a ~120B\u2011A8B B200 MoE at end of month, start post\u2011training Marin MoEs \u2014 is written largely in **placeholders** (the sizes are the July\u20116\u201312 narrator's approximate figures; the Aug\u20111 run's shape #7073 is open at 4/14, \"no decision this week\"). Progress is genuine but incomplete: the TPU hero run's 2T cooldown read favorably (2.277 vs the 2.269 target, explicitly *not* apples\u2011to\u2011apples), the H100 validation cleared 23.8% MFU, GQA is the settled September attention choice \u2014 **but B200 MFU is below its 20% commitment bar on both paths measured (17.8% single\u2011node / 18.26 multinode), the data/architecture/loss\u2011preregistration for the B200 run remain undecided, the SuperBPE and curation \"wins\" both reverse under scrutiny, and last week's headline cross\u2011framework RL win was walked back from +12.3 to ~+0.8\u20131.4 MATH500.** It is, deliberately, a month of getting ready \u2014 for the September ~512B\u2011A16B, 20T\u2011token hero run on the twelve incoming NVL72 racks.\n\n---\n<!--provenance-->\n> **Provenance.** Gold answer for eval question `july` (\"explain our july 2026 plan\"), grounded solely in the frozen 2026\u201107\u201116 eval corpus via `evals/runners/mum-frozen`.\n>\n> **Primary source:** the in\u2011corpus weekly summary [2026\u201107\u201106_2026\u201107\u201112](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html) is the authoritative narration of the July plan and is directly retrievable (`mum-frozen summaries show`). Corpus\u2011cutoff note: many 7000\u2011series issues (#7073, #7074, #7052, #6969, #7067, #6998, #6979, #7012, #7024, #6991, #7045, #7086\u2013#7088, #7124, #7126, #7128) are **not retrievable as primary issue bodies** (the GitHub crawl predates them) \u2014 every claim about them here is sourced from that weekly summary, which cites them authoritatively. Issue *bodies* verified directly in corpus include #6689 (placeholder template), #6704, #6705, #6706 (\"Need to be at 20%+?\"), #6710, #6716, #6053, #6522 (GQA/MLA FLOP accounting), #6218 (RL\u2011vs\u2011OPD), #6042, #6046, #6096, #6708; #6649's PR diff (+7,646/\u221214,211) is visible in the summary's PR list.\n>\n> **Fidelity guards applied:** every number labeled achieved / target / projected; hardware+config attached to each metric; close\u2011out state preferred over mid\u2011thread proposals; the three\u2011platform MFU matrix kept distinct; the two B200 MFU figures surfaced separately; the xorl and SuperBPE/curation results resolved to their walk\u2011backs. All headline model sizes flagged as narrator placeholders.",
+  "gold_archived": "golds-archive-2026-07-14/july.json",
+  "gold_provisional": true,
+  "review_notes": {}
+}

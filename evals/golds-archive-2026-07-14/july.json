@@ -1,0 +1,110 @@
+{
+  "id": "july",
+  "question": "explain our july 2026 plan",
+  "corpus": "2026-07-14",
+  "answerable": true,
+  "skill_hint": "research",
+  "source": "loop2/config.json:questions.july (facts G1-G7)",
+  "dims": [
+    "what the milestone is (name / when / who filed it)",
+    "the hero-run model: scale & which hardware it runs on",
+    "architecture & long-context plan (target length and method)",
+    "data workstreams (pretrain / SFT / RL)",
+    "loss preregistration target (the number)",
+    "MFU / perf gate before the run",
+    "schedule / sequencing & the NEXT hero run"
+  ],
+  "citations": {
+    "must_have": [
+      "#6704",
+      "#6044",
+      "#6701",
+      "#6702",
+      "#6706",
+      "#6705",
+      "#6689"
+    ],
+    "nice_to_have": [
+      "#6700",
+      "#6047",
+      "#6713",
+      "#6714",
+      "#6707",
+      "#6710",
+      "#6716"
+    ],
+    "forbidden": [],
+    "recency_critical": [
+      "#6705"
+    ]
+  },
+  "facts": {
+    "must_have": [
+      {
+        "id": "1",
+        "match": "67B|67\\s*B",
+        "note": "67B-total MoE"
+      },
+      {
+        "id": "2",
+        "match": "TPU|v4",
+        "note": "runs on TPU v4-2048, moved off GPU"
+      },
+      {
+        "id": "3",
+        "match": "262k|262K|YaRN",
+        "note": "262k context via two-stage YaRN"
+      },
+      {
+        "id": "4",
+        "match": "2\\.269",
+        "note": "preregistered stage-1 loss target"
+      },
+      {
+        "id": "5",
+        "match": "B200",
+        "note": "B200 MFU gate before the run"
+      },
+      {
+        "id": "6",
+        "match": "August|Aug",
+        "note": "final 10T slips to early August"
+      }
+    ],
+    "nice_to_have": [
+      {
+        "id": "7",
+        "match": "2026-06-26|hero run",
+        "note": "milestone name / filed date"
+      },
+      {
+        "id": "8",
+        "match": "SFT|RL",
+        "note": "data workstreams"
+      }
+    ]
+  },
+  "traps": {
+    "platform": "hero run is on TPU v4-2048 (moved OFF GPU); do not report GPU as the run hardware",
+    "temporal": "report the close-out plan including the August slip, not a mid-thread proposal",
+    "target_vs_achieved": "~2.269 loss and B200>20% are TARGETS/commitments, not achieved results"
+  },
+  "trap_checks": {
+    "platform": {
+      "require": [
+        "TPU|v4"
+      ]
+    },
+    "temporal": {
+      "require": [
+        "Aug"
+      ]
+    },
+    "target_vs_achieved": {
+      "require": [
+        "2\\.269"
+      ]
+    }
+  },
+  "gold_prose": "## Our July 2026 plan\n\nThe **\"July hero run\"** milestone was filed 2026-06-26 by ihodes (hero-run template, ~[#6700](https://github.com/marin-community/marin/issues/6700)–[#6716](https://github.com/marin-community/marin/issues/6716)).\n\n**The run.** Centerpiece is a **67B-total / ~2B-active MoE on ~10T tokens** (d=2560), running on\n**TPU v4-2048** — moved off GPU ([#6044](https://github.com/marin-community/marin/issues/6044)/[#6704](https://github.com/marin-community/marin/issues/6704)).\n\n**Architecture & long context.** Extend context to **262k via two-stage YaRN** ([#6701](https://github.com/marin-community/marin/issues/6701)/[#6047](https://github.com/marin-community/marin/issues/6047)).\n\n**Data.** Pretraining mix + CoreWeave pipeline ([#6713](https://github.com/marin-community/marin/issues/6713)/[#6700](https://github.com/marin-community/marin/issues/6700)), SFT ([#6714](https://github.com/marin-community/marin/issues/6714)), and RL data ([#6707](https://github.com/marin-community/marin/issues/6707)).\n\n**Preregistered loss.** Stage-1 **target ~2.269 paloma macro** over the first 8T tokens ([#6702](https://github.com/marin-community/marin/issues/6702)).\n\n**Perf gate.** Get **B200 MFU above ~20% before the run** (commitment) ([#6706](https://github.com/marin-community/marin/issues/6706)/[#6710](https://github.com/marin-community/marin/issues/6710)).\n\n**Sequencing.** The final 10T post-training **slips to early August** ([#6705](https://github.com/marin-community/marin/issues/6705)); the next hero run (nB-AmB XT) targets **EOY at 256–500B** ([#6689](https://github.com/marin-community/marin/issues/6689)).\n"
+}

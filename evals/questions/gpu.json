@@ -1,0 +1,135 @@
+{
+  "id": "gpu",
+  "question": "explain how training on GPUs is going",
+  "corpus": "2026-07-16",
+  "answerable": true,
+  "skill_hint": "research",
+  "source": "loop2/config.json:questions.gpu (facts F1-F7)",
+  "dims": [
+    "cluster bringup / enablement",
+    "throughput & MFU (achieved vs target)",
+    "memory / OOM / sharding fragility",
+    "optimizer (Muon) cost",
+    "parallelism strategy (FSDP vs pipeline)",
+    "kernels / MoE software-stack readiness",
+    "which hardware the flagship 67B run actually uses"
+  ],
+  "citations": {
+    "must_have": [
+      "#6304",
+      "#6689",
+      "#6706",
+      "#6716",
+      "#6532",
+      "#6044",
+      "#6693",
+      "#6493"
+    ],
+    "nice_to_have": [
+      "#6321",
+      "#6292",
+      "#6293",
+      "#6704",
+      "#6710",
+      "#6693",
+      "#6534",
+      "#6700",
+      "#6701",
+      "#6702"
+    ],
+    "forbidden": [
+      "#6970"
+    ],
+    "recency_critical": []
+  },
+  "facts": {
+    "must_have": [
+      {
+        "id": "1",
+        "match": "crashed",
+        "note": "The 11.05B MLA 500B run crash-looped x5 on 07-13 (r2/r4-nosim, b512) and was only state=running (~24-31% of 500B) on 07-14 at freeze; NO finished MLA-500B run exists. Must contradict the 'completion ~July 13-14 / healthy' narrative."
+      },
+      {
+        "id": "2",
+        "match": "gqa4",
+        "note": "The only FINISHED 500B H100 run is grug-d2048-L24-gqa4-500B-r8-nosim-v2 (10.77B / param_count 1.077e10, finished 07-09, train/loss 1.629, eval/bpb 0.7273, 500B tokens) \u2014 a DIFFERENT architecture (GQA-4) than the 11.05B MLA run the summary attributes completion to."
+      },
+      {
+        "id": "3",
+        "match": "23\\.8",
+        "note": "23.8% MFU / 1.37M tok/s / 1.53 s/step / '64xH100' is SUMMARY-ASSERTED only \u2014 no W&B run in the corpus logs throughput/mfu or tokens_per_second for the d2048-500B family. Must be labeled asserted, not measured."
+      },
+      {
+        "id": "4",
+        "match": "9\\.37",
+        "note": "#6304 drove 90B-5.3BA MoE MFU 2.8%->9.37% (3.3x, achieved) on 256 H100 cw-us-east-02a but MISSED its ~25% target; rjpower: ~9.4% is 'the practical pure-FSDP ceiling' (comm-bound on latency-bound FSDP all-gathers). Central target-vs-achieved gap."
+      },
+      {
+        "id": "5",
+        "match": "17\\.8",
+        "note": "B200 single-node MFU 17.8% (summary-asserted, from out-of-corpus #7012) is BELOW the >=20% gate (#6706); 25% is a September target, not a result."
+      },
+      {
+        "id": "6",
+        "match": "288 B200",
+        "note": "End-of-month B200 hero run size/rack is CONTESTED: #6689 says '288 B200 (4xNVL72)' with model size/FLOP/tokens/data/loss all blank/'?'; the weekly summary says '~120B-A8B on 2xNVL72'. Unresolved; run had NOT launched (gate unmet)."
+      },
+      {
+        "id": "7",
+        "match": "6532",
+        "note": "The only corpus-verifiable pipeline-parallelism work is #6532 (zero-bubble PP), on TPU v6e (1.22x FSDP at v6e-32, 0.78x single-host), and it was PARKED / moved to rjpower/marin-experiments#11, PR #6534 closed unmerged. No in-corpus H100 PP MFU number."
+      },
+      {
+        "id": "8",
+        "match": "v4-2048",
+        "note": "Hero 67B-A2B pretraining run is on TPU v4-2048 (1,024 chips); v4-1024 was the superseded initial attempt (#6044)"
+      },
+      {
+        "id": "9",
+        "match": "sonic.?cute|gb200",
+        "note": "Freshest Blackwell state at freeze is the 07-16 gb200-d1280-sonic-cute attention-kernel sweep (reference/cudnn failed; only smaller gpu_fa4_cute finished) plus a d5120/L48 ~129B multi-rack bring-up (07-16->07-17): cudaasync/intrarack-pad unblocked up to 128 GPU (largest stable = 128-GPU/2-rack); 256/512/640-GPU all crashing. No MFU logged for any GB200 run."
+      },
+      {
+        "id": "10",
+        "match": "19\\.9",
+        "note": "best production-shape H100 MFU ~19.9% (32 H100, SGD/Adam), #6693"
+      },
+      {
+        "id": "11",
+        "match": "Muon",
+        "note": "GPU production path dropped Muon for SGD/Adam; Muon tax 16.19% SGD vs 4.75% MuonH (#6493)"
+      }
+    ],
+    "nice_to_have": []
+  },
+  "traps": {
+    "superseded": [
+      "#6970 is wrong/superseded/off-platform here"
+    ]
+  },
+  "trap_checks": {
+    "superseded": {
+      "forbid_cite": [
+        "6970"
+      ]
+    }
+  },
+  "gold_prose": "# How training on GPUs is going\n\n**Short version (frozen corpus, freeze date 2026-07-16).** GPU training is a central, actively-staffed workstream \u2014 the whole rest of the 2026 plan (an end-of-month B200 hero run, then the year's biggest run on the full 800+ B200 cluster) is meant to run on NVIDIA hardware, and July is explicitly a *preparation* month. But the honest state at the freeze is **\"still fighting crashes and still under the MFU bar on both Hopper and Blackwell,\" not \"about to land.\"** The two things a reader should not miss: (1) the weekly-summary narrative that the flagship 11B H100 validation run is \"healthy\u2026 completion expected ~July 13\u201314\" is **contradicted by the W&B ground truth in the same corpus** \u2014 every named MLA-500B run of that model on the freeze boundary is crashed or merely *running* mid-recovery, none finished; and (2) the sharpest, best-documented GPU-MFU result in the corpus is a **miss**: issue [#6304](https://github.com/marin-community/marin/issues/6304) targeted 25% MFU on the 90B-5.3BA MoE and closed out at **9.37%**, declaring ~9.4% \"the practical pure-FSDP ceiling.\" Pipeline parallelism is the named fix, but the corpus-verifiable PP work is on TPU and was *parked*.\n\nHardware split kept throughout: **H100 = Hopper**, **B200 / GB200 = Blackwell / NVL72**. Numbers are labeled **achieved / target / projected / summary-asserted**, and every metric carries its hardware/config, because these are not interchangeable.\n\n---\n\n## 1. H100 (Hopper): the flagship 500B run \u2014 summary optimism vs. the crash wall\n\n### 1a. What the weekly summary claims (summary-asserted, NOT run-logged)\nThe [2026-07-06\u219207-12 weekly summary](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html) says the \"compute-optimal Marin 11B-A1.5B validation run on H100 cleared **~23.8% MFU**\u2026 (~1.37M tokens/s, ~1.53 s/step at batch 512 \u00d7 seq 4096),\" on **64\u00d7H100**, \"still running as of this writing (~264B tokens in), with completion expected around July 13\u201314,\" framed by Isaac Hodes as *\"more about exercising the hardware instead of delivering an artifact\"* (it is pushed to 500B tokens, past compute-optimal, to shake out the stack for the Blackwell path). The epic is [#6716](https://github.com/marin-community/marin/issues/6716) (\"[Hero run] Land 8B-A1B XT on H100s,\" body: *\"POC for multinode GPU run\"* \u2014 no close-out comment exists in the corpus, and note the epic title says **8B-A1B**, smaller than the ~11B model actually run).\n\n**Provenance caveat (load-bearing):** the **23.8% MFU / 1.37M tok/s / 1.53 s/step / \"64\u00d7H100\"** figures appear **only in that weekly-summary narrative**. Literal search of the frozen corpus returns **no W&B run** and **no issue/Discord** asserting them. The run cards for this model family log only `train/loss`, `eval/bpb`, `eval/loss`, `throughput/total_tokens`, `parameter_count`, `_step`, `_runtime` \u2014 **`throughput/mfu` and `tokens_per_second` are not captured for any d2048-500B run.** So 23.8% cannot be pinned to a logged run value and must be treated as **summary-asserted, not measured**. (1.37M tok/s is internally consistent with 512\u00d74096 \u00f7 1.53 s = 1.37M, i.e. an instantaneous steady-state derivation \u2014 but wall-clock throughput of the actual running jobs is ~560\u2013590K tok/s, less than half.)\n\n### 1b. The W&B ground truth: the 11.05B **MLA** 500B run crash-looped, then was only *running* (~24\u201331%) at freeze\nThe model the summary attributes a \"July 13\u201314 completion\" to is the **11.05B-total MLA** variant (`parameter_count = 1.105e10`, `attention_implementation=gpu_fa4_cute`, CoreWeave H100, project `marin_moe`, Larry Dial). Its named runs on the freeze boundary:\n\n| run (grug-d2048-L24-mla-500B-\u2026) | state | train/loss | total_tokens | note |\n|---|---|---|---|---|\n| `-r4-nosim-4node-20260713-231256` | **crashed** | \u2014 | \u2014 | died before 1st step |\n| `-r4-nosim-4node-20260713-233635` | **crashed** | \u2014 | \u2014 | died before 1st step |\n| `-r2-nosim-2node-20260713-234514` | **crashed** | \u2014 | \u2014 | died before 1st step |\n| `-r2-nosim-2node-b128-20260713-235114` | **crashed** | 11.64 | 8.44e7 | fresh-init loss = died at startup |\n| `-r4-b512-20260713-235949` | **crashed** | 11.40 | 1.845e8 | fresh-init loss = died at startup |\n| `-r4-b512-datakit-20260714-001739` | **running** | 1.691 | 1.537e11 (~31%) | recovery attempt |\n| `-r4-b512-datakit-qkvscale-20260714-041711` | **running** | 1.667 | 1.456e11 (~29%) | recipe still being tuned |\n| `-r4-b512-datakit-qkvscale-noswa-20260714-144648` | **running** | 1.772 | 1.195e11 (~24%) | recipe still being tuned |\n\nReads: **five crashed attempts fired inside a ~47-minute window the evening of 07-13** (the signature of a bring-up crash loop sweeping node-count \u00d7 batch-size), the two that logged anything died at fresh-init loss \u224811.5. Recovery launched minutes later (07-14 00:18Z) into **three still-`running` attempts at only ~24\u201331% of 500B** \u2014 losses healthy (~1.7 and falling) but the *end-state at freeze is \"in progress,\" and none is `state=finished`.* **There is no finished MLA-500B run anywhere in the corpus.** The still-tuning suffixes (`qkvscale`, `noswa` = no sliding-window attention) show the recipe was not even fixed yet. (Run URLs share the `https://wandb.ai/marin-community/marin_moe/runs/` prefix + the name above.)\n\n### 1c. What actually *did* land (the likely source of the summary's optimism): the **gqa4** sibling\nThe one **finished** 500B H100 run in the corpus is a **different architecture**: [`grug-d2048-L24-gqa4-500B-r8-nosim-v2-20260709-042053`](https://wandb.ai/marin-community/marin_moe/runs/grug-d2048-L24-gqa4-500B-r8-nosim-v2-20260709-042053) \u2014 **state=finished**, GQA-4 (not MLA), `parameter_count = 1.077e10` (**10.77B**, \u2260 the 11.05B MLA), **throughput/total_tokens = 5e11 (500B landed)**, final **train/loss 1.629, eval/bpb 0.7273, eval/loss 2.166**, tags `cw datakit grug h100 moe`. Its own same-day first attempt `-r8-20260709-031827` crashed first. This July-9 gqa4/10.77B/`r8` run is almost certainly what \"a 64\u00d7H100 500B run cleared ~23.8% MFU\" points to \u2014 but **(i)** it is the gqa4 model, not the 11B MLA model the summary/draft attribute a July-13\u201314 completion to, and **(ii)** even for it, **no MFU is logged in the frozen card** (only loss/bpb/tokens). The run name carries `r8` (8 replicas); the frozen card is truncated and does **not** expose `num_hosts`/`num_devices`, so even the \"64\u00d7H100\" count is summary-asserted, not read from the run.\n\n**Reconciliation (the guard the draft missed):** the summary conflates a *finished gqa4/10.77B* run with a *crash-looping-then-recovering MLA/11.05B* run. At the 2026-07-16 freeze the true picture is: gqa4-500B landed on 07-09 (loss 1.629, no MFU logged); the MLA-500B run the \"completion ~July 13\u201314\" line describes was **crashed \u00d75 on 07-13 and only ~24\u201331% done and still running on 07-14** \u2014 \"still fighting crashes,\" not \"about to finish.\"\n\n### 1d. The one rigorously-documented H100 MoE-MFU result is a **miss**: [#6304](https://github.com/marin-community/marin/issues/6304) \u2014 25% target \u2192 9.37% ceiling\nThis is the concrete origin of the whole \"pipeline parallelism is the fix\" narrative and the clearest target-vs-achieved gap in the GPU story (the draft omitted it entirely). Issue **[#6304](https://github.com/marin-community/marin/issues/6304)** \"[grug] Drive 90B-5.3BA MoE MFU on cw-us-east-02a from 3% to ~25%\" (rjpower), on the **90B-total / 5.3B-active** Grug MoE, **256 H100 / 32 nodes**, cluster **cw-us-east-02a** (CoreWeave), inherited from the bring-up [#6292](https://github.com/marin-community/marin/issues/6292) / PR [#6293](https://github.com/marin-community/marin/pull/6293) (\"scale to 256 H100 + FSDP/EP sparse MoE\").\n\n- **Target:** \u226525% active-FLOPs MFU (\u22482.0M tok/s). **Achieved (close-out):** *\"2.8% \u2192 9.37% MFU (3.3\u00d7) \u2014 batch 1024 \u00d7 seq 2048 + `save_moe`, 712K tok/s\u2026 ~9.4% is the practical pure-FSDP ceiling for this 90B/5.3BA model on 256 H100 (comm-bound on latency-bound FSDP all-gathers, memory-capped at the optimal batch).\"* \u2192 **target missed by ~2.7\u00d7.**\n- Experiment ledger (all 256 H100, seq 2048): baseline batch 256 = **2.8%** / 221K tok/s \u2192 batch 512 = **5.37%** / 408K (+85%, near-linear) \u2192 batch 1024 = **9.32%** / 709K \u2192 +`save_moe` remat = **9.37%** / 712K (best). Batch 1536 and 2048 both **OOM**; PGLE OOM; XLA collective-combine flags **\u22127%**; pure-bf16 params \u2192 deterministic gang hang; the embed-backward reshard fix (`451ba5108b`) was **reverted** (\u221211% at batch 512 / OOM at 1024); microbatching *lowers* MFU (7.18%) because FSDP re-gathers params every microbatch.\n- **Why it's a ceiling, not a stopping point:** profiling shows the step is **~82% communication** (batch-1024 profile), dominated by hundreds of small, latency-bound per-tensor FSDP all-gathers, while the throughput-optimal batch already fills HBM \u2014 a double bind where every remaining FSDP lever either OOMs or (microbatching) adds gathers. The named escape is a **different parallelism**: [#6321](https://github.com/marin-community/marin/issues/6321) \"Deeper MoE MFU levers beyond the pure-FSDP ceiling\" ranks **pipeline/tensor parallelism** as the highest-ceiling successor (\"reduce gathers per token\u2026 hybrid FSDP is memory-blocked at 90B\").\n\n### 1e. Pipeline parallelism: verified on **TPU** and **parked**; the GPU-side realization is out-of-corpus\nThe corpus-verifiable PP work is [#6532](https://github.com/marin-community/marin/issues/6532) \"Zero-bubble pipeline parallelism for Grug-MoE\" (rjpower, PR [#6534](https://github.com/marin-community/marin/issues/6534)), and it is on **TPU v6e**, not H100: PP **beats FSDP at multi-host scale** \u2014 v6e-32 (8 hosts) **180,578 vs 148,221 tok/s (1.22\u00d7 FSDP)** \u2014 but **loses on a single host (0.78\u00d7)**, because PP only wins once the FSDP all-gather has to cross the slow inter-host network. It was then **PARKED**: *\"the PP / zero-bubble investigation for grug-MoE has been moved out of marin to rjpower/marin-experiments#11\u2026 PR #6534 is closed unmerged.\"* So PP validates the *principle* the #6304 diagnosis points to, but on different silicon and as a closed effort. **A separate GPU-side JaxPP effort and its \"18.26% MFU\" figure (issue #7024) are NOT in the frozen corpus** \u2014 there is **no in-corpus H100 PP MFU number** to close the loop against 9.37%. Treat any \"Hopper is back on the menu / 18.26 MFU\" claim as unverifiable here.\n\n*(For scale reference, the only other logged H100 grug MFU data points are the June-9 cw-us-east-02a bring-up canaries in [#6292](https://github.com/marin-community/marin/issues/6292): d1024 on 64 H100 = 1.6M tok/s at ~5.4% MFU, an explicit 20-step liveness test \u2014 literally \"exercising the hardware.\" No finished 64\u00d7H100 d2048-500B run with a logged MFU exists in the corpus.)*\n\n---\n\n## 2. B200 (Blackwell / NVL72): under the 20% gate, and the end-of-month run's size/rack is contested\n\n### 2a. The gate: \u226520% MFU (achieved 17.8% is summary-asserted, below bar)\nThe end-of-month B200 run is **gated** on B200 MFU clearing 20%: [#6706](https://github.com/marin-community/marin/issues/6706) \"Get B200 MFUs above X in advance of July run\" (body: *\"Need to be at 20%+?\"*), tracked by [#6710](https://github.com/marin-community/marin/issues/6710) (\"Training MFU % \u226520% per #6706; pushing toward the 25% target for September\") and the 128-GPU workstream [#6693](https://github.com/marin-community/marin/issues/6693). The weekly summary reports **17.8% single-node on 8\u00d7B200** (via Tri Dao's QuACK/SonicMoE grouped GEMM wired into the expert MLPs; \"width, not batch, is the live lever\"), i.e. **below the \u226520% bar**. **Provenance caveat:** the 17.8% (and 14.9% / 12.5% / ~1,175 TFLOP/s) numbers live in **issue #7012, which is NOT in the frozen corpus** (only a Discord pointer to it exists) \u2014 so they are **summary-asserted, unverifiable against the freeze**. **20% is a bar and 25% is a September target \u2014 neither is an achieved result.**\n\n### 2b. Freshest state at the freeze: a same-day (07-16\u219207-17) GB200 multi-rack bring-up that is *crashing above 128 GPU*\nThe freeze itself captures live GB200 activity the summary (which stops at 07-12) never covered \u2014 and it records **no MFU field for any GB200 run** (verified: 0 GB200 run cards contain `throughput/mfu`), so it updates the *narrative* without superseding 17.8%:\n\n- **Attention-kernel sweep** `gb200-d1280-sonic-cute-{2..9}` (all **2026-07-16**, Larry Dial): varies `attention_implementation` \u2208 {reference, cudnn, gpu_fa4_cute}. **`reference` (cute-2) and `cudnn` (cute-4) both failed; every 8.6B-param variant (cute-2/3/4/5/6) failed; only the smaller ~2.47B `gpu_fa4_cute` configs (cute-7/8/9) finished.** Purpose: pick the working Blackwell attention kernel; no throughput/MFU comparison logged.\n- **d5120 / L48 (~129B-param) multi-rack scaling campaign** (07-16 into **07-17**): 32\u219264\u2192128\u2192256\u2192512\u2192640 GPU. `cudaasync` unblocked 64-GPU (`\u202664gpu-b1024-r2nons-cudaasync2`, `\u2026r1/r2-muonh-cudaasync` all **finished**); **128-GPU / 2-rack** (`\u2026128gpu-b2048-r2-intrarack`, `-intrarack-pad`) **finished** \u2014 the **largest stable/finished GB200 run at freeze** \u2014 while plain `-muonh` crashed; **256-GPU, 512-GPU, and 640-GPU all crashed** (512-GPU `-r8-segfix` was still `running` past midnight into 07-17). Derived throughput (not MFU, no FLOP baseline in corpus): ~463K tok/s at 128-GPU, ~250K at 64-GPU.\n\nSo the true Blackwell snapshot at freeze is: **single-node ~17.8% (summary-asserted, below the 20% bar) and an actively-crashing multi-rack bring-up above 128 GPU** \u2014 not a stable headline efficiency number.\n\n### 2c. The end-of-month B200 hero run: size and rack count are **contested and undecided**\nThe draft (following the summary) called it \"~120B-A8B on 2 NVL72.\" The tracking issue itself says otherwise. [#6689](https://github.com/marin-community/marin/issues/6689) \"[Hero Run] nB-AmB XT on B200s\" (owner @ClassicLarry) lists **\"288 B200 (4\u00d7NVL72)\"** and leaves **model size (\"nB-AmB\"), FLOP budget, tokens, WandB link, data mix, and pre-registered loss all blank/\"?\"**; its framing: *\"the last run before we train on the full 800+ B200 cluster.\"* The weekly summary instead says **\"~120B-A8B\u2026 on 2\u00d7NVL72.\"** These **conflict on two axes** \u2014 **rack/chip count (288 B200 / 4\u00d7NVL72 vs 2\u00d7NVL72 \u2248 half)** and **model size (placeholder vs ~120B-A8B)** \u2014 and no in-corpus artifact reconciles them. Every substantive parameter is an open stub: architecture [#6701](https://github.com/marin-community/marin/issues/6701), data mix [#6700](https://github.com/marin-community/marin/issues/6700), pre-registered loss [#6702](https://github.com/marin-community/marin/issues/6702). **Bottom line: the run had NOT launched at freeze** (its \u226520% MFU gate is unmet at 17.8%, and size/data/loss are undecided). Report size and rack count as **contested**, not fact. *(The related commitment/cost issues the summary cites \u2014 #7073, #7074 \u2014 are not in the frozen corpus.)*\n\n---\n\n## 3. The other hero runs are still on **TPU** (attribution correction)\nOnly **one** in-flight hero *pretraining* run is clearly identifiable in the corpus, and it is on TPU: the **67B-A2B MoE (d2560) on 10T tokens** \u2014 [#6044](https://github.com/marin-community/marin/issues/6044) (tracking [#6704](https://github.com/marin-community/marin/issues/6704), \"should likely land in August\"). ClassicLarry: *\"We have started the run on TPUs this morning **(v4-1024)**,\"* but that initial **v4-1024** (512 chips) attempt **crashed at step 4367 and was superseded** \u2014 the team \"doubled compute to **v4-2048** (all reserved nodes).\" The **hero run runs on v4-2048 (1,024 chips)**, us-central2: run_id `moe_67b_a2b_d2560_ep1_rep16_bs4096_seq8192_sw2k_v4_2048_muon_10T`, resumed as `..._resume15k_v2_10T` (**state=running, ~3.2T of 10T tokens** at the 2026-07-16 freeze). Its winning v4-2048 config (EP=1, replica=8, BS=8192) sustains **~2.57M tok/s at 18.62% MFU** (~45-day projected 10T runtime); the higher **~1,485,929 tok/s / 21.5% MFU** figure is the **superseded v4-1024 attempt** (best *per-chip* MFU but ~78-day wall-clock). The `..._v4_2048_test` runs are config-sweep smoke tests that coexist with \u2014 but are not \u2014 the hero run. The draft's claim of \"two\" in-flight TPU hero pretraining runs is **not corroborated** \u2014 only the 67B-A2B is named.\n\n---\n\n## 4. Bottom line (labeled)\n- **Working:** a real 500B-token run *did* land on H100 \u2014 the **gqa4 / 10.77B** run (`\u2026gqa4-500B-r8-nosim-v2`, finished 07-09, loss 1.629, eval/bpb 0.727), though **its MFU is not logged in the corpus**; the #6304 campaign lifted 90B-5.3BA MoE MFU **3.3\u00d7 (2.8%\u21929.37% achieved)**; the cw-us-east-02a 256-H100 cluster and GB200 racks are up and being driven; `cudaasync`/`intrarack-pad` unblocked GB200 up to 128 GPU.\n- **Below target / still fighting:** the **11B MLA 500B run was crashed \u00d75 (07-13) and only ~24\u201331% done and running (07-14) at freeze \u2014 not finished**, contradicting the \"completion ~July 13\u201314\" narrative; H100 MoE MFU tops out at **9.37% (achieved) vs a 25% target (miss)** on the 90B model, pure-FSDP-ceiling-bound; **B200 ~17.8% (summary-asserted) < the 20% gate**; GB200 multi-rack is **crashing above 128 GPU** at freeze; **25% is a September target, not a result.** Pipeline parallelism is the named structural fix, but the only corpus-verifiable PP work is TPU-only and **parked** (#6532 \u2192 rjpower/marin-experiments#11); the GPU-side PP/JaxPP number is not in the corpus.\n- **Undecided / on TPU:** the end-of-month **B200 hero run's size and rack count are contested** (#6689's *288 B200 / 4\u00d7NVL72, size \"?\"* vs the summary's *~120B-A8B / 2\u00d7NVL72*) and it **had not launched** (gate unmet, arch/data/loss open: #6700/#6701/#6702); the identifiable in-flight hero *pretraining* run remains on TPU (**67B-A2B on v4-2048**, ~18.62% MFU sustained, landing ~August).\n\n**Provenance flags (quote-or-omit):** the following draft-cited issues are **referenced by the weekly summary but are NOT present in the frozen corpus**, so their numbers cannot be verified here and are omitted or labeled summary-asserted above: **#7012** (17.8% B200 detail), **#7024** (JaxPP / 18.26% MFU), **#6998** (GPU Upskilling Master Plan), **#6979** (GPU MFU Learning Path / weak-scaling), **#7013/#7015** (FA4 default backend fix), **#7079** (fp8 1.53\u00d7), **#7064/#7034** (Iris federation), **#7073/#7074** (B200 commitment / post-training cost). No W&B run in the corpus logs `throughput/mfu` or `tokens_per_second` for the d2048/d2560-500B family or any GB200 run, so **all H100/B200 \"% MFU\" headline numbers except #6304's 9.37% (H100, 256-GPU, 90B), the 67B TPU ~18.62% (v4-2048 hero run; the 21.5% / v4-1024 figure is the superseded initial attempt), and the June-9 5.4% canary are summary-asserted, not run-logged.**\n\n### H100 optimizer close-out \u2014 Muon \u2192 SGD/Adam\n\nThe best **production-shape** H100 result in the corpus is **~19.9% MFU on 32 H100 (4 nodes) with SGD/Adam** \u2014 dlwh, 2026-06-26 (`#gpu`): *\"~19.9 MFU on 4 nodes w/ SGD/Adam \u2026 Muon needs to go for now \u2026 we'll need much faster interconnect or PP\"* \u2014 tracked under [#6693](https://github.com/marin-community/marin/issues/6693) (*\">20 MFU at 128 GPUs workstream\"*). This is why the production H100 path runs **SGD/Adam, not Muon**: on a single-node 8\u00d7H100 d2560 ring-MoE A/B ([#6493](https://github.com/marin-community/marin/issues/6493)), SGD held **16.19% MFU** (74,848 tok/s, 0.438 s/step) vs MuonH's **4.75%** (21,962 tok/s, 1.49 s/step) \u2014 Muon consumed ~500 ms of a ~1500 ms step. Caveats: substitute optimizer, **32 GPU not 128**, still **below the >20%@128-GPU bar**. Achieved-MFU ladder: 5.4% canary \u2192 9.37% (90B pure-FSDP) \u2192 **19.9% (SGD/Adam, 32-GPU)**.\n\n---\n<!--provenance-->\n> *Source: frozen 2026-07-16 eval corpus (marinmirror index + weekly summaries through 2026-07-06_2026-07-12); no refresh. Every issue/PR # and W&B run in this answer was re-verified against `evals/corpus/2026-07-16/corpus-index.db`. Numbers labeled achieved / target / projected / summary-asserted; each carries its hardware + config.*\n>\n> *Question (id=gpu): \"explain how training on GPUs is going\"*",
+  "gold_archived": "golds-archive-2026-07-14/gpu.json",
+  "gold_provisional": true,
+  "review_notes": {
+    "forbidden_but_gold_cites_them": [
+      "6979",
+      "6998",
+      "7024",
+      "7012",
+      "7013",
+      "7015",
+      "7079",
+      "7064",
+      "7034",
+      "7073",
+      "7074"
+    ]
+  }
+}

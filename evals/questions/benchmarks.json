@@ -1,0 +1,163 @@
+{
+  "id": "benchmarks",
+  "question": "What are our target benchmarks and our development proxies?",
+  "corpus": "2026-07-16",
+  "answerable": true,
+  "skill_hint": "research",
+  "source": "prompt-bank 2026-07-16 batch 1",
+  "dims": [
+    "headline target benchmarks",
+    "dev/proxy evals used during iteration",
+    "why each proxy is trusted",
+    "gaps between proxy and target"
+  ],
+  "citations": {
+    "must_have": [
+      "#574",
+      "#817",
+      "#1337",
+      "#6611",
+      "#6726",
+      "#6608",
+      "#5819",
+      "#2779",
+      "#4550",
+      "#6044",
+      "#5247",
+      "#6096"
+    ],
+    "nice_to_have": [
+      "#482",
+      "#448",
+      "#658",
+      "#672",
+      "#781",
+      "#2663",
+      "#3690",
+      "#4447",
+      "#4697",
+      "#4389",
+      "#3292",
+      "#6602",
+      "#6665",
+      "#5519",
+      "#6757",
+      "#6712",
+      "#5005",
+      "#5254",
+      "#5836",
+      "#6811",
+      "#1125",
+      "#1215",
+      "#6362",
+      "#5053"
+    ],
+    "forbidden": [
+      "#6603"
+    ],
+    "recency_critical": []
+  },
+  "facts": {
+    "must_have": [
+      {
+        "id": "1",
+        "match": "14/22",
+        "note": "PR #574 wired 14 of 22 DCLM CORE MCQ tasks into default_eval (nikil-ravi); the load-bearing during-training MCQ tier for most of training."
+      },
+      {
+        "id": "2",
+        "match": "soft metrics",
+        "note": "PR #817 switched to the stanford-crfm/lm-evaluation-harness fork logging soft/BPB metrics; fork mainly de-Torches lm-eval; being retired toward EleutherAI mainline in 2026."
+      },
+      {
+        "id": "3",
+        "match": "2\\.75",
+        "note": "Delphi #1337 pre-registration (Helw150, 1.9 asymptote): 1e21:2.75, 1e22:2.55, 1e23:2.40 Paloma macro-loss vs FLOPs \u2014 the core scaling-proxy mechanism; projected/target, not achieved."
+      },
+      {
+        "id": "4",
+        "match": "2\\.53",
+        "note": "Achieved 1e22 Delphi-Nemotron macro loss = 2.53, beat the 2.55 forecast; 1e21 achieved 2.7581; no final 1e23 number in corpus."
+      },
+      {
+        "id": "5",
+        "match": "2\\.234",
+        "note": "MoE isoflop 1e23 (#4697, d5120 129B/16B) final Paloma macro loss 2.234 vs predicted 2.252 \u2014 same L\u221e+A\u00b7C^(-\u03b1) pre-registration methodology, separate ladder from Delphi."
+      },
+      {
+        "id": "6",
+        "match": "Table[ -]?9|table9",
+        "note": "Current live mixture/DSP-selection objective = OLMoBaseEval Easy Table-9 unweighted 51-component BPB macro (Calvin-Xu, #6611/#6726), computed natively in Levanter/TPU fp32 byte-denominator."
+      },
+      {
+        "id": "7",
+        "match": "supersed",
+        "note": "#6608: the Table-9 macro objective superseded the Uncheatable-Eval-only objective for mixture selection, but eval/uncheatable_eval/bpb remained a coexisting validation target (scoped, not total)."
+      },
+      {
+        "id": "8",
+        "match": "v4\\.0\\.4",
+        "note": "AA Intelligence Index v4.0.4 (#5819) is the headline TARGET framework: GDPval-AA, tau2-Bench Telecom, Terminal-Bench Hard, SciCode, AA-LCR, AA-Omniscience, IFBench, HLE, GPQA Diamond, CritPt \u2014 competencies to approximate, mostly NOT executed."
+      },
+      {
+        "id": "9",
+        "match": "[Ee]valchemy",
+        "note": "Only a reasoning subset is actually executed as generative evals via Evalchemy on TPU/vLLM (#2779/#3690): AIME24/25/26, MATH500, GPQA Diamond, LiveCodeBench, HumanEval+/MBPP+, etc. \u2014 target-vs-executed distinction."
+      },
+      {
+        "id": "10",
+        "match": "4550|downstream[ -]?scaling",
+        "note": "#4550 downstream-scaling proxy-evals project (RohithKuditipudi): predict held-out largest model's downstream perf from cheaper ladder runs; #4389 (soft agentic proxy, negative result) superseded by it."
+      },
+      {
+        "id": "11",
+        "match": "2\\.269",
+        "note": "67B-A2B hero-run stage-1 (8T-token) preregistered Paloma target 2.269 @ seqlen 8192/1024 seqs is in #6044 (ClassicLarry), a PROJECTION; NOT #6811 (which is an ihodes placeholder 'pass@256 on X Y Z')."
+      },
+      {
+        "id": "12",
+        "match": "61\\.96|64\\.66",
+        "note": "Comparator target 'beat Qwen': marin-32b-base 61.96 vs Qwen2.5-32B 64.66, Olmo-3-32B 63.20 on lm-eval pretraining suite; gaps in math/code/reasoning; OLMES 8-shot-COT harness caveats on generation benchmarks."
+      },
+      {
+        "id": "13",
+        "match": "Mega-Evals|~?200",
+        "note": "Mega-Evals (#2663, ~200 lm-eval tasks, Helw150) never merged (auto-closed for inactivity); not the load-bearing default set."
+      },
+      {
+        "id": "14",
+        "match": "0\\.069",
+        "note": "#5247 MMLU-acc vs BPB Spearman -0.069 (accuracy is noise)"
+      },
+      {
+        "id": "15",
+        "match": "SimpleRL",
+        "note": "#6096 post-RL prediction: RL-gain fails R^2=0.33; pre-RL pass@K predicts post-RL"
+      }
+    ],
+    "nice_to_have": []
+  },
+  "traps": {
+    "superseded": [
+      "#6603 is wrong/superseded/off-platform here"
+    ]
+  },
+  "trap_checks": {
+    "superseded": {
+      "forbid_cite": [
+        "6603"
+      ]
+    }
+  },
+  "gold_prose": "# Target benchmarks and development proxies\n\nMarin's evaluation stack is **two-tiered and has evolved over time**: a set of external\n**target benchmarks** we ultimately want to move, and a much larger tier of cheap,\nbenchmark-leak-safe **development proxies** \u2014 perplexity / bits-per-byte (BPB) slices and\npre-registered scaling-law targets \u2014 that are read *during* pretraining/midtraining, long\nbefore the target benchmarks are meaningful. Crucially, **what Marin actually executes in\nits eval pipeline is not the same as the aspirational target list**, and the objectives\nhave shifted across the project's life. Answering this well requires separating four\nthings: (1) what actually ran on training jobs, (2) the pre-registered scaling proxies,\n(3) the current live mixture-selection objective, and (4) the external target frameworks\nwe are trying to approximate.\n\nOwnership note: the evals area is led/populated primarily by **willheld (William Held)**\n(#evals, Mega-Evals, 32B), **Calvin-Xu** (OLMix / Table-9 scaling), **ClassicLarry / Larry\nDial** (67B-A2B pre-registration), **Helw150 + kothasuhas + RohithKuditipudi**\n(downstream-scaling proxies / Delphi), **nikil-ravi** (`default_eval` / CORE), and\n**dlwh / Kevin Xiang Li / ihodes** across infra, the AA-surrogate design, and the hero\nruns. Attributions below follow the corpus.\n\n---\n\n## 1. The load-bearing during-training eval tier (what actually ran for most of training)\n\nFor most of Marin's training history the canonical during-training evals settled into three\nco-existing layers wired into `default_train` / `default_eval` / `default_anneal`:\n\n**(a) Paloma PPL / validation-loss sets \u2014 always-on.** The first real during-training eval.\n`#448` \"Add default ppl evals to default training\" (dlwh, 2024-10-18) was closed by\n`#482`, which wired **Paloma** in as a default validation set\n([#448](https://github.com/marin-community/marin/issues/448),\n[#482](https://github.com/marin-community/marin/pull/482)). Paloma macro/micro loss remains\nthe headline pretraining number to this day.\n\n**(b) DCLM-CORE-style MCQ tasks \u2014 the canonical `default_eval`.** Requested in `#553` \"Add\nCORE eval from DCLM paper\" (nikil-ravi, arxiv 2406.11794), delivered by\n**[PR #574](https://github.com/marin-community/marin/pull/574)** \"Add default_eval with CORE\ntasks\" (nikil-ravi, 2024-11-18): makes evals a `list[EvalTaskConfig]` and \"Adds tasks from\nthe CORE benchmark in the DCLM paper. **It has 14/22 \u2014 some of them require remote code, use\ndifferent numbers of shots** etc.\" (the 8 omitted tasks are not enumerated in-corpus).\nA homegrown `internal_eval` framework (`#468`/`#594`) was the abandoned predecessor: its\nnumbers \"ended up being garbage somehow\" and the code was removed, superseded by\nlm-eval-harness ([#553](https://github.com/marin-community/marin/issues/553),\n[#594](https://github.com/marin-community/marin/issues/594)). The default_eval task set (from\nW&B run names) was ~12 tasks: `agieval_lsat_ar, arc_easy, arc_challenge, boolq,\ncommonsense_qa, copa, hellaswag, lambada_openai, openbookqa, piqa, winograd, winogrande`\n(with a `bigbench_language_identification_multiple_choice` variant).\n\n**(c) MMLU \u2014 opt-in, later pushed toward anneal.** `#658`/`#672`: \"By default, MMLU\nevaluation is not run \u2014 this adds an option to run 0-shot and 5-shot MMLU for larger scale\nruns\" ([#658](https://github.com/marin-community/marin/issues/658),\n[#672](https://github.com/marin-community/marin/pull/672)). Later proposed as the *sole*\n`default_anneal` eval to dodge CORE-download flakiness that was killing anneal runs (merge\nstatus a gap in-corpus).\n\n**Harness lineage \u2014 the lm-eval-harness fork with \"soft metrics.\"** CORE was routed through\na lightly-modified fork of EleutherAI's lm-evaluation-harness, not internal_eval.\n**[PR #817](https://github.com/marin-community/marin/pull/817)** (nikil-ravi, 2025-02-18)\n\"Switch to lm-eval-harness fork with soft metrics\" made\n`stanford-crfm/lm-evaluation-harness` the default \"and will also log the soft metrics \u2026\nIt currently does not fully work with MMLU due to a bug.\" \"Soft metrics\" = **bits-per-byte\n(BPB) + per-choice logprob metrics**, logged alongside accuracies. The fork exists mainly to\n\"make lm_eval_harness not fully dependent on Torch,\" and the stated rationale is \"it's the\nclosest thing we have to a standard, particularly for non-frontier models.\" Debug noise:\n`#781` (MMLU on Levanter), `#1125` (MMLU soft-metrics tracking). By early 2026 willheld had\ngrown this to **\"71 evals in lm-eval-harness for pretraining\"** with a 100-task target\n([2026-01-21](https://discord.com/channels/1354881461060243556/1356487738840318002/1463620749356175519)),\nlater **\"181 evals \u2026 as our candidate set\"**\n([2026-01-26](https://discord.com/channels/1354881461060243556/1356487738840318002/1465481663411912824)).\nThe fork is being retired toward EleutherAI mainline mid-2026 (\"Seems like we can move off our\nfork\"), so single-harness attribution is a snapshot.\n\n**\"Mega-Evals\" \u2014 a lead, but never the default set.**\n**[PR #2663](https://github.com/marin-community/marin/pull/2663)** \"Mega-Evals\" (Helw150,\n2026-02-05) \"Runs ~200 Evals using Lm-Eval-Harness\" \u2014 but it was flagged for a\ncleanup-masks-failure bug and **auto-closed for inactivity (2026-05-04, re-closed\n2026-06-12); it never merged.** Treat \"~200 Mega-Evals\" as an aspirational harness, not the\nload-bearing default_eval. (Successor hardening: [PR #6362](https://github.com/marin-community/marin/pull/6362)\nadds DCLM Core v2 scoring helpers, Calvin-Xu, 2026-06.)\n\n---\n\n## 2. Pre-registered Paloma macro-loss scaling targets (the core development-proxy mechanism)\n\nThe distinctive Marin development proxy is not a benchmark score at all \u2014 it is a\n**pre-registered Paloma macro-average-loss vs FLOPs scaling law**, of functional form\n`macro(C) = L\u221e + A\u00b7C^(-\u03b1)` (irreducible asymptote + power law in compute), registered\n*before* a hero/ladder run finishes so the run can be judged against a \"smooth scaling\"\nacceptance bar.\n\n**Delphi scaling suite ([#1337](https://github.com/marin-community/marin/issues/1337)).**\n\"Delphi: Create a modern scaling suite ('modernized Pythia')\" (percyliang, 2025-05-22): a\nreusable open suite of checkpoints going beyond Pythia (up to ~32\u201370B, more tokens,\nNemotron-CC/CommonPile rather than The Pile). \"getting the best accuracy isn't a goal.\" The\n**pre-registration (Helw150, 2026-03-03, explicitly \"for @ihodes\")**:\n> \"We should expect the following Paloma Macro Losses at the end of these Nemotron runs **if\n> we have smooth scaling** (assuming a loss asymptote of ~1.9 from @kothasuhas work): **1e21:\n> 2.75, 1e22: 2.55, 1e23: 2.40**\"\n([#1337 comment-3992593231](https://github.com/marin-community/marin/issues/1337#issuecomment-3992593231)).\n\nAchieved-vs-target (prefer close-out; all Delphi-Nemotron ladder):\n| Budget | Pre-registered target (1.9 asymptote) | Achieved | Verdict |\n|---|---|---|---|\n| 1e21 | 2.75 (projected) | **2.7581** (measured) | within forecast (~.0002 off) |\n| 1e22 | 2.55 (projected) | **2.53** (measured) | **beat** forecast despite spikes ([comment-4016705345](https://github.com/marin-community/marin/issues/1337#issuecomment-4016705345)) |\n| 1e23 | 2.40 (projected) | **no final number in corpus** | run was spiky, required optimizer fix; last comment (2026-04-24) shows downstream forecasts explicitly \"Not pre-registered\" |\n\nThe 1e23 run underwent a **stability crisis** (untuned weight decay \u2192 norm growth \u2192\ndivergence), fixed with AdamH + WhenWen's norm-constrained optimizers; it was allowed to\nfinish \"to update our priors about the dangers of spiking.\" The 1.9 asymptote is itself\n**contested** \u2014 the 1e22 over-performance is read as evidence \"the asymptote at 1.9 is\nwrong.\" Engineering that operationalized this lives in `#3292` \"Delphi Scaling Setup\"\n(modular isoflop recipes: `c_adamc`, `completed_adamh`).\n\n**Sibling MoE isoflop ladder \u2014 cleaner close-out, same methodology.**\n[#4447](https://github.com/marin-community/marin/issues/4447) fits the same\n`L\u221e+A\u00b7C^(-\u03b1)` law via leave-future-out CV;\n**[#4697](https://github.com/marin-community/marin/issues/4697)** the 1e23 MoE (d5120, 129B\ntotal / 16B active, ~1T tokens, v4-1024\u2192v4-2048) **predicted 2.252, final Paloma macro loss\n2.234 \u2014 <1% off pre-registration** ([#4697 comment-4498921338](https://github.com/marin-community/marin/issues/4697#issuecomment-4498921338)).\n**Do not conflate ladders**: Delphi-Nemotron 1e21 = 2.7581, MoE isoflop 1e21 = 2.599, MoE\n1e23 = 2.234 \u2014 separate ladders/datasets/recipes sharing the same pre-registration discipline.\n\n**The #downstream-scaling \"proxy evals project\" (stem\n[#4550](https://github.com/marin-community/marin/issues/4550)).** \"Reliable scaling for\ndownstream evals/post-training\" (RohithKuditipudi, 2026-04-09; teetone, ahmeda14960,\nAlienKevin): predict how an expensive run performs on downstream benchmarks from cheaper\nruns. Off-policy trajectory log-likelihood proved \"a somewhat noisy indicator,\" so they\npivoted to **predicting task performance across a scaling ladder (holding out the largest\nmodel)** using the Marin isoflops + Delphi ladders, plus token-scaling-down (#4548) and\npass@k for large k (#4549). Example: fitting **GSM8K loss/BPB for the Delphi models**,\nextrapolating <1e21\u21921e23 (off by ~0.1 nats, under-predicting). The precursor\n**[#4389](https://github.com/marin-community/marin/issues/4389)** \"soft proxy for agentic\nbenchmarks\" returned a **largely negative result** (no monotonic proxy\u2192downstream\nrelationship on MATH across ~15 models; success-failure gap did worse than plain validation\nloss) and was **closed 2026-06-10, superseded by #4550.**\n\n---\n\n## 3. Current live mixture/DSP-selection objective: OLMoBaseEval Easy \"Table-9\" BPB macro\n\nThe objective that actually drives **data-mixture and DSP (domain-selection-policy)\nselection at freeze** is the **OLMoBaseEval Easy Table-9 unweighted 51-component BPB macro**\n(`table9_macro_bpb`), driven by **Calvin-Xu** (2026-06-23\u219207-06). This is the paper-faithful\nOLMix Table-9 target: the unweighted mean of 51 BPB components (Minerva/ARC/MT-MBPP/Basic\nSkills leaves standalone; MMLU collapsed to 4 OLMix size-weighted buckets; top-level\nQA/code/math aggregates excluded), from 104 scored tasks / 88,592 instances\n([#6611 comment-4804956805](https://github.com/marin-community/marin/issues/6611#issuecomment-4804956805)).\n\n**How it is computed:**\n[PR #6726](https://github.com/marin-community/marin/pull/6726) \"Add Marin-native OLMoBaseEval\nEasy Table 9 BPB evaluator\" (Calvin-Xu, 2026-06-27) scores the suite **natively in Levanter\non TPU** (region-locally, replacing the \"convoluted external Stanford-SC eval path\"):\ncontinuation-masked **fp32 log-probs over a UTF-8-byte denominator**, unweighted\nper-instance \u2192 per-component \u2192 macro. Parity vs the SC oracle on a us-east5 v6e-8: macro\nabsolute diff **1.9e-8**, all 51 components within 1e-3. A silent bf16-drift bug in the Iris\nexecutor path was caught and fixed in review (`olmo_base_eval_step` now defaults `f32`,\nmatmul precision \"highest\").\n\n**It superseded the Uncheatable-Eval-only objective \u2014 but only partly.** The prior objective\nwas `eval/uncheatable_eval/bpb` (single-target \"Uncheatable Eval\"), against which the OLMix\nbaseline `olmix_d001_kl005_cap4` (two-phase, Huber \u03b40.01, KL 0.05, cap 4) was selected in\n[#6608](https://github.com/marin-community/marin/issues/6608). The explicit supersession\nevent (2026-06-26): the older uncheatable OLMix scaling parent \"was stopped because it was\n**superseded by the current Table-9 macro objective** and was repeatedly preempting the\nTable-9 optimized scaling rows\"\n([#6608 comment-4811794926](https://github.com/marin-community/marin/issues/6608#issuecomment-4811794926)).\n**Nuance:** the supersession is scoped, not total \u2014 at freeze, `eval/uncheatable_eval/bpb`\n**remained a live scaling-validation target** (`dsp_effexp_kl01`/`olmix_d001_kl005_cap4`),\ncoexisting with the new primary fit objective\n([#6602 comment-4804956790](https://github.com/marin-community/marin/issues/6602#issuecomment-4804956790)).\nThere was also an interim generation between them: `olmo_base_easy_top3_macro_bpb`\n(equal-weight mean of the three top-level aggregates).\n\n**The proxy in action.** Effective-exposure DSP fit directly on `table9_macro_bpb` on a\n280-row 300M panel: **best model = effective-exposure DSP, `linear_reg=1e-4`, OOF Spearman\n0.918 / OOF RMSE 0.01284**, beating both OLMix variants (paper-faithful `single_tied`\n0.380; Marin-extension `two_phase_adapted` 0.891 \u2014 the latter must be reported separately as\nit is *not* the OLMix paper baseline). The Table-9-optimized scaling ladder (Iris) at freeze:\nboth 3e18 and both 2e19 arms **SUCCEEDED**; **3e20/1e21 still running** (incomplete). The\nobjective is being *refined not frozen*: [#6665](https://github.com/marin-community/marin/issues/6665)\nrejected reliability-weighting the aggregate as an estimand shift (\"Keep the headline\nestimand fixed: the unweighted 51-component Table-9 macro BPB\").\n\n---\n\n## 4. Perplexity-gap / AA-competency PPL surrogate suite (the May-2026 proxy redesign)\n\nLayered on top of the above is the **AA-competency perplexity-gap suite**\n([#5819](https://github.com/marin-community/marin/issues/5819), dlwh, 2026-05-18): a\ncompetency-organized portfolio of raw-text PPL/BPB slices, consolidated into\n`experiments/evals/model_perplexity_gap_suite.py`\n([PR #5836](https://github.com/marin-community/marin/pull/5836), which explicitly composes\nraw-PPL providers \"for Marin 32B vs Qwen3 32B scoring\").\n\n**Core design rule \u2014 avoid \"benchmark-maxxing.\"** The proxies deliberately do **not** contain\nthe actual target-benchmark items: \"We should not add the actual AA component questions \u2026\nThat includes GPQA/HLE/AIME/MATH/MMLU-Pro/IFBench/LiveCodeBench/SciCode exact items, even\nwhere a train split exists.\" Each target competency gets a *distributional surrogate* tagged\nwith a **`ppl_fidelity`** rating (faithful for factual recall / sci-prose familiarity; weak\nfor abstention, agentic state-tracking, long-context retrieval, which are explicitly deferred\nto post-training / non-PPL evaluation). Coverage bundles: Paloma slices, Uncheatable Eval\n(arxiv/wikipedia/bbc/github), FineWeb2 multilingual, Stack v2 / formal-methods / bio-chem /\nstructured-table slices, and an LM-eval bridge (with `mmlu_auxiliary_train`, `gsm8k_train`\nallowed only as small canaries). Competency gaps became subissues #5823\u2013#5829.\nProxy quality is **still being validated**: the success criterion is rank-correlation between\na PPL proxy and downstream evals ([#6712](https://github.com/marin-community/marin/issues/6712)),\nand early reads (#5005) reported low SNR on many slices.\n\n---\n\n## 5. Target benchmarks (what we ultimately want to move)\n\n**Artificial Analysis (AA) Intelligence Index v4.0.4 \u2014 the headline target framework, but\nmostly aspirational competencies, not executed evals.** From\n[#5819 comment-4482092952](https://github.com/marin-community/marin/issues/5819#issuecomment-4482092952)\n(dlwh), the v4.0.4 index components are: **GDPval-AA \u00b7 tau2-Bench Telecom \u00b7 Terminal-Bench\nHard \u00b7 SciCode \u00b7 AA-LCR \u00b7 AA-Omniscience \u00b7 IFBench \u00b7 HLE (text-only) \u00b7 GPQA Diamond \u00b7\nCritPt**; standalone AA text evals *not* in the index: **MMLU-Pro \u00b7 AIME 2025 \u00b7\nLiveCodeBench \u00b7 Global-MMLU-Lite**. **Critically, #5819 treats these as competency labels to\napproximate via PPL surrogates, not as evals in the pipeline** \u2014 the agentic/long-context/\ndocument components (tau2, Terminal-Bench, GDPval, AA-LCR, CritPt, AA-Omniscience, HLE,\nIFBench) are **not executed**. There is **no achieved AA-Intelligence-Index score in the\ncorpus**; AA-II is an optimization *target* proxied by BPB/downstream deltas (e.g.\n[#6757](https://github.com/marin-community/marin/issues/6757): curated vs proportional mixes\n\"statistically indistinguishable\" on macro-uncheatable-BPB).\n\n**What is actually executed as generative evals: a reasoning subset via Evalchemy (TPU/vLLM).**\n[PR #2779](https://github.com/marin-community/marin/pull/2779) (moojink, 2026-02-13) added\n`EvalchemyEvaluator` running **AIME24/25 (+AIME26, OlympiadBench, LiveCodeBench v6 via\n[PR #3690](https://github.com/marin-community/marin/pull/3690)), AMC23, HMMT, MATH500,\nHumanEval+, MBPP+, LiveCodeBench, GPQA Diamond** as Marin eval steps on TPU via vLLM. So the\n**actually-run generative set overlaps AA only partially** (GPQA Diamond, LiveCodeBench,\nAIME25; plus non-index tasks). SciCode is in the PPL map and decon but **not** in the\nexecuted Evalchemy list \u2014 a documented gap. Agentic AA components are routed to **Harbor**\nwhere \"agentic eval parity on TPU\" remained an open goal as of July 2026. (Decontamination\nscope \u2260 execution scope: [#5519](https://github.com/marin-community/marin/issues/5519)\ndecontaminates against **8 AA + 849 lm-eval-harness leaves**, but that is a datakit pipeline,\nnot evals we run.) Percy Liang's framing (2026-07-13): curated evals feed \"our basket of\n200+ perplexity evals and standard generative evals \u2026 monitored at the end of training\n(pretraining + midtraining + SFT) before RL.\"\n\n**Comparator target \u2014 \"beat Qwen.\"** On the pretraining side the concrete bar is Qwen (2.5/3\n32B). On the released 32B, the real story is a **downstream generative-benchmark comparison\nwith harness caveats**, not just a perplexity gap: on the lm-eval fork pretraining suite,\n**marin-32b-base 61.96 vs Qwen2.5-32B 64.66, Olmo-3-32B 63.20**\n([ziqingh, 2025-11-21](https://discord.com/channels/1354881461060243556/1356487738840318002/1441540620865769554)),\nwith gaps concentrated in \"math, code and reasoning\" (dlwh). willheld reported the 32B \"strong\non the large majority of benchmarks\" but had to exclude **generation benchmarks** because of\nOLMES 8-shot-COT-vs-lm-eval harness differences and \"our Qwen must be mildly different\"\n([#marin-32b, 2025-10-01](https://discord.com/channels/1354881461060243556/1367246647062564995/1423016207300300912)).\nIncluding generation tasks the mean-rank ordering had **Qwen 2.5 32B Base 2.74 ahead of\nMarin 32B Base 3.00**.\n\n**Pretraining loss \"targets\" (a distinct kind of target).** For hero runs the headline is\n**Paloma macro-loss** against pre-registered targets. For the **July 67B-A2B run** (d=2560,\n67B total / 2.01B active, MuonH, v4-2048, ~10.07T tokens \u2248 1.2e23 FLOPs), ClassicLarry\npre-registered a **stage-1 (first 8T tokens) target of 2.269 Paloma macro_loss @ seqlen 8192\n/ 1024 sequences** \u2014 a **projection, not achieved**, and it lives in\n**[#6044](https://github.com/marin-community/marin/issues/6044#issuecomment-4820008980)** (not\n#6811). The separate pass@k acceptance bar in\n**[#6811](https://github.com/marin-community/marin/issues/6811)** (ihodes) is a **placeholder**:\n\"Criteria is pass@256 on X Y Z evals\" \u2014 \"X Y Z\" is literal, never concretized. The measured\n2T early-cooldown reading of **2.277** (from the finished W&B run `\u2026cooldown_step39k`) is\n**apples-to-oranges** with 2.269 (2.8T vs 8T tokens, seqlen 65536 vs 8192, phase-2 vs phase-1\nmix) \u2014 its closeness is coincidental. Reference bars in-thread: 32B lowest-ever Paloma 2.202;\nprior 1e23 MoE final 2.234.\n\n---\n\n## 6. Where each tier is computed (harness / platform map)\n\n- **`stanford-crfm/lm-evaluation-harness` fork** (Levanter, TPU) \u2014 pretraining log-prob +\n  MCQA/generation; DCLM CORE + MMLU + soft/BPB metrics; being retired toward EleutherAI\n  mainline. W&B logging under `marin-community/marin` (`lmeval_*` runs), metric keys like\n  `eval/uncheatable_eval/bpb`, `eval/paloma/macro_loss`.\n- **Evalchemy** (`mlfoundations` \u2192 `teetone` \u2192 `marin-community` fork; TPU via vLLM) \u2014\n  post-training reasoning/generative evals (the executed AA-adjacent subset).\n- **HELM** (`stanford-crfm/helm`) \u2014 parallel, partly sidelined for reasoning/coding.\n- **Harbor** \u2014 intended home for agentic AA components; **not at parity** on TPU at freeze.\n- **Iris** (iris.oa.dev) job ladder \u2014 the scaling-validation ladders (Delphi, Table-9-optimized).\n- **Delphi scaling ladder** \u2014 the pre-registered macro-loss proxy runs (Nemotron/CommonPile).\n- **Marin-native Levanter evaluator** ([PR #6726](https://github.com/marin-community/marin/pull/6726))\n  \u2014 the Table-9 BPB macro (W&B project `marin-eval`, run family `olmo_base_eval_table9`).\n- **OLMES** \u2014 the 8-shot-COT harness whose differences changed marin-32b generation-benchmark numbers.\n\n---\n\n## 7. Conflicts, superseded states, and gaps\n\n- **Objective evolved:** Uncheatable-Eval-only \u2192 interim top-3 macro \u2192 **Table-9 51-component\n  macro** for mixture/DSP selection (Uncheatable remained a coexisting validation target).\n- **Superseded:** homegrown `internal_eval` \u2192 lm-eval-harness fork; #4389 soft-agentic-proxy\n  \u2192 #4550; Mega-Evals (#2663) never merged.\n- **Target \u2260 achieved / target \u2260 executed:** AA v4.0.4 components are competencies to\n  approximate; only a reasoning subset (Evalchemy) actually runs. No achieved AA-II score\n  in corpus.\n- **Citation precision:** the 2.269 stage-1 target is in **#6044** (not #6811); #6811's\n  pass@256 bar is a placeholder; the 2.277 cooldown reading pins to the W&B run, not an issue.\n- **Gaps:** no final 1e23 Delphi Paloma macro-loss number; the 1.9 asymptote is contested;\n  the 8 omitted DCLM-CORE tasks (#574) aren't enumerated; 3e20/1e21 Table-9 rungs still\n  running; SciCode not executed despite being an index component.\n\n### Proxy-validity, quantified (why soft metrics, and where proxies fail)\n\nTwo studies anchor *why* Marin trusts soft / normalized-probability metrics over raw accuracy. [#5247](https://github.com/marin-community/marin/issues/5247) (Calvin-Xu, 2026-04-28): on 300M qsplit core rows (n=240), raw **MMLU accuracy has ~no monotonic relation to BPB (Spearman \u22120.069)** and near-zero vs choice_logprob_norm (\u22120.026), while MMLU-acc vs **choice_prob_norm correlates +0.866** \u2014 close-out: *\"accuracy is itself noise; use the smooth proxy with the highest SNR.\"* [#6096](https://github.com/marin-community/marin/issues/6096) (Helw150): across 10 SimpleRL-Zoo base models, base-model reasoning features predict post-RL *level*, but **predicting the RL gain fails (R\u00b2=0.33)** \u2014 pre-RL pass@K is the main predictor of post-RL pass@K; coding/SWE-bench is flagged as the untested next domain.\n\n---\n<!--provenance-->\n> *Gold reference answer. Data: marinmirror frozen 2026-07-16 eval corpus, accessed via\n> `evals/runners/mum-frozen` (refresh disabled; single-process). Every load-bearing number\n> and citation re-verified against the frozen corpus via `mum-frozen show <url>`. Numbers\n> labeled achieved / measured / target / projected; hardware/config attached where in-corpus;\n> close-out state preferred over mid-thread proposals; unciteable claims omitted.*\n>\n> *Question (id=benchmarks): \"What are our target benchmarks and our development proxies?\"*",
+  "gold_provisional": true,
+  "review_notes": {},
+  "citation_equivalents": {
+    "574": [
+      "553"
+    ],
+    "2779": [
+      "3690"
+    ]
+  }
+}

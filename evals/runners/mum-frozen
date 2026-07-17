@@ -1,0 +1,12 @@
+#!/bin/bash
+# `mum` pinned to the frozen 2026-07-16 eval corpus. refresh is hard-blocked.
+# The freeze dir holds corpus-index.db, corpus-manifest.json, and summaries/ — a
+# complete MARIN_CACHE, so no live mirror is touched.
+if [ "$1" = "refresh" ]; then
+  echo "mum-frozen: refresh is disabled (frozen-corpus eval run)" >&2; exit 1
+fi
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+export MARIN_CACHE="$ROOT/evals/corpus/2026-07-16"
+export MARIN_MAX_AGE_DAYS=3650
+export MARIN_STALE_HOURS=99999
+exec mum "$@"

@@ -1,0 +1,26 @@
+{
+  "date": "2026-07-16",
+  "source": "~/.cache/marin",
+  "built_at_epoch": 1784250060,
+  "built_at_utc": "2026-07-17T01:01:00Z",
+  "frozen_at_utc": "2026-07-17T01:48:16Z",
+  "embed_model": "BAAI/bge-small-en-v1.5",
+  "embed_dim": 384,
+  "chunk_count": 68026,
+  "parent_threads": 4465,
+  "per_source": {
+    "discord": 27971,
+    "github": 20609,
+    "wandb": 19446
+  },
+  "sha256": {
+    "corpus-index.db": "b7c4e7e22ca6c725345da07305af0abea19b4dc98b08640c1712269a7ea355aa",
+    "corpus-manifest.json": "87237b49747bc999e350b272b74e1bd2af22aff05c5dbe73a2f0c85ea1125df5"
+  },
+  "summaries": {
+    "weeks": 15,
+    "latest": "summary-2026-07-06_2026-07-12.html",
+    "issue_refs": 3003
+  },
+  "note": "frozen corpus = corpus-index.db chunks UNION issue #s referenced by these summaries"
+}

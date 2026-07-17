@@ -1,0 +1,119 @@
+{
+  "id": "muon",
+  "question": "what is our current muon approach, and how did we end up here?",
+  "corpus": "2026-07-14",
+  "answerable": true,
+  "skill_hint": "research",
+  "source": "loop2/config.json:questions.muon (facts X1-X7) + golds/muon.md",
+  "dims": [
+    "the current chosen optimizer (MuonH config: which leaves, AdamH where, when decided)",
+    "early verification: Muon's critical batch size vs AdamW (sqrt-LR scaling)",
+    "negative results tried (e.g. MuonRemez partial orthogonalization)",
+    "data-dependent findings (nano-walks: Muon vs AdamH crossover)",
+    "architecture refinements (magnitude-direction decoupling gate results)",
+    "the GPU bottleneck (single-node FSDP / Newton-Schulz cost)",
+    "the pivot and what's next (pipeline parallelism, delayed-gradient staleness)"
+  ],
+  "citations": {
+    "must_have": [
+      "#5167",
+      "#5134",
+      "#1565",
+      "#2284",
+      "#5585",
+      "#6388",
+      "#6493",
+      "#6431"
+    ],
+    "nice_to_have": [
+      "#1293",
+      "#4281",
+      "#6492",
+      "#6423"
+    ],
+    "forbidden": [],
+    "recency_critical": [
+      "#6431",
+      "#6493"
+    ]
+  },
+  "facts": {
+    "must_have": [
+      {
+        "id": "1",
+        "match": "MuonH",
+        "note": "chosen optimizer is MuonH (matrix/expert leaves)"
+      },
+      {
+        "id": "2",
+        "match": "AdamH",
+        "note": "AdamH on embeddings/lm_head"
+      },
+      {
+        "id": "3",
+        "match": "2026-06-06",
+        "note": "decided 2026-06-06"
+      },
+      {
+        "id": "4",
+        "match": "critical batch|sqrt-LR",
+        "note": "larger critical batch size vs AdamW"
+      },
+      {
+        "id": "5",
+        "match": "MuonRemez",
+        "note": "MuonRemez negative result"
+      },
+      {
+        "id": "6",
+        "match": "Newton-Schulz|1\\.49s",
+        "note": "NS step-tail cost on GPU"
+      },
+      {
+        "id": "7",
+        "match": "pipeline parallel",
+        "note": "reluctant pivot to pipeline parallelism"
+      }
+    ],
+    "nice_to_have": [
+      {
+        "id": "8",
+        "match": "nemotron|nano walk",
+        "note": "nano-walk data-swap crossover"
+      },
+      {
+        "id": "9",
+        "match": "magnitude-direction|d512",
+        "note": "magnitude-direction decoupling gate"
+      }
+    ]
+  },
+  "traps": {
+    "temporal": "the current decision is MuonH (optimizer studies closed 2026-06-06); do not report an earlier candidate as current",
+    "platform": "the Newton-Schulz step-tail bottleneck is GPU-specific; the how-we-got-here history is mostly TPU",
+    "superseded": [
+      "MuonRemez (#2284) was tried and rejected - not the current approach"
+    ]
+  },
+  "trap_checks": {
+    "temporal": {
+      "require": [
+        "MuonH"
+      ],
+      "require_cite": [
+        "5167"
+      ]
+    },
+    "platform": {
+      "require": [
+        "Newton-Schulz"
+      ]
+    },
+    "superseded": {
+      "require": [
+        "MuonRemez"
+      ]
+    }
+  },
+  "gold_prose": "**Current approach.** For Grug MoE, the chosen optimizer is **MuonH** (Frobenius-preserving Muon with hyperball projection) on matrix/expert leaves, AdamH on embeddings/lm_head. This was decided 2026-06-06: the MuonH-heuristic/AdamH-2x/Muon-search studies closed with \"we went with MuonH\" ([#5167](https://github.com/marin-community/marin/issues/5167), [#5134](https://github.com/marin-community/marin/issues/5134)).\n\n**How we got here (mostly TPU).** Muon's larger critical batch size vs AdamW was verified ([#1565](https://github.com/marin-community/marin/issues/1565), sqrt-LR scaling to BS 512), building on hparams from [#1293](https://github.com/marin-community/marin/pull/1293). MuonRemez (partial orthogonalization) was a negative result ([#2284](https://github.com/marin-community/marin/issues/2284)). Nano walks showed Muon dominating dense ablations but AdamH overtaking once data swapped to nemotron+llama3 ([#5585](https://github.com/marin-community/marin/issues/5585)); MuonH nonetheless held its edge even at 5000× overtrain. Magnitude-direction decoupling passed gate-1 at d512 (eff. speedup 1.034) but only broke even at d768 ([#6388](https://github.com/marin-community/marin/issues/6388)). Parent tracker: [#4281](https://github.com/marin-community/marin/issues/4281).\n\n**The live problem (GPU).** On single-node CoreWeave H100, MuonH's Newton-Schulz dominates the step tail (MuonH 1.49s vs SGD 0.44s); dlwh's packed-fp32-master/MuonMasterBank work is the active effort ([#6493](https://github.com/marin-community/marin/issues/6493); [#6492](https://github.com/marin-community/marin/issues/6492) closed dup). Best update path 0.28s, but FSDP materialization/reshard—not NS itself—is the residual bottleneck. This is pushing a reluctant pivot to **pipeline parallelism**. Supporting that: simulated (TPU v6e) staleness work shows Muon is 2.6–5.3× more delay-robust than AdamH and weight prediction is Muon-specific, making realistic per-stage PP a recoverable ~1.16–1.33× token tax, net-positive when DCN-bound ([#6431](https://github.com/marin-community/marin/issues/6431); harness PR [#6423](https://github.com/marin-community/marin/pull/6423), now moved to an external repo). Real-PP validation is greenlit but not yet built."
+}

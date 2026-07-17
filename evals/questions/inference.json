@@ -1,0 +1,179 @@
+{
+  "id": "inference",
+  "question": "Who is doing inference work and where is it at? What's the current performance and are there any open issues?",
+  "corpus": "2026-07-16",
+  "answerable": true,
+  "skill_hint": "research",
+  "source": "prompt-bank 2026-07-16 batch 1",
+  "dims": [
+    "who owns inference work",
+    "current state / stack",
+    "performance numbers",
+    "open issues / blockers"
+  ],
+  "citations": {
+    "must_have": [
+      "#6500",
+      "#6626",
+      "#6627",
+      "#6709",
+      "#6867",
+      "#6870",
+      "#6042",
+      "#6041",
+      "#6664",
+      "#6891",
+      "#5285",
+      "#5400",
+      "#5887",
+      "#6335",
+      "#6629"
+    ],
+    "nice_to_have": [
+      "#4109",
+      "#4841",
+      "#5351",
+      "#5368",
+      "#6754",
+      "#6556",
+      "#6293",
+      "#6966",
+      "#6965",
+      "#6868",
+      "#6869",
+      "#6655",
+      "#6656",
+      "#6218",
+      "#4719",
+      "#6227",
+      "#6229",
+      "#6230",
+      "#6342",
+      "#1876",
+      "#7085",
+      "#7117",
+      "#7097",
+      "#7113",
+      "#7052",
+      "#7111",
+      "#7133",
+      "#7106",
+      "#7107",
+      "#7164",
+      "#4401",
+      "#2237"
+    ],
+    "forbidden": [],
+    "recency_critical": []
+  },
+  "facts": {
+    "must_have": [
+      {
+        "id": "1",
+        "match": "Iris[- ].{0,20}inference|inference service.{0,20}Iris|Iris inference",
+        "note": "The serving substrate the whole question hinges on; owned by Romain Yon (yonromai). Draft omitted it. #5285 handoff landed, #5400 design went stale, #5887 broker built."
+      },
+      {
+        "id": "2",
+        "match": "Romain Yon|yonromai",
+        "note": "Owner of Iris inference service + GrugMoE vLLM enablement + the brokered path where #6983 lives."
+      },
+      {
+        "id": "3",
+        "match": "6500",
+        "note": "[Epic] Inference/Serving Infrastructure Specialist (penfever=Benjamin Feuer) \u2014 the public role definition; charters 3 components (inference server, format library #6626, agent harness #6627). Role defined but not demonstrably filled."
+      },
+      {
+        "id": "4",
+        "match": "6626",
+        "note": "Marin Format Library \u2014 bidirectional render/parse round-trip; chartered but NOT started; blocked on Stage-4 template decision."
+      },
+      {
+        "id": "5",
+        "match": "6627",
+        "note": "Marin Agent Harness \u2014 chartered but NOT started; stopgaps = mini-swe-agent/Harbor/terminus-2."
+      },
+      {
+        "id": "6",
+        "match": "2\\.5\\s*h|2\\.5hr|2\\.5 hr",
+        "note": "~2.5 hr/step is an END-TO-END RL step wall-clock (achieved), NOT a serving throughput; never decomposed into gen-vs-train. Russell Power asked for the split and got only a token count."
+      },
+      {
+        "id": "7",
+        "match": "10M tokens|~10M",
+        "note": "~10M tokens GENERATED per step \u2014 a count, not a rate; the only decomposition Feuer gave."
+      },
+      {
+        "id": "8",
+        "match": "64.?H100|64\u00d7H100|64xH100",
+        "note": "Qwen3-Coder-30B-A3B / Qwen3.5-35B-A3B fit on 64\u00d7H100 (8 nodes) on CoreWeave; achieved. 80B PROJECTED to need 96-128\u00d7H100."
+      },
+      {
+        "id": "9",
+        "match": "GH200",
+        "note": "MoE R3/TIS bring-up (#6335, penfever) is on JSC Jupiter GH200 \u2014 the device-pinning saga is GH200, NOT CoreWeave H100. Do not conflate with the 64\u00d7H100 CoreWeave state."
+      },
+      {
+        "id": "10",
+        "match": "Jupiter|JSC",
+        "note": "The 30B proof-of-life (job 849580, 6 nodes/24\u00d7GH200, ~12h walltime) and 80B bring-up ran on JSC Jupiter GH200 (#6335/#6655)."
+      },
+      {
+        "id": "11",
+        "match": "CoreWeave",
+        "note": "The July 64\u00d7H100 'plumbed' state is on CoreWeave cw-us-east-02a H100 (#6629/#6293); GrugMoE EP8 validation also on CoreWeave/H100 (#6891)."
+      },
+      {
+        "id": "12",
+        "match": "no baseline|establish the baseline|baseline",
+        "note": "#6709 makes 'measure/document the current serving baseline' its explicit first, not-yet-done task; no H100 rollout-tok/s baseline or target exists \u2014 literally true for H100 but understates prior TPU/A100 work."
+      },
+      {
+        "id": "13",
+        "match": "2237",
+        "note": "Real quantified async-RL baseline: 3.7x from 4.1->15.4 req/s \u2014 but a TRAINER number, not rollout inference (actor already ~13 req/s). Do not present as generation baseline."
+      },
+      {
+        "id": "14",
+        "match": "4719",
+        "note": "SWE-ZERO 3.4x per-worker rollout throughput (prefix caching) on vLLM/TPU v6e-4 \u2014 a real rollout baseline #6709 should build on."
+      },
+      {
+        "id": "15",
+        "match": "EP8|expert\\.parallel",
+        "note": "GPU GrugMoE correctness validated at EP8 on 8\u00d7H100 CoreWeave (#6891/#6966); #6042 closed. Perf/RL-grade explicitly out of scope, deferred to #6870 (TODO DoD)."
+      },
+      {
+        "id": "16",
+        "match": "4096",
+        "note": "The reproduced #6983 'wedge' was a 4096-token position-limit NaN->HTTP 400 (marin-8b-base), masked by VLLM_ALLOW_LONG_MAX_MODEL_LEN \u2014 NOT a broker bug; broker path measured clean. Original field wedge remains genuine but unreproduced."
+      },
+      {
+        "id": "17",
+        "match": "stale",
+        "note": "#5400 (Iris inference-service design) went stale 2026-06-07; #4401 (centralized low-priority inference RFC) auto-closed stale 2026-07-04 \u2014 the design track partly stalled."
+      },
+      {
+        "id": "18",
+        "match": "mlfoundations|penfever/working",
+        "note": "Two vLLM forks: marin-community/vllm (+tpu-inference) for GrugMoE serving vs mlfoundations/vllm penfever/working for RL/MarinSkyRL (Feuer 2026-07-14)."
+      },
+      {
+        "id": "19",
+        "match": "~10x|12%|good enough for evals",
+        "note": "dlwh's Levanter inference ~10x faster, within ~12% of vLLM-TPU; 'good enough for evals' but vLLM a hard requirement for SkyRL (#6041)."
+      },
+      {
+        "id": "20",
+        "match": "penfever|Benjamin Feuer",
+        "note": "penfever = Benjamin Feuer (@benjaminfeuer); owns MarinSkyRL RL-inference load and authored the role epic #6500."
+      }
+    ],
+    "nice_to_have": []
+  },
+  "traps": {},
+  "trap_checks": {},
+  "gold_prose": "# Inference at Marin: who, where, current performance, and open issues\n\n**Short version.** \"Inference\" at Marin is four overlapping things, with different owners and very different maturity:\n\n1. **The serving substrate \u2014 the Iris inference service** (a vLLM-only distributed service that runs on the Iris cluster and hands evals/RL an OpenAI-compatible HTTP endpoint via a `RunningModel` handoff). Owner: **Romain Yon (`yonromai`)**. The *handoff contract* and *brokered serving path* shipped in code; the *formal design doc went stale* and the older centralized-inference RFC was auto-closed stale. This is the layer the \"brokered vLLM wedge\" bug lives in.\n2. **GrugMoE-in-vLLM enablement** (get Marin's own MoE to serve correctly on TPUs and GPUs). Owner: **Romain Yon**. TPU path **landed/closed**; GPU correctness **validated at EP8**; a July epic (#6867) tracks full-size + fast-enough work, **0/3 children closed**.\n3. **RL rollout inference throughput** (make generation fast enough that RL isn't inference-bound). Epic owner: **Isaac Hodes (`ihodes`, #6709)**; the real load and the only concrete numbers come from **Benjamin Feuer (`penfever`)**'s MarinSkyRL. Still at the **\"establish a baseline\"** stage \u2014 no agreed H100 rollout-tok/s baseline or target exists.\n4. **The role definition + two unbuilt components** \u2014 **#6500 \"[Epic] Inference / Serving Infrastructure Specialist\"** (penfever) charters an inference server, a **Format Library (#6626)** and an **Agent Harness (#6627)**; the latter two are **chartered but unstarted**.\n\nThe current performance evidence is thin and must be read carefully: the only headline number (**~2.5 hr per RL step, ~10M tokens generated/step, 64\u00d7H100**) is an **end-to-end RL step wall-clock, not a serving throughput**, and it was never decomposed into generation-vs-train.\n\n---\n\n## 1. Who is doing inference work (people map)\n\n- **Romain Yon (`yonromai` / \"romain\")** \u2014 owns the **Iris inference service** end-to-end (RFC/design, MVP, the served-model handoff, the brokered serving path, the July Grug inference epic) and the **GrugMoE-in-vLLM** enablement on both TPU and GPU. Also the `vllm`/`tpu-inference` fork rebase tooling. [#5285](https://github.com/marin-community/marin/pull/5285), [#5400](https://github.com/marin-community/marin/pull/5400), [#5887](https://github.com/marin-community/marin/pull/5887), [#6867](https://github.com/marin-community/marin/issues/6867), [#6664](https://github.com/marin-community/marin/pull/6664)\n- **Russell Power (`rjpower`)** \u2014 owns the underlying **Iris cluster/scheduler/federation** machinery, brought up the **CoreWeave `cw-us-east-02a` H100 cluster** ([#6293](https://github.com/marin-community/marin/pull/6293)), shipped the **`marin-serve` one-liner inference server** ([#6556](https://github.com/marin-community/marin/pull/6556)), and drove the \"one vLLM fork\" consolidation ([#7097](https://github.com/marin-community/marin/issues/7097), per weekly summary).\n- **Will Held (`Helw150`)** \u2014 the RL/rollout **consumer**: filed the original centralized-inference RFC ([#4401](https://github.com/marin-community/marin/issues/4401)), filed the serving-reliability \"wedge\" bug (#6983), and added inference-side **logit-mixing** plumbing (a brokered teacher/student mixed-logit `RunningModel`, #7113, per summary).\n- **Benjamin Feuer (`penfever` = `@benjaminfeuer`)** \u2014 owns **MarinSkyRL** RL-inference bring-up on GPUs (131k-context RL on MoE models), where the current real inference *load* and *throughput* numbers come from; also authored the role-definition epic. [#6335](https://github.com/marin-community/marin/issues/6335), [#6629](https://github.com/marin-community/marin/issues/6629), [#6655](https://github.com/marin-community/marin/issues/6655), [#6656](https://github.com/marin-community/marin/issues/6656), [#6218](https://github.com/marin-community/marin/issues/6218), [#6500](https://github.com/marin-community/marin/issues/6500)\n- **David Hall (`dlwh`)** \u2014 owns **Levanter-side inference** (the JAX reference path and the TPU RL-rollout backend-parity epic), and made Levanter inference ~10\u00d7 faster. [#6227](https://github.com/marin-community/marin/issues/6227)\n- **AlienKevin** \u2014 prior **async-RL perf** lead: the \"Benchmark and speed up async RL\" work ([#2237](https://github.com/marin-community/marin/issues/2237)) and the SWE-ZERO rollout-throughput work ([#4719](https://github.com/marin-community/marin/issues/4719)).\n- **Rohith Kuditipudi** \u2014 carries **TPU vLLM fork overlay patches**; hit the RPA-v3 v4 gap (#7085) and lm-eval pin rot (per summary).\n- **Isaac Hodes (`ihodes`)** \u2014 owns the tracking/def-of-done issues for **evals-on-Iris** ([#5368](https://github.com/marin-community/marin/issues/5368)) and the **rollout-speed epic** ([#6709](https://github.com/marin-community/marin/issues/6709)), and scoped the **Format Library** ([#6626](https://github.com/marin-community/marin/issues/6626)) and **Agent Harness** ([#6627](https://github.com/marin-community/marin/issues/6627)).\n- **Iris consumers / stakeholders** for a shared inference service: Michael Ryan, moojink, XenonMolecule, Mrinal Kumar, Ahmed M Ahmed (per the #inference / RFC threads).\n\n### The role charter: #6500 (defined, not demonstrably filled)\n\n**[#6500 \"[Epic] Inference / Serving Infrastructure Specialist\"](https://github.com/marin-community/marin/issues/6500)** (penfever, 2026-06-18) is the *public definition* of who owns inference \u2014 \"what it owns, the boundary with the supervisor + the managers it serves, its current near-term work, and its compute envelope.\" It charters the role around three components: a **Marin Inference Server** (a thin patch on vLLM), a **Marin Format Library** (scoped as #6626), and a **Marin Agent Harness** (scoped as #6627). penfever authored it as one of a set of parallel role-charters the same day; the corpus contains no evidence the slot has been filled by a single named contributor \u2014 the actual inference-server work is being realized ad hoc by **yonromai** (GrugMoE vLLM), **rjpower** (`marin-serve`), and **dlwh** (Levanter). Treat #6500 as a role *definition*, not tracked execution.\n\n*(Caveat: the frozen corpus stores issue bodies truncated to their opening ~250 chars and exposes no assignee/state metadata, so \"unfilled/unstarted\" is inferred from empty threads and the absence of linked implementation PRs, not from an explicit field.)*\n\n---\n\n## 2. Where it's at, by subsystem\n\n### 2a. The Iris inference service (the serving substrate) \u2014 Romain Yon\n\nIris proper is the Ray-like actor/scheduler substrate (actors run on worker VMs inside the cluster VPC; external clients reach them via an actor-proxy route \u2014 [#4109](https://github.com/marin-community/marin/issues/4109)). The **inference service** is a distributed vLLM serving layer built on top of it that exposes an OpenAI-compatible HTTP endpoint to power evals (and later RL rollouts / synthetic data). Chronology and current state:\n\n| Item | What | State (in corpus) |\n|---|---|---|\n| [#4401](https://github.com/marin-community/marin/issues/4401) | RFC: **Centralized Low-Priority Inference Service on Iris** (Will Held, Claude-drafted) \u2014 multi-model, for data-curation/RL/synth | **Auto-closed stale 2026-07-04** (inactive 83 days). Superseded by Romain's eval-first design. |\n| [#5368](https://github.com/marin-community/marin/issues/5368) | Tracking: **Inference service for evals** (ihodes). DoD: selected evals run on Iris in a **worker-preemption-resilient** way (preemption blows up jobs today); **decided: use vLLM** | Continued into June via #6042/#6041. |\n| [#4841](https://github.com/marin-community/marin/pull/4841) | RFC 01 \u2014 **Decouple evals from model backends via OpenAI-compatible HTTP** | **Draft PR** (stacked on #4815). |\n| [#5285](https://github.com/marin-community/marin/pull/5285) | RFC: **Served Model Eval Handoff** \u2014 introduces the `RunningModel` handoff object between serving code and eval code; `lm_eval` first consumer | **Merged** \u2014 the landed backbone evals call. |\n| [#5351](https://github.com/marin-community/marin/pull/5351) | [codex] Iris inference routing **MVP/prototype** | **Closed 2026-05-04** as a prototype (\"use the findings as design evidence\"). |\n| [#5400](https://github.com/marin-community/marin/pull/5400) | **Design Iris inference service** \u2014 vLLM-only; Iris owns vLLM lifecycle, readiness, **request brokering**, cleanup, diagnostics | **Went stale 2026-06-07** (23 days inactive). The formal design never got ratified. |\n| [#5887](https://github.com/marin-community/marin/pull/5887) | **Broker vLLM HumanEval serving across Iris TPU workers** \u2014 one eval fans out across multiple TPU vLLM workers; **broker leases** so a preempted worker only loses its in-flight lease | Built and reviewed (rjpower); the concrete \"request brokering\" implementation. |\n\n**Net status:** the *handoff contract* (`RunningModel` + OpenAI-HTTP, #5285) is **landed**; the *brokered vLLM serving path* (#5887, broker/proxy/worker) is **built and in use**; but the *formal design doc* (#5400) **went stale** and the older centralized-inference RFC (#4401) was **closed stale**. Iris-as-a-service is real in code but its design was never ratified. Note also that a June control-plane hiccup \u2014 [#6754](https://github.com/marin-community/marin/issues/6754), \"Iris EndpointService 404 in brokered smoke\" \u2014 was an **API mismatch, not a serving regression** (resolved after rjpower restarted the cluster with an endpoint-API update).\n\n### 2b. GrugMoE-in-vLLM enablement \u2014 Romain Yon\n\n- **TPU serving \u2014 landed and closed.** GrugMoE inference on TPU via the Marin-owned `vllm`/`tpu-inference` forks **closed as completed on 2026-07-02** (#6041), landing in **[#6664](https://github.com/marin-community/marin/pull/6664)** with the export path, fork pins, and a real-checkpoint v6e e2e test comparing vLLM against the Levanter/JAX reference. [#6041 close comment](https://github.com/marin-community/marin/issues/6041#issuecomment-4869501446)\n- **GPU serving \u2014 correctness validated at EP8.** The GPU support issue **[#6042](https://github.com/marin-community/marin/issues/6042)** (DoD: \"loaded and used for inference in vLLM on GPUs; correctness tested, perf okay for evals\"; **RL-grade perf explicitly out of scope**) **closed** after **eight-way expert-parallel (EP8)** serving of a real GrugMoE checkpoint passed on CoreWeave/H100. Validation was Romain's draft harness **[#6891](https://github.com/marin-community/marin/pull/6891)** (real checkpoint, TP1/DP8/EP8 on 8\u00d7H100 CoreWeave, matched a JAX/Levanter reference; short greedy parity + expert coverage only, performance/long-run deferred), restacked as **[#6966](https://github.com/marin-community/marin/pull/6966)** after an XSA/GQA attention-sharding fix (#6965). Per the weekly summary, **Isaac Hodes logged the EP8-passed close** on #6042.\n- **July epic \u2014 [#6867](https://github.com/marin-community/marin/issues/6867)** (yonromai, 2026-07-02): \"Support full size GrugMoE model on both TPUs and GPUs. Stretch: Inference is fast enough on GPUs.\" Children: **#6868** (TPU correctness), **[#6869](https://github.com/marin-community/marin/issues/6869)** (correctness on largest checkpoint, GPUs), **[#6870](https://github.com/marin-community/marin/issues/6870)** (GPU throughput for RL). **0/3 closed** as of the week it opened. The forks pull from **`marin-community/vllm` + `tpu-inference`** (confirmed by the #6664/#6966 pins).\n- **`marin-serve`** \u2014 [#6556](https://github.com/marin-community/marin/pull/6556) (rjpower): a one-liner to boot vLLM on an Iris TPU slice (HF model or `gs://` checkpoint) with a small browser dashboard. This is the \"patch on vLLM\" inference-server component in practice, built independently of the #6500 role.\n\n### 2c. RL rollout inference (MarinSkyRL) \u2014 Benjamin Feuer / penfever\n\nMarinSkyRL is the live consumer generating real inference load. It has **migrated across clusters over time \u2014 do not attribute all of it to one chip/cluster**:\n\n- **MoE R3/TIS bring-up (June) = JSC Jupiter, GH200.** **[#6335](https://github.com/marin-community/marin/issues/6335)** \"Stand up router replay (R3) and TIS on MarinSkyRL\" (penfever) is on **JSC J[upiter]**, Qwen3-Next-A3B family. The **GH200 device-pinning** issue (Ray no longer overriding `CUDA_VISIBLE_DEVICES` via `RAY_ACCEL_ENV_VAR_OVERRIDE_ON_ZERO`, so policy ranks collided on GPU-0) is a **Jupiter/GH200 artifact**, fixed with per-node local-rank pinning. Proof-of-life: Qwen3-Coder-30B-A3B, EP4\u00d7FSDP4, grouped-GEMM + TIS, **JSC Jupiter job 849580**, ran ~12 h to walltime timeout on **6 nodes (24\u00d7 GH200)**. The 80B bring-up also ran on Jupiter GH200 ([#6655](https://github.com/marin-community/marin/issues/6655) retro). **This is GH200, not CoreWeave H100.**\n- **CoreWeave H100 workflow (June) = `cw-us-east-02a`.** **[#6629](https://github.com/marin-community/marin/issues/6629)** validated the gang-scheduled multi-node MarinSkyRL workflow on the **CoreWeave `cw-us-east-02a` H100** cluster via Iris (1-node 8\u00d7H100 and 2-node 16\u00d7H100 smokes end-to-end).\n- **131k / CP+DCP (June) = multi-cluster.** [#6656](https://github.com/marin-community/marin/issues/6656) is the CP/DCP + 131k long-context RL campaign retro.\n- **Current state (July): \"131k RL on MoEs (MarinSkyRL) is plumbed on CoreWeave.\"** Per Feuer's Discord and the weekly summary, Qwen3-Coder-30B-A3B and Qwen3.5-35B-A3B each **fit on 64\u00d7H100 (8 nodes)** on CoreWeave. The tracking issue for this (#7052) is **not in the frozen corpus**.\n- **Two vLLM forks, two owners.** GrugMoE *serving* uses **`marin-community/vllm`** (+ `tpu-inference`). The **RL/MarinSkyRL** track pulls from a **separate `mlfoundations/vllm` fork, `penfever/working` branch** \u2014 Feuer, 2026-07-14 #inference: \"did you already merge the active branch features in from `github.com/mlfoundations/vllm` `penfever/working`? \u2026 I won't be able to do RL until we sync up on the vLLM branch + fork.\" In that same thread Feuer points to a follow-up issue (#7164, not itself in the frozen corpus) for adding a training `GrugMoeForCausalLM` PyTorch modeling class so GrugMoE can load into MarinSkyRL.\n\n### 2d. Format Library (#6626) and Agent Harness (#6627) \u2014 chartered, unstarted\n\n- **[#6626](https://github.com/marin-community/marin/issues/6626) \"Marin format library for chat/response\"** (ihodes): a single Python module that is the **authoritative source of truth for chat/response format in BOTH directions \u2014 RENDER a conversation \u2192 exact token string, and PARSE model output \u2192 structured `{reasoning / tool_calls / final / tool_results}`** (the \"cheap ~80%\" of `openai-harmony`/`mistral-common`; round-trip `parse(render(x)) == x` tested). **Not started** in corpus; the only render-side code that exists is Levanter's one-way Jinja chat-template rendering (dlwh: #6342, #1876) \u2014 the parse half doesn't exist. Blocked on the undecided Stage-4 chat-template (\"likely Qwen-style\") choice; explicitly punt-able to 2027.\n- **[#6627](https://github.com/marin-community/marin/issues/6627) \"Agent harness for agentic RL\"** (ihodes): a harness that interfaces with Marin's inference solution, with strong malformed-tool-call failure-mode detection, a built-in LLM judge, a fixed tool set, dedicated Web-Fetch/Web-Search endpoints, and WYSIWYG trace extraction (so SFT works); a terminus-2-style sidecar. **Not started** in corpus; current agentic-RL work uses stopgaps (mini-swe-agent / Harbor / terminus-2, e.g. AlienKevin's SWE-ZERO #4719).\n\n---\n\n## 3. Current performance (every number labeled + hardware attached)\n\n- **RL step time (MarinSkyRL, achieved, but NOT a serving throughput):** Qwen3-Coder-30B-A3B and Qwen3.5-35B-A3B each fit on **64\u00d7H100 (8 nodes), CoreWeave**, at **~2.5 hr/step** generating **~10M tokens/step**, at **131k context**. Feuer's words: *\"~2.5hr / step at the moment which is slower than I would like but not insane.\"* **This is an end-to-end async-RL step wall-clock** (inference passes + gather + train), **not** an isolated tok/s. Russell Power explicitly asked Feuer to decompose it \u2014 \"what performance we're seeing from the training side\" \u2014 and got only a token *count* (\"~10M tokens generated per step\"), **never a generation-vs-train time split**. 131k is context length (\"probably the limit of this hardware without additional cleverness\"), not throughput. The incoming 80B-scale model (Qwen3-Next-80B-A3B) is **projected** to need **96\u2013128\u00d7H100**. [Discord 2026-07-09](https://discord.com/channels/1354881461060243556/1524748716190339122/1524749076355088485)\n- **TPU Levanter reference vs vLLM (achieved):** dlwh's Levanter-inference optimization made it **~10\u00d7 faster**, landing **within ~12% of vLLM-TPU** \u2014 \"good enough for evals,\" but vLLM is still wanted and is \"probably a hard requirement for SkyRL.\" [#6041](https://github.com/marin-community/marin/issues/6041#issuecomment-4869501446)\n- **GPU GrugMoE serving (achieved):** correctness at **EP8 passed** on 8\u00d7H100 CoreWeave (short greedy parity + expert coverage). The DoD for #6042 was only \"perf okay (good enough for evals)\"; **serious/RL-grade perf is out of scope there** and deferred to #6870, whose \"fast enough\" DoD is still a literal **TODO** (\"Within X% of Jax on GPUs vs. within Y% of reference model\"). [#6042](https://github.com/marin-community/marin/issues/6042), [#6870](https://github.com/marin-community/marin/issues/6870)\n- **No H100/GH200 isolated inference baseline exists.** The rollout-speed epic **#6709** makes \"measure and document the current serving baseline\" its explicit **first, not-yet-done task**; there is **no agreed rollout-tok/s baseline and no target**. [#6709](https://github.com/marin-community/marin/issues/6709)\n\n### The measured throughput baselines that DO exist (all TPU/A100 \u2014 the natural build-on for #6709)\n\nThe epic's \"no baseline\" framing is literally true *for H100 rollout tok/s*, but understates a body of real, quantified prior work that #6709 should build on:\n\n- **#2237 (AlienKevin, closed):** on **TPU v5p-8, Llama-3.1-8B**, \"3.7\u00d7 RL **training** speed up from 4.1 \u2192 15.4 requests/s.\" **Caveat: this is a *trainer* number, not rollout inference** \u2014 the actor/rollout side was already ~3\u00d7 faster (~13 req/s) and was not the thing sped up. Do not present it as a generation baseline. [#2237](https://github.com/marin-community/marin/issues/2237)\n- **#4719 (AlienKevin, SWE-ZERO):** **3.4\u00d7 per-worker rollout throughput** from `--enable-prefix-caching` alone (600 \u2192 4,600 rollouts/batch/hr) on **vLLM/TPU v6e-4**, with vLLM prefill+decode+queue = 84.6% of the per-rollout budget. [#4719](https://github.com/marin-community/marin/issues/4719)\n- **#6227 epic / #6229 / #6230 (dlwh, TPU Levanter-vs-vLLM decode parity \u2014 the cleanest rollout-generation numbers in corpus):** on **v6e-8, TP8, `prefill_b8_i2048_o128_n1`**, vLLM **~1212\u20131264 decode tok/s** vs Levanter **~899\u2013958** (ratio ~0.74\u20130.76, target FAIL); on **v5p-8, TP4, `mixed_b32_i512_o512_n1`**, vLLM **5215 decode** vs Levanter **3131** (ratio 0.60, FAIL). **#6709 links none of these.** [#6227](https://github.com/marin-community/marin/issues/6227), [#6229](https://github.com/marin-community/marin/issues/6229), [#6230](https://github.com/marin-community/marin/issues/6230)\n- **#6218 (penfever, the richest GPU RL grid):** MarinSkyRL non-agentic throughput ablations on **CINECA Leonardo, A100-64GB** \u2014 effective-tokens/s sweeps, CUDA-graphs and seq-len knobs, generation-vs-train boundedness analysis. **A100, not H100.** [#6218](https://github.com/marin-community/marin/issues/6218)\n\nThe mismatch is (a) **hardware** \u2014 every measured baseline is TPU or A100, while #6709 targets H100 \u2014 and (b) **mis-linking** \u2014 #6709 links #2237 (a *trainer* number) but not the genuinely-relevant rollout-parity work. What #6709 uniquely still lacks is the **H100 port** of measurement that already exists elsewhere.\n\n---\n\n## 4. Open issues / risks\n\n- **#6709 (rollout-speed epic):** open; **no baseline documented, no perf target agreed**. The whole speed track hinges on this. [#6709](https://github.com/marin-community/marin/issues/6709)\n- **#6870 (GPU GrugMoE perf \"decent\"):** open; DoD is an unquantified **TODO**. [#6870](https://github.com/marin-community/marin/issues/6870)\n- **#6869 (full-size GrugMoE GPU correctness):** open \u2014 EP8 passed on *a* checkpoint, but the *largest*-checkpoint correctness bar remains. [#6869](https://github.com/marin-community/marin/issues/6869)\n- **#6983 (brokered vLLM \"wedge\") \u2014 resolved, but with a caveat.** Will Held's reproducible wedge turned out to be a **model/serving bug, not a broker bug**: fast vLLM HTTP 400s once the prompt crossed **marin-8b-base's true 4096-token position limit** (`Out of range float values are not JSON compliant: nan`, masked by `VLLM_ALLOW_LONG_MAX_MODEL_LEN` + an oversized `max_model_len`); Romain Yon's instrumented rerun measured the **broker/proxy path clean** (`dropped_responses=0`, `rejected_requests=0`), and Will withdrew the reproduction claim. **But the *original field wedge* (brokered clients stalling >30 min against an idle, healthy engine, no restarts) \"remains genuine but unreproduced,\"** and the silent NaN-400 was flagged as possibly deserving its own issue. So the broker was exonerated *on the reproduced case only*. (Body not in frozen corpus; narrated by the 2026-07-06/07-12 weekly summary.) [summary](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html)\n- **#7117 (vLLM-compatible BF16 HF export regression):** **open** \u2014 the 134 GB / 39-shard export verified by whole-tree SHA256, but reruns of the inference assertion hit an **NCCL `ncclAlltoAll` error** on the JIT path. [summary](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html)\n- **#7085 (TPU RPA v3):** ragged-paged-attention v3 raises `NotImplementedError: Unsupported tpu_version=4` on v4-8 workers, so Rohith Kuditipudi **can't run inference there at all**; minimal fix is a `case 4` fallback in the block-size heuristic. [summary](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html)\n- **`marin-serve` GPU gaps:** #7111/#7133 (`marin-serve --gpu` can't boot vLLM cleanly \u2014 TPU/GPU extras and torch pins collide; the per-job `uvx` workaround still needs a real H100 boot test) and #7106/#7107 (`marin-serve` fails cryptically outside a workspace checkout). [summary](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html)\n- **Fork churn:** consolidating to \"one vLLM fork\" (#7097) is in progress; bumping the fork pins triggered `uv` git-lock timeouts and a missing `zephyr` module when spinning up many workers in parallel. Two separate forks (marin-community/vllm for serving, mlfoundations/vllm `penfever/working` for RL) is itself a coordination risk that currently blocks Feuer's RL. [summary](https://mws.oa.dev/summaries/summary-2026-07-06_2026-07-12.html)\n- **Stalled design track:** the formal **Iris inference-service design (#5400) went stale**, and the older centralized-inference RFC (**#4401) was auto-closed stale** \u2014 the eval-serving *design* track partly stalled even as the GrugMoE enablement track actively closed as completed.\n- **131k MoE production is not yet a solved run:** the CP/DCP + 131k campaign (#6656) is a bring-up retro, not a converged production result; the proof-of-life 30B run (#6335) is explicitly \"not a converged or even clearly-improving run.\"\n\n---\n\n## 5. Provenance & confidence\n\n- **Grounded in primary corpus threads** (verified via `mum show`): #6500, #6626, #6627, #6709, #6867, #6869, #6870, #6041/#6664, #6042, #6891, #6966, #6293, #6556, #5285, #5400, #5887, #5351, #4841, #4109, #5368, #4401, #6754, #6335, #6629, #6655, #6656, #6218, #2237, #4719, #6227/#6229/#6230; the 2026-07-09 Discord thread (2.5 hr/step, 10M tok/step, 64\u00d7H100, 131k, 96\u2013128\u00d7H100 projection); and the 2026-07-14 #inference message (mlfoundations/vllm `penfever/working` fork).\n- **Sourced only to the 2026-07-06/07-12 weekly summary** (issue bodies post-freeze / not indexed): **#6983, #7052, #7085, #7111, #7113, #7117, #7133, #7097, #7106, #7107** and the \"Isaac Hodes logged the EP8 close on #6042\" attribution. Treat their finer details as summary-narrated, not primary.\n- **Not in frozen corpus:** #7052 (the MarinSkyRL CoreWeave perf tracker), #7113 (logit-mixing PR), #7164 (MarinSkyRL GrugMoE modeling class) \u2014 referenced (in Discord/summary) but their bodies could not be retrieved.\n- **Corpus limitation:** issue bodies are stored truncated (~250 chars) with no assignee/state metadata, so \"unstarted/unfilled/stale\" is inferred from thread contents and stale-bot comments, and granular retro numbers inside #6655/#6656 (job IDs, per-step rewards) were not quoted because they are not visible in the frozen `show` output.\n\n<!--provenance-->\n> *Data: marinmirror frozen eval corpus (68k chunks) \u00b7 weekly summaries through 2026-07-06_2026-07-12. No refresh.*\n>\n> *Query: \"Who is doing inference work and where is it at? What's the current performance and are there any open issues?\"*",
+  "gold_provisional": true,
+  "review_notes": {}
+}

@@ -1,0 +1,1773 @@
+{
+  "baselines": [
+    {
+      "id": "gpu",
+      "path": "/Users/isaach/workspace/mumwelt/evals/baselines/opus48-repo/gpu.md",
+      "citations": [
+        "6998",
+        "6292",
+        "6296",
+        "7013",
+        "7015",
+        "7140",
+        "6226",
+        "7009",
+        "7207",
+        "7217",
+        "7226",
+        "7133",
+        "6947",
+        "7031",
+        "6601",
+        "5469",
+        "7222",
+        "6577",
+        "7014",
+        "7250",
+        "4524",
+        "5328",
+        "6966",
+        "6841",
+        "4302",
+        "6367",
+        "6979"
+      ],
+      "note": "GPU training in Marin is active and validated at scale (real ~90B MoE on 256 CoreWeave H100s via Iris), organized under the GPU Upskilling Master Plan (#6998); remaining work is efficiency/polish \u2014 fused FA4 attention default, Hopper MoE MFU (~3% now, \u226520-25% target), Blackwell/GB200, and fault tolerance."
+    },
+    {
+      "id": "july",
+      "path": "/Users/isaach/workspace/mumwelt/evals/baselines/opus48-repo/july.md",
+      "citations": [
+        "6689",
+        "6700",
+        "6701",
+        "6702",
+        "6703",
+        "6704",
+        "6705",
+        "6706",
+        "6707",
+        "6708",
+        "6709",
+        "6710",
+        "6711",
+        "6712",
+        "6713",
+        "6715",
+        "6716",
+        "6811",
+        "6863",
+        "6867",
+        "6037",
+        "6162",
+        "6341",
+        "7073",
+        "7074",
+        "7170",
+        "7273",
+        "6714",
+        "6044"
+      ],
+      "note": "Marin's July 2026 plan = GitHub milestone #10: finish the 67B-A2B MoE, launch the ~120B-A8B B200 hero run (#6689, last run before the full 800+ B200 cluster) gated on 20%+ B200 MFU (#6706), and start the first MoE post-training (#6705/#7170), plus standing data/RL/infra/eval workstreams \u2014 a bridge month toward the EOY 256\u2013500B run."
+    },
+    {
+      "id": "april",
+      "path": "/Users/isaach/workspace/mumwelt/evals/baselines/opus48-repo/april.md",
+      "citations": [
+        "7",
+        "4266",
+        "4256",
+        "4281",
+        "3800",
+        "4268",
+        "4269",
+        "4270",
+        "4271",
+        "4272",
+        "4273",
+        "4283",
+        "4282",
+        "5065",
+        "4474",
+        "4477",
+        "4479",
+        "4480",
+        "5069",
+        "3100",
+        "4469",
+        "4473",
+        "5247",
+        "4294",
+        "8",
+        "9"
+      ],
+      "note": "April milestone (#7) was met: closed on time 2026-04-30 with all 25 issues completed, headline ~120B-A12B (100B-A13B) MoE launched+pre-registered per #4281; caveats are one unfinished ablation sub-goal (70/84) and later pivot to 67B-A2B in May/June."
+    },
+    {
+      "id": "muon",
+      "path": "/Users/isaach/workspace/mumwelt/evals/baselines/opus48-repo/muon.md",
+      "citations": [
+        "6044",
+        "6811",
+        "6153",
+        "5763",
+        "4033",
+        "4034",
+        "5167",
+        "5596",
+        "5619",
+        "4110",
+        "6119",
+        "5598",
+        "6506",
+        "6538",
+        "6588",
+        "6634",
+        "6589",
+        "6301",
+        "7118",
+        "6493",
+        "6693",
+        "6527",
+        "2545",
+        "3902",
+        "5517",
+        "5597"
+      ],
+      "note": "Current optimizer is MuonH (Muon + Frobenius hyperball + H-scaling heuristic) on the matrix/GatedNorm group of the May-Recipe Grug-MoE 67B-A2B hero run; we got here because plain Muon didn't cleanly beat AdamH on MoE (#5167) but MuonH won the measured-range matrix-swap (#5596) and was folded into the template (#6153) \u2014 open risks are a long-horizon scaling crossover and slow Newton-Schulz on GPU."
+    },
+    {
+      "id": "ablations",
+      "path": "/Users/isaach/workspace/mumwelt/evals/baselines/opus48-repo/ablations.md",
+      "citations": [
+        "722",
+        "669",
+        "718",
+        "102",
+        "163",
+        "274",
+        "596",
+        "605",
+        "615",
+        "400",
+        "616",
+        "618",
+        "6739",
+        "6741",
+        "5810",
+        "6849",
+        "6860",
+        "6859",
+        "5406",
+        "5410",
+        "7187",
+        "5812",
+        "5811",
+        "2345",
+        "6326",
+        "5359",
+        "5362",
+        "5363",
+        "5364",
+        "5365",
+        "6391",
+        "5360",
+        "6757",
+        "931",
+        "6521",
+        "6750",
+        "5197",
+        "6063",
+        "6449",
+        "7162",
+        "6713"
+      ],
+      "note": "Cited markdown summary of Marin data ablations \u2014 classifier comparisons (fastText/BERT/fast-transformer, source-mix classifiers), mix comparisons (curated vs proportional, swarm/MDE mixture optimization), with training-data sizes and eval/test surfaces \u2014 written to ablations.md."
+    },
+    {
+      "id": "classifier",
+      "path": "/Users/isaach/workspace/mumwelt/evals/baselines/opus48-repo/classifier.md",
+      "citations": [
+        "5810",
+        "5360",
+        "6739"
+      ],
+      "note": "The classifier is the v0 LLM-oracle fastText quality model \"sonnet46-thr05\" (Sonnet-4-6-labeled rubric, AUC 0.846); weights sit only in a private GCS bucket with no documented sharing approval."
+    },
+    {
+      "id": "benchmarks",
+      "path": "/Users/isaach/workspace/mumwelt/evals/baselines/opus48-repo/benchmarks.md",
+      "citations": [
+        "4389",
+        "4550",
+        "4549",
+        "4551",
+        "4548",
+        "5534",
+        "5059"
+      ],
+      "note": "Two-tier eval: target benchmarks (CORE_TASKS/DCLM subset, MMLU, key_evals OLMo2-comparable gen+MCQ, leaderboard, and agentic Harbor tasks AIME/Terminal-Bench/SWE-bench Verified) vs development proxies (in-loop bpb/logprob metrics, perplexity-gap slices, and researched proxies for hard/agentic targets)."
+    },
+    {
+      "id": "h100-67b",
+      "path": "/Users/isaach/workspace/mumwelt/evals/baselines/opus48-repo/h100-67b.md",
+      "citations": [
+        "6998",
+        "4302",
+        "4312",
+        "6367",
+        "6979",
+        "6044",
+        "6704",
+        "6811",
+        "5356"
+      ],
+      "note": "The full 256-expert 67B-A2B was memory-negative on H100 (OOM before step 0, #6367) so the hero run went to TPUs (#6704); the H100 upskilling effort (#6979) pivoted to a 64-expert working copy and hit best-of ~28% MFU / 203k tok/s GQA on 8xH100 with flat weak-scaling to 64xH100, then closed out to B200."
+    },
+    {
+      "id": "inference",
+      "path": "/Users/isaach/workspace/mumwelt/evals/baselines/opus48-repo/inference.md",
+      "citations": [
+        "6500",
+        "6867",
+        "6868",
+        "6869",
+        "6870",
+        "6106",
+        "1898",
+        "6709",
+        "7170",
+        "6136",
+        "7143",
+        "7106",
+        "7107",
+        "5985",
+        "6545",
+        "7085",
+        "5672",
+        "6229",
+        "6480",
+        "6123",
+        "6112",
+        "1879",
+        "6231",
+        "6228",
+        "6230",
+        "5702",
+        "4286",
+        "6509",
+        "7236"
+      ],
+      "note": "Inference spans three tracks \u2014 @penfever's serving/format/harness backbone (#6500) + OPD teacher RFC (#7236), @yonromai's GrugMoE vLLM (#6867) + RL-rollout speed (#6709), and the Levanter/JAX engine (#1898); 67B-A2B is servable today (#7170) but perf targets are mostly TBD and the top open risk is TPU multi-host decode corruption at high throughput (#6136)."
+    }
+  ],
+  "results": [
+    {
+      "id": "gpu",
+      "candidate": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/candidates/opus48-marin-research/gpu.md",
+        "citations": [
+          "6710",
+          "6716",
+          "6706",
+          "7012",
+          "6979",
+          "6998",
+          "7024",
+          "7079",
+          "6699",
+          "6048",
+          "4302",
+          "6597",
+          "6933",
+          "6970",
+          "7013",
+          "7015",
+          "6909",
+          "6950",
+          "7064",
+          "7034",
+          "7043",
+          "7108",
+          "7109",
+          "7018",
+          "6941",
+          "6947",
+          "6880",
+          "6911",
+          "7073"
+        ],
+        "note": "GPU training is a central prep track for the Sept NVL72 hero run: H100 11B run healthy at ~23.8% MFU (#6716), B200 at 17.8% vs a 20% gating bar (#7012/#6706), pipeline parallelism the named fix (#7024); MFU still under target on both platforms but trajectory is clearly up."
+      },
+      "weaknesses": [
+        "STALE-VS-CLOSE-OUT (biggest): The headline claim that the 11B-A1.5B H100 validation run is 'live and healthy,' 'held ~23.8% MFU,' with 'completion expected ~July 13-14' is copied verbatim from the July 6-12 weekly-summary narrative and is directly contradicted by the W&B ground truth in the same frozen corpus: every named run of this model on the freeze boundary is state=crashed/failed -- grug-d2048-L24-mla-500B-r2-nosim-2node, -r2-nosim-2node-b128, -r4-nosim-4node (x2) all crashed 07-13, -r4-b512 crashed 07-14, and the 8-node r8-b1024/r8-b512-seq4k-nson runs failed 07-09, plus grug-moe-d2560-L24-e64-muonh-heur-8node crashed 07-07. The draft never reconciles the optimistic summary with the crash wall; the true state at the 07-16 freeze looks like 'still fighting crashes,' not 'about to finish.'",
+        "UNVERIFIED NUMBER: The 23.8% MFU / ~1.37M tok/s / 64xH100 / 1.53 s/step figures have no independent run-level corroboration in the corpus -- only the weekly summary asserts them. The actual named runs are 2/4/8-node (r2/r4/r8) and crashed; no finished 8-node (=64xH100) 500B run surfaces. The draft presents a summary paraphrase as a measured result.",
+        "MISSING SUBSYSTEM / TARGET-VS-ACHIEVED: The draft omits issue #6304 ('Drive 90B-5.3BA MoE MFU on cw-us-east-02a from 3% to ~25%'), which formally CLOSED OUT at 9.37% MFU (2.8%->9.37%, 3.3x), with rjpower's verdict '~9.4% is the practical pure-FSDP ceiling for this 90B/5.3BA model.' This is the concrete origin of the whole 'pipeline parallelism is the fix' narrative and the single clearest target(25%)-vs-achieved(9.4%) gap in the GPU story -- and it is entirely absent.",
+        "B200 SIZE / RACK CONFLICT: The draft (following the summary) says the end-of-month run is '~120B-A8B on 2 NVL72,' but the run-tracking issue #6689 itself lists '288 B200 (4xNVL72)', owner @ClassicLarry, with architecture, FLOP budget, tokens, data mix and pre-registered loss all still '?'. The '120B-A8B' size and '2 NVL72' count are narrative, not in the issue, and #6689 says it is 'the last run before we train on the full 800+ B200 cluster' -- a 2x rack discrepancy and an unresolved size the draft states as fact.",
+        "STALE BLACKWELL STATE: The draft's B200 story stops at 17.8% (#7012) but the freshest evidence in the corpus is the gb200-d1280-sonic-cute sweep (runs cute-2 through cute-9, all dated 07-16, the freeze day) -- a live attention-impl/kernel sweep (reference / cudnn / gpu_fa4_cute) with mixed finished/failed states. The draft misses this same-day close-out activity, so its Blackwell snapshot is a week stale.",
+        "PLATFORM ATTRIBUTION / 'TWO TPU RUNS': The draft asserts 'the two in-flight hero pretraining runs remain on TPU' but clearly identifies only one (67B-A2B). Also it states the 67B-A2B is 'on v4-2048,' whereas comments on #6044 say ClassicLarry 'started the run on TPUs this morning (v4-1024)' and the throughput table is v4-1024, with v4-2048 appearing only as a failed smoke test (moe_67b_a2b_d2048_..._v4_2048_test) -- an unresolved slice ambiguity.",
+        "PP TRACK CONFLATION + OMITTED READINESS ITEM: The draft's pipeline-parallelism narrative cites only #7024 (JaxPP, 18.26 MFU) but omits that #6532 ('Zero-bubble pipeline parallelism for Grug-MoE') was PARKED and moved out of marin to rjpower/marin-experiments#11 -- two distinct PP efforts, one dead. It also drops the post-training pricing that anchors the same July milestone (#7074, Benjamin Feuer/penfever: 0.25-0.9x the 10T pretrain in HW-FLOPs, RL-dominated), part of the GPU-readiness picture."
+      ],
+      "n_digests": 5,
+      "gold": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/golds-proposed/gpu.md",
+        "must_have_citations": [
+          "6304",
+          "6689",
+          "6706",
+          "6716",
+          "6532",
+          "6044"
+        ],
+        "nice_citations": [
+          "6321",
+          "6292",
+          "6293",
+          "6704",
+          "6710",
+          "6693",
+          "6534",
+          "6700",
+          "6701",
+          "6702"
+        ],
+        "forbidden_citations": [
+          "6979",
+          "6998",
+          "7024",
+          "7012",
+          "7013",
+          "7015",
+          "7079",
+          "7064",
+          "7034",
+          "7073",
+          "7074",
+          "6970"
+        ],
+        "key_facts": [
+          {
+            "match": "crashed",
+            "note": "The 11.05B MLA 500B run crash-looped x5 on 07-13 (r2/r4-nosim, b512) and was only state=running (~24-31% of 500B) on 07-14 at freeze; NO finished MLA-500B run exists. Must contradict the 'completion ~July 13-14 / healthy' narrative."
+          },
+          {
+            "match": "gqa4",
+            "note": "The only FINISHED 500B H100 run is grug-d2048-L24-gqa4-500B-r8-nosim-v2 (10.77B / param_count 1.077e10, finished 07-09, train/loss 1.629, eval/bpb 0.7273, 500B tokens) \u2014 a DIFFERENT architecture (GQA-4) than the 11.05B MLA run the summary attributes completion to."
+          },
+          {
+            "match": "23.8",
+            "note": "23.8% MFU / 1.37M tok/s / 1.53 s/step / '64xH100' is SUMMARY-ASSERTED only \u2014 no W&B run in the corpus logs throughput/mfu or tokens_per_second for the d2048-500B family. Must be labeled asserted, not measured."
+          },
+          {
+            "match": "9.37",
+            "note": "#6304 drove 90B-5.3BA MoE MFU 2.8%->9.37% (3.3x, achieved) on 256 H100 cw-us-east-02a but MISSED its ~25% target; rjpower: ~9.4% is 'the practical pure-FSDP ceiling' (comm-bound on latency-bound FSDP all-gathers). Central target-vs-achieved gap."
+          },
+          {
+            "match": "17.8",
+            "note": "B200 single-node MFU 17.8% (summary-asserted, from out-of-corpus #7012) is BELOW the >=20% gate (#6706); 25% is a September target, not a result."
+          },
+          {
+            "match": "288 B200",
+            "note": "End-of-month B200 hero run size/rack is CONTESTED: #6689 says '288 B200 (4xNVL72)' with model size/FLOP/tokens/data/loss all blank/'?'; the weekly summary says '~120B-A8B on 2xNVL72'. Unresolved; run had NOT launched (gate unmet)."
+          },
+          {
+            "match": "6532",
+            "note": "The only corpus-verifiable pipeline-parallelism work is #6532 (zero-bubble PP), on TPU v6e (1.22x FSDP at v6e-32, 0.78x single-host), and it was PARKED / moved to rjpower/marin-experiments#11, PR #6534 closed unmerged. No in-corpus H100 PP MFU number."
+          },
+          {
+            "match": "v4-1024",
+            "note": "The identifiable in-flight TPU hero pretraining run is the 67B-A2B (d2560) 10T-token run on v4-1024 (#6044), ~21.5% MFU achieved; v4-2048 appears only as failed/reserved smoke tests. Draft's 'v4-2048' is the wrong slice."
+          },
+          {
+            "match": "cute",
+            "note": "Freshest Blackwell state at freeze is the 07-16 gb200-d1280-sonic-cute attention-kernel sweep (reference/cudnn failed; only smaller gpu_fa4_cute finished) plus a d5120/L48 ~129B multi-rack bring-up (07-16->07-17): cudaasync/intrarack-pad unblocked up to 128 GPU (largest stable = 128-GPU/2-rack); 256/512/640-GPU all crashing. No MFU logged for any GB200 run."
+          }
+        ],
+        "note": "Gold reconciles the summary's optimistic '11B run healthy, done ~July 13-14' against W&B ground truth (MLA-500B crashed x5, only running ~24-31% at freeze; gqa4-500B is the real finished run, no MFU logged), centers the #6304 25%->9.37% pure-FSDP-ceiling miss, flags 23.8%/17.8% as summary-asserted, and marks the #6689 B200 run size/rack as contested and unlaunched."
+      }
+    },
+    {
+      "id": "july",
+      "candidate": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/candidates/opus48-marin-research/july.md",
+        "citations": [
+          "6704",
+          "6044",
+          "6811",
+          "6046",
+          "6689",
+          "7073",
+          "6716",
+          "6706",
+          "7012",
+          "6710",
+          "7074",
+          "6053",
+          "6705",
+          "6037",
+          "7064",
+          "7034",
+          "6715",
+          "6649",
+          "6998",
+          "6979",
+          "7024",
+          "7079",
+          "6711",
+          "6713",
+          "6969",
+          "6839",
+          "7045",
+          "6708",
+          "7052",
+          "6709",
+          "6867"
+        ],
+        "note": "July 2026 is a \"preparation month, not a finish line\": complete the 67B-A2B TPU MoE (~Aug 30), start a ~120B-A8B B200 MoE end-of-month, and start post-training \u2014 all readying for the September ~512B-A16B/20T hero run on 12 incoming NVL72 racks; grounded in the July 6-12 summary plus primary issues, with target-vs-achieved flagged (B200 MFU 17.8% below its 20% bar; B200 run data/arch still open)."
+      },
+      "weaknesses": [
+        "Every headline model size is a narrator placeholder presented as fact. The end-of-month B200 run's real issue #6689 is literally titled '[Hero Run] nB-AmB XT on B200s' (size undecided); '~120B-A8B', the September '~512B-A16B / 20T', and the milestone's own 'XB-AYB' all come from the weekly-summary prose, not a preregistered spec. The draft states them without flagging that #7073 (shape of the Aug-1 run) is still open at 4/14 sub-issues closed and no size/data/arch decision was recorded this week.",
+        "B200 MFU is under-specified and conflates two different numbers. The draft reports a single '17.8% single-node on 8xB200' but omits that this is at width d5120 (14.9% at d2560, 12.5% at H100-config parity), that batch is a dead lever while width is the live one, and that the QuACK/SonicMoE gated GEMM alone runs ~1,175 TFLOP/s (~52% of peak). Critically it never mentions the separate multinode JaxPP pipeline-parallel result (mean MFU 18.26 at ~414k tok/s, 1.74 pts below the 20% bar, #7024) \u2014 so there are two competing 'B200 MFU' figures and neither clears the 20% commitment.",
+        "Platform/target matrix is blurred. There are distinct MFU targets on three platforms \u2014 TPU v4-2048 (67B run, ~18.6%), H100/Hopper (11B validation 23.8%; GPU upskilling target 20-25% on 128-256 H100 in #6998), and B200/Blackwell (20% Aug bar #6706, 25% Sept target #6710) \u2014 and the draft partly runs them together (e.g. treats '25% for September' as a clean bar without noting Hopper vs Blackwell have separate 20-25% goals).",
+        "The RL-framework section is stale. The draft implies a clean MarinSkyRL story and omits the week's biggest RL-framework datapoint: last week's cross-framework xorl win (+12.3 MATH500 / +8.8 gsm8k on 16 GPUs, #6915) was CLOSED July 6 and then substantially WALKED BACK on July 10 by Ashwinee Panda's fidelity audit (not same-ruler \u2014 Muon vs AdamW, different grader), collapsing the apparent lift to ~+0.8-1.4 MATH500 vs the reference's +8.4.",
+        "Under-weights the data/curation and tokenizer subsystems and their negative results \u2014 the very inputs that gate the data-lock commitment (#7073). The draft cherry-picks the mixing-via-embeddings win (#6969) but omits Michael Ryan's #2351 reality check (Marin high_quality curation is NOT Pareto-dominant at DCLM CORE), the cluster of ~12 datakit quality/dedup/decontam defect issues (#6849-#6860, #7124, #7126), and the entire tokenizer decision (#6796: SuperBPE's edge reverses at scale, the feBPB metric, Will Held's GPT-OSS tokenizer proposal).",
+        "Thin on named owners and the strategic pre->post feedback loop. It names only Benjamin Feuer and Tri Dao, omitting the people actually driving each workstream \u2014 Larry Dial (67B run + cooldown + YaRN sweep), Will Held (B200 QuACK wiring, zero-RL Delphi, tokenizer), David Hall (GPU upskilling master plan + JaxPP PP + fused EP kernel), Russell Power (Iris federation, Executor retirement, SFT-with-confidence), Matt Wittmann (fp8), Rafal Wojdyla (mixing-via-embeddings) \u2014 and never mentions the #6096 pre-to-post loop (redefine 'compute-optimal' as pass@256) that motivates the 'pretraining recipe that sets up post-training' workstream.",
+        "Misses a wave of close-outs / state transitions this week, treating several finished items as open or omitting them: #6046 (loss-registration) closed, #6042 (GPU EP8 GrugMoE serving) passed/closed, #6048 (fp8 training) closed done, #4302 (H100 MFU tracker) closed, #3192 (synthetic-data tracker) closed July 7, #6045 (10T datamix) closed July 7, #6796/#5842 (tokenizer) closed, #5470 (coscheduler collision) closed. It also omits the flagship run's operational reality (topology crash at step 31,962 permanently slowed steps 26.1s->30.0s / +15%; preemption + barrier-timeout incidents).",
+        "A couple of numbers are unverified or loose. The Executor retirement is cited as '~-14k lines' but PR #6649's diff is +7,646 / -14,211 (net ~ -6.5k) \u2014 -14k is the deletions, not the net. The 67B progress is given as '~2.1T at ~18.6% MFU' but omits the precise step 39,000 / ~21% of 10.07T, and the post-training pricing omits the pipeline shape (RL over 10 experts THEN multi-teacher on-policy distillation into the student on the Nemotron path) and the '~5x environment speedup divides it by five' caveat."
+      ],
+      "n_digests": 5,
+      "gold": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/golds-proposed/july.md",
+        "must_have_citations": [
+          "6689",
+          "6704",
+          "6811",
+          "6706",
+          "6710",
+          "7073",
+          "7074",
+          "6716",
+          "6705"
+        ],
+        "nice_citations": [
+          "6522",
+          "6649",
+          "6998",
+          "6979",
+          "7012",
+          "7024",
+          "6969",
+          "7067",
+          "6796",
+          "2351",
+          "6915",
+          "6991",
+          "7052",
+          "6839",
+          "7045",
+          "7130",
+          "7088",
+          "6708",
+          "6162",
+          "6341",
+          "6096",
+          "6218",
+          "6053",
+          "6042",
+          "6046",
+          "5470",
+          "6045",
+          "3192",
+          "6048",
+          "4302",
+          "5842",
+          "6711",
+          "6715",
+          "6709",
+          "6867",
+          "6037",
+          "7034",
+          "7064",
+          "7079",
+          "6597",
+          "6983",
+          "6191"
+        ],
+        "forbidden_citations": [
+          "4300",
+          "6304",
+          "4986",
+          "6532",
+          "6534"
+        ],
+        "key_facts": [
+          {
+            "match": "preparation month",
+            "note": "July is explicitly a readiness/preparation month running to mid-August, not a finish line"
+          },
+          {
+            "match": "complete 67B",
+            "note": "milestone verbatim: complete 67B-A2B MoE; start XB-AYB MoE on B200s; start post-training Marin MoEs"
+          },
+          {
+            "match": "placeholder",
+            "note": "must flag that headline model sizes (120B-A8B, 512B-A16B, XB-AYB) are narrator/summary placeholders, not preregistered specs; #6689 title is 'nB-AmB XT on B200s'"
+          },
+          {
+            "match": "512B",
+            "note": "September hero run ~512B-A16B on 20T tokens when twelve NVL72 racks land ~Sept 15 (approximate, summary prose)"
+          },
+          {
+            "match": "120B",
+            "note": "end-of-month ~120B-A8B B200 run on 2 NVL72 (approximate)"
+          },
+          {
+            "match": "August 30",
+            "note": "67B-A2B 10T TPU v4-2048 run targeted to land ~Aug 30; at step 39,000 ~2.1T tokens (~21% of 10.07T) at ~18.6% MFU"
+          },
+          {
+            "match": "2.277",
+            "note": "2T intermediate cooldown finished at 2.2772 Paloma macro-loss, favorable early read vs the 2.269 preregistered stage-1 target"
+          },
+          {
+            "match": "2.269",
+            "note": "preregistered stage-1 target at 8T/80% mark, seqlen 8192, before cooldown; comparison to 2.277 is NOT apples-to-apples"
+          },
+          {
+            "match": "23.8",
+            "note": "11B-A1.5B validation run on 64xH100 cleared ~23.8% MFU as a Blackwell dry run, deliberately overtrained to 500B tokens"
+          },
+          {
+            "match": "17.8",
+            "note": "B200 MFU reached 17.8% single-node 8xB200 at d5120 via QuACK/SonicMoE, below the 20% bar (14.9% d2560, 12.5% H100-parity)"
+          },
+          {
+            "match": "18.26",
+            "note": "separate multinode JaxPP pipeline-parallel result: mean MFU 18.26 at ~414k tok/s, 1.74 pts below 20% bar (#7024)"
+          },
+          {
+            "match": "20%",
+            "note": "B200 20% bar (#6706, posed as a question 'Need to be at 20%+?') gates the end-of-month run; not yet met"
+          },
+          {
+            "match": "25%",
+            "note": "distinct 25% MFU target for the September run (#6710), separate from the 20% Aug bar and the Hopper 20-25% upskilling target"
+          },
+          {
+            "match": "GQA",
+            "note": "grouped-query attention is the one genuinely-decided September architecture element; MLA rejected on +17-20% FLOP accounting (#6522)"
+          },
+          {
+            "match": "0.25",
+            "note": "post-training priced at ~0.25-0.9x the 10T pretrain in HW-FLOPs (projection, #7074), ~5-20% of the 120B run, ~5x env speedup divides by five"
+          },
+          {
+            "match": "Nemotron",
+            "note": "post-training pipeline: RL over 10 experts THEN multi-teacher on-policy distillation (MOPD) into the student on the Nemotron path, dominated by RL leg"
+          },
+          {
+            "match": "4/14",
+            "note": "data/arch/preregistered-loss lock for the Aug-1 B200 run (#7073) still open at 4/14 sub-issues, no decision recorded this week"
+          },
+          {
+            "match": "Pareto",
+            "note": "curation reality check (#2351): Marin high_quality curation is NOT Pareto-dominant at compute-matched DCLM CORE, even at 3k scale"
+          },
+          {
+            "match": "SuperBPE",
+            "note": "SuperBPE tokenizer edge reverses at scale (#6796 closed); decision trending to GPT-OSS tokenizer on OPD/pass@K ecosystem grounds, not compression"
+          },
+          {
+            "match": "0.8",
+            "note": "xorl cross-framework win (+12.3 MATH500) walked back July 10 by Ashwinee Panda's same-ruler audit to ~+0.8-1.4 MATH500 vs reference +8.4 (Muon-vs-AdamW confound)"
+          },
+          {
+            "match": "14,211",
+            "note": "Executor retirement #6649 diff is +7,646/-14,211 (net ~-6.5k); -14k is deletions not net"
+          },
+          {
+            "match": "Iris",
+            "note": "Iris cross-cluster federation went live: marin hands whole jobs to CoreWeave (#7064/#7034)"
+          },
+          {
+            "match": "131k",
+            "note": "MarinSkyRL 131k-context RL on MoEs plumbed on CoreWeave (#7052): 30B/35B-A3B fit 64xH100 at ~2.5h/step; feasibility envelope only, no quality metric"
+          },
+          {
+            "match": "0.9410",
+            "note": "mixing-via-embeddings surrogate (#6969) priced a never-swept bucket at 0.9410 uncheatable BPB, beating sweep best 0.9554; winner's-curse caveat ~0.031 BPB"
+          }
+        ],
+        "note": "Definitive corpus-grounded gold for 'explain our july 2026 plan' written to evals/golds-proposed/july.md; every number labeled achieved/target/projected with hardware attached, all model sizes flagged as narrator placeholders, and the two B200 MFU figures, xorl walk-back, and SuperBPE/curation negative results resolved to their close-out state."
+      }
+    },
+    {
+      "id": "april",
+      "candidate": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/candidates/opus48-marin-research/april.md",
+        "citations": [
+          "4256",
+          "4266",
+          "4268",
+          "4269",
+          "4270",
+          "4271",
+          "4272",
+          "4273",
+          "4281",
+          "4282",
+          "4283",
+          "4300",
+          "4447",
+          "4569",
+          "4697",
+          "3800",
+          "5028",
+          "5031",
+          "5042",
+          "5071",
+          "5184",
+          "5212",
+          "5290",
+          "5319",
+          "5330",
+          "5369",
+          "5377",
+          "5379"
+        ],
+        "note": "April 2026 milestone (\"Kick-off pre-registered 100B-A13B MoE\"): headline run beat its pre-registered loss (2.234 vs 2.252) but finished May 20 not April; off-Ray/usability/agentify epics met; canary-90% and TPU-MFU 25-30% targets missed."
+      },
+      "weaknesses": [
+        "SCOPE OMISSION (biggest): The draft frames the April milestone as only Infra (#4256) + Modeling (#4266) and misses an entire third pillar \u2014 post-training / synthetic data (#3192, 'critical path for post-training'), which ihodes closed 'for the April milestone' on 2026-05-03 in the same batch as the infra/modeling epics. Unmentioned: SWE-ZERO 140B scale-out (#4719, ~52% PR / ~6.5M rollouts), the SWE-bench Verified dose-response curve (#4898: 0%->3.3%->4.0%->5.3% on Marin-8B) with its stuck 500K SFT (FAILED at step-38, down ~80h), and the TerminalCorpus Marin-32B midtrain (#4760) that exposed a ~10x agentic-prior gap vs Qwen3-32B. This is a whole workstream absent from the scorecard.",
+        "MILESTONE ROSTER UNDERCOUNTED: The week-of-April-26 summary (the milestone summary) enumerates workstreams the draft's 9-row scorecard never lists \u2014 'Levanter Store, K8s Logging, and Infrastructure Improvements' (#4474) and 'Data sources for pre-training / mid-training' are both milestone sections. The draft's scorecard is not a complete milestone accounting.",
+        "TARGET-VS-ACHIEVED FRAMING on the 1e23: Per the #4266 body, *completing* the 1e23 was an explicit STRETCH goal ('Stretch: 1e23 completed (~16 days on v4-2048)'), and the milestone is titled 'Kick-off ... (pregistered)' \u2014 i.e. the committed deliverable was launch+pre-register, not finish-by-April-30. The draft's headline ('did not cross the finish line inside April', 'schedule slip') over-penalizes a stretch goal as if it were the core commitment.",
+        "STALE MFU VERDICT: The draft marks TPU MFU flatly 'Missed (~16.4%)', but (a) dlwh closed #4300 as 'good enough' on 2026-05-31 \u2014 the owner's final disposition, unmentioned; and (b) 16.4% is from a CRASHED intermediate attempt (resume45207_clip15, 487B tokens), not the completed May-20 run's sustained MFU. The 'Missed' cell conflates a soft self-made-up target that was later signed off with a hard failure.",
+        "PLATFORM ATTRIBUTION MUDDY: The crashed attempts ran on v4-1024 (319k chip-hours); #4266's stretch assumed v4-2048; the draft never establishes which TPU platform the successful 2026-05-20 completion actually used, at what MFU, or whether the ragged-all-to-all v4-2048 migration ('the 2048 saga', dlwh 2026-04-16) ever landed. The 16.4%/platform pairing is asserted without pinning the final run.",
+        "FORECAST/TARGET NUMBER AMBIGUITY: The draft uses '~2.25 / 2.252' as the pre-registered target and calls 2.234 a 'beat', but multiple forecasts coexist \u2014 isoflop #4447 = 2.25, ClassicLarry's 'initial prediction of 2.252', Helw150's VPNLS re-forecast = 2.295 (registered for Percy's ICLR talk, 2026-04-24), and the AdamH-embed 1e23 projection of 2.249 vs 2.251 baseline. Which number was the *registered* bet, and whether 'beat' holds against the conservative 2.295 VPNLS, is unresolved.",
+        "AGENTIFY TARGET MISSTATED: The scorecard lists the #4282 target as '>=3 agent-run decisions' and grades it 'Hit \u2014 AdamH-embed promoted', but the actual #4282 goal was 'prove out ~3 decisions end-to-end (smoke -> tuned isoflop up to 1e20), agent-coordinated via GitHub'. The close-out leaned on ONE Gate-2-promotable change plus many negative results; whether ~3 *full* agent-run decisions were completed is not demonstrated, and the MCP babysitter / agent-research skill / foraging (#5117) context is dropped.",
+        "UNDER-RESEARCHED, NOT UNKNOWN: For on-demand/reserved capacity (#4268) the draft says 'no close-out surfaced... can't confirm sign-off', but concrete evidence exists \u2014 PR #4379 landed the CapacityType enum (PREEMPTIBLE/ON_DEMAND/RESERVED) on 2026-04-03, and the #4256 audit found 'Iris has a full reservation system'. The draft reports a research gap where the corpus has answers.",
+        "MILESTONE STRUCTURE MISCHARACTERIZED: The draft says the milestone was 'split from two parent tracking issues #4256 and #4266'. In fact both were deliberately REMOVED from the milestone and closed as scaffolding ('remove this issue from the milestone so it doesn't pollute our completion count'); the live 'April 2026' GitHub milestone holds the epics themselves (plus #3192, #4474, data-sources). The completion-count mechanics and true epic roster are misdescribed."
+      ],
+      "n_digests": 5,
+      "gold": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/golds-proposed/april.md",
+        "must_have_citations": [
+          "4266",
+          "4256",
+          "4697",
+          "4447",
+          "3192",
+          "4898",
+          "4719",
+          "4760",
+          "4281",
+          "4282",
+          "4283",
+          "4300",
+          "4270",
+          "4269",
+          "4273",
+          "4474",
+          "3100"
+        ],
+        "nice_citations": [
+          "4268",
+          "4379",
+          "4271",
+          "4272",
+          "5319",
+          "5184",
+          "4569",
+          "5330",
+          "4963",
+          "3800",
+          "5117",
+          "5369",
+          "4662",
+          "5377",
+          "5379"
+        ],
+        "forbidden_citations": [
+          "1337",
+          "6044"
+        ],
+        "key_facts": [
+          {
+            "match": "2\\.234",
+            "note": "Final 1e23 paloma macro loss achieved (#4697), beat the pre-registered ~1%"
+          },
+          {
+            "match": "2\\.252",
+            "note": "The pre-registered forecast (L\u221e=1.6 isoflop fit, #4447 c4225593039); NOT 2.25 alone. Answer should name this as the registered number"
+          },
+          {
+            "match": "(pregistered|100B-A13B|1\\.2T)",
+            "note": "Milestone title: 'Kick-off pre-trained 100B-A13B 1.2T token MoE (pregistered)'"
+          },
+          {
+            "match": "[Ss]tretch",
+            "note": "1e23 completion was an explicit STRETCH goal ('Stretch: 1e23 completed (~16 days on v4-2048)'); committed goal was launch+pre-register only"
+          },
+          {
+            "match": "(pollute|removed from|scaffolding|deliberately)",
+            "note": "#4256/#4266 were REMOVED from the milestone and closed so they wouldn't 'pollute our completion count' \u2014 they are not the scorecard parents"
+          },
+          {
+            "match": "(319k|94\\.5%|three attempts|all.{0,6}crashed)",
+            "note": "Three v4-1024 attempts burned 319k chip-hrs (94.5% of week's TPU) and all crashed before April end"
+          },
+          {
+            "match": "16\\.4",
+            "note": "~16.4% MFU (crashed v4-1024 resume45207 intermediate) vs the made-up 25-30% band"
+          },
+          {
+            "match": "good enough",
+            "note": "dlwh closed the MFU target #4300 as 'good enough' 2026-05-31; the 25-30% band was self-described as made up. Not a flat 'missed'"
+          },
+          {
+            "match": "(60%|9/9|GPU canary)",
+            "note": "Canary #4270: TPU ferry 9/9 (100%) but GPU regressed to ~60% on JAX 0.9.2 \u2014 the clearest quantitative miss"
+          },
+          {
+            "match": "(5\\.3%|0%.{0,20}(3\\.3|dose))",
+            "note": "SWE-bench dose-response on Marin-8B: 0% -> 3.3% -> 4.0% -> 5.3% (#4898) \u2014 the post-training pillar's one WIN"
+          },
+          {
+            "match": "(52%|6\\.5M|6,5|~half)",
+            "note": "140B SWE-ZERO scale-out (#4719) reached only ~52% coverage / ~6.5M rollouts before capacity collapse"
+          },
+          {
+            "match": "(2/87|20\\.9|10.?x|10.?\u00d7)",
+            "note": "Marin-32B TerminalCorpus (#4760): 2/87 (~2.3%) vs Qwen3-32B 18/86 (~20.9%), ~10x gap \u2014 negative result"
+          },
+          {
+            "match": "(post-training|synthetic data|3192)",
+            "note": "The third pillar the draft omits entirely: post-training/synthetic-data (#3192)"
+          },
+          {
+            "match": "(v4-2048|us-central2|EP8|ragged)",
+            "note": "The completed run finished on v4-2048 EP8 ragged in us-central2 (launched on v4-1024 EP4 ring)"
+          },
+          {
+            "match": "(19T|20T)",
+            "note": "Data sources #3100: target 20T, achieved >19T \u2014 met"
+          },
+          {
+            "match": "(never.{0,20}complete|no.{0,20}(percentage|completion)|two sweeps|05-03|06-05)",
+            "note": "No formal 'milestone complete' declaration or % in corpus; wound down issue-by-issue on 2026-05-03 and 2026-06-05"
+          },
+          {
+            "match": "(AdamH|5184)",
+            "note": "Agentify #4282 win: AdamH-embed (#5184) first Gate-2-promotable agent-driven change; but goal was ~3 full decisions, not fully demonstrated"
+          }
+        ],
+        "note": "Gold answer written; restructures the milestone into 3 pillars (modeling/infra/post-training), fixes the roster (12 epics, #4256/#4266 excluded), reframes 1e23 completion as a stretch goal, qualifies the 2.252 beat, and treats MFU as owner-signed-off \u2014 all verified against the frozen corpus."
+      }
+    },
+    {
+      "id": "muon",
+      "candidate": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/candidates/opus48-marin-research/muon.md",
+        "citations": [
+          "6153",
+          "5167",
+          "5596",
+          "5597",
+          "5951",
+          "5645",
+          "5719",
+          "4034",
+          "6044",
+          "6704",
+          "6701",
+          "6493",
+          "6492",
+          "6979",
+          "6066",
+          "6588",
+          "7118",
+          "6811"
+        ],
+        "note": "Current optimizer is MuonH (heuristic-LR-scaled Muon, Newton-Schulz orthogonalization) on the matrix param group in the May Recipe (#6153), reached via an Apr-Jun AdamH/Muon/MuonH bake-off (#5167, #5596) + LR refit (#5951); runs on TPU because Muon's orthogonalization overhead is costly on GPU (#6493, #6704)."
+      },
+      "weaknesses": [
+        "MIS-CITED HEADLINE NUMBER: the '~2.12x equal-throughput compute-equivalent speedup at every isoFLOP budget' is attributed to PR #6153, but that string does not appear in #6153. The 2.12x actually comes from #6074 (ClassicLarry, 2026-05-31 17:16): it is a *projected* number from a scaling-law fit `loss(C)=1.6+81.48\u00b7C^-0.0922` pinned at L_inf=1.6, and it holds only because the fit forces 'same \u03b1 as the v16 README curve' -> a mechanically uniform multiplier. It is not a measured whole-recipe result. Worse, Larry immediately caveats it (17:19): 'I am not trusting the 1e18 data point... Muon does disproportionately well at the very small size with only 1pct warmup', and the headline fit drops 1e18. The draft presents a projected, caveated, best-case constant as an achieved fact.",
+        "'Passed both gates' is WRONG and hides a scale-dependent reversal. The gate-2 close-out on #5596 (WhenWen, 2026-05-11 16:01) is explicitly labeled 'mixed verdict'. The MuonH loss advantage shrinks monotonically with scale: d512 -0.056, d768 -0.035, d1024 -0.025 -- and the fitted MuonH-vs-AdamH scaling curves 'cross near C ~ 1.65e21' (16:05). Beyond that crossover AdamH is projected to win, yet the 67B-A2B/10T hero run is ~1e23 FLOPs, ~two orders of magnitude past the crossover. The draft never surfaces this, and it directly contradicts the #6074 'uniform 2.12x at every budget' fit -- two of Larry's own fits disagree on whether MuonH even wins at hero scale.",
+        "STALE/OVERSTATED MITIGATION: the draft says a 'grouped/stacked Newton-Schulz prototype was built to amortize' the one-matrix-at-a-time cost (#6493/#6492), implying the GPU cost problem was addressed. The #6493 close-out shows the opposite: #6492 was closed as a duplicate; the grouped/padded stack path 'did not improve throughput'; only a later `stack_batch_4d_sharded` layout was 'the first concrete better layout candidate', and it is still a micro-benchmark harness result (MUON-BENCH-* update runs), not something shipped into the recipe. The draft reads as if amortization succeeded.",
+        "PLATFORM ATTRIBUTION CONFLATED: the draft asserts Muon's GPU overhead is 'why the June/July run landed on TPU rather than H100.' But the 67B-A2B run is native to TPU v4-2048 (per the 2026-07-06 summary and wandb `moe_67b_a2b_*_v4_2048_test`), tracked from the start on #6704 ('Land June 67B-A2B run on TPUs'). The GPU/Blackwell Muon-cost work (#6493 single-node H100 A/B, #6979 90B-MoE GPU MFU, #6706/#6710 B200) is a *separate* NVL72/B200 track being readied for the September ~512B-A16B run -- i.e. the team is trying to make Muon cheap ON GPU for the future, not retreating from GPU to TPU for this run. The 4.75% MFU figure is a single-node H100 diagnostic vs SGD (SGD is a cost-isolation control, not a real optimizer option), not the hero-run config -- the actual TPU run holds ~18.6% MFU.",
+        "STALE 'CURRENT' STATE: the draft's 'current approach' omits the live run status that is the most-cited result of the latest (2026-07-06) week. As of that week the run is at ~2.3T of 10T tokens (~21%), ~18.6% MFU on the resume15k_v2 run, completion targeted ~Aug 30; the first intermediate (2T) cooldown (#6811) closed at 2.277 Paloma macro-loss / 0.824 bpb vs a preregistered stage-1 target of 2.269 (explicitly NOT apples-to-apples: target is seqlen-8192, pre-cooldown, 80%-mark; the cut fully decays LR, uses phase-2 mix, evaluates at 8x context); a second cooldown at 5T is planned for early August. The draft mentions the MuonH->Adam cooldown question but none of this surrounding current-state.",
+        "UNDER-VERIFIED LR-LAW CONSTANTS: the draft reports the #5951 heuristic as lr_coeff 0.097 and lr_tokens_exp -0.395 (R^2=0.996) as if final. But that thread contains a self-correction cascade: Larry flags the 60% LR jump as 'surprising', posts a 'Correction: previous fit had a units bug' (intermediate_dim = d*4 vs actual ~d/2 in the heuristic), and on 2026-06-05 re-plots after normalizing for batch size ('the chart above is a bit deceptive'). The draft quotes the mid-thread table values without confirming they are the committed constants in experiments/grug/moe/heuristic.py after the corrections; R^2=0.996 is fit quality, not confirmation the shipped constants match.",
+        "PEOPLE/ATTRIBUTION under-mapped: ClassicLarry = Larry Dial (owns LR law #5951, isoflop #6074, recipe #6153, cooldowns #6811); WhenWen = Kaiyue Wen (owns matrix-swap gates #5596/#5645/#5719); dlwh = David Hall (posed the MoE-Muon question #4034, GPU grouped-NS #6493); ihodes = Isaac Hodes (hero-run tracking #6704/#6811). The draft credits the Hessian-corrected speedrun (#7118) to 'Kaiyue Wen' as a frontier outsider while treating 'WhenWen' as the gate owner -- likely the same person, so the frontier-vs-production people picture may be muddled."
+      ],
+      "n_digests": 5,
+      "gold": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/golds-proposed/muon.md",
+        "must_have_citations": [
+          "6044",
+          "6153",
+          "6074",
+          "5596",
+          "5951",
+          "4034",
+          "5167",
+          "6493",
+          "6811"
+        ],
+        "nice_citations": [
+          "5619",
+          "5645",
+          "5719",
+          "6704",
+          "6693",
+          "6573",
+          "6979",
+          "6066",
+          "6588",
+          "7118",
+          "6532",
+          "6706",
+          "6710",
+          "6716",
+          "6689",
+          "7012",
+          "7024",
+          "6492",
+          "6046"
+        ],
+        "forbidden_citations": [],
+        "key_facts": [
+          {
+            "match": "MuonH",
+            "note": "Current production optimizer name; Muon + LR heuristic + Hyperball/Frobenius-hyperball constraint on matrix params."
+          },
+          {
+            "match": "Newton-Schulz",
+            "note": "Core mechanism: momentum then Newton-Schulz orthogonalization of each 2-D update."
+          },
+          {
+            "match": "May Recipe",
+            "note": "The recipe MuonH ships inside; merged to main in PR #6153 (ClassicLarry, 2026-06-04)."
+          },
+          {
+            "match": "6153",
+            "note": "PR that merged the May Recipe (MuonH on the weight-matrix group) to main; RESTATES but is NOT the origin of the 2.12x."
+          },
+          {
+            "match": "lm_head|output_proj",
+            "note": "Only lm_head/output_proj stays on AdamH; MuonH covers attn matmuls, MoE experts, shared expert, GatedNorms."
+          },
+          {
+            "match": "5719",
+            "note": "Attempt to move attention K,V to AdamH REGRESSED (+0.0140 loss at d512), so K/V stay on MuonH."
+          },
+          {
+            "match": "5951",
+            "note": "MuonH's own LR law refit for May Recipe; lr_coeff ~0.097, lr_tokens_exp -0.395, R^2=0.996 \u2014 but a units-bug self-correction cascade, so treat as committed direction not audited digits."
+          },
+          {
+            "match": "67B",
+            "note": "Hero run = 67B-total / 2.01B-active MoE, d=2560, 256 experts K=4, ~10.07T tokens (~1.2e23 FLOPs), MuonH."
+          },
+          {
+            "match": "v4-2048",
+            "note": "Hero run is native to TPU v4-2048 us-central2; MuonH is the optimizer."
+          },
+          {
+            "match": "2\\.12",
+            "note": "Must be labeled PROJECTED/scaling-law-derived (drop-1e18 fit, whole-recipe not Muon-alone), NOT a measured achieved result."
+          },
+          {
+            "match": "6074",
+            "note": "TRUE origin of the 2.12x (ClassicLarry 2026-05-31 17:16); drop-1e18 fit pins alpha=0.0941 to v16 baseline -> uniform by construction."
+          },
+          {
+            "match": "drop|1e18",
+            "note": "Larry distrusts the 1e18 point ('Muon does disproportionately well at very small size with 1pct warmup'); the 2.12x depends on dropping it."
+          },
+          {
+            "match": "mixed verdict|crossover",
+            "note": "#5596 gate-2 was a 'mixed verdict' with a projected crossover near C~1.65e21; left OPEN, not 'passed both gates'."
+          },
+          {
+            "match": "0.0906|shallow|monotonic",
+            "note": "MuonH's Paloma exponent came in shallow and the loss advantage shrinks with scale (d512 -0.056 -> d1280 -0.0177); crossover retired as a warmup artifact via #5619 no-warmup PASS."
+          },
+          {
+            "match": "1[-\\s]*2%|overhead",
+            "note": "The load-bearing argument is measured wall-clock: 30-40% step speedup vs 1-2% Muon overhead, sound regardless of loss fit."
+          },
+          {
+            "match": "4034",
+            "note": "Original 2026-03 question 'is Muon a net win/loss/wash on MoE?' (dlwh); closed 'Integrated MuonH' 2026-06-06."
+          },
+          {
+            "match": "5167",
+            "note": "April bake-off (MuonH heuristic / AdamH-2x / Muon Vizier search); closed 'we went with MuonH here'."
+          },
+          {
+            "match": "6493",
+            "note": "GPU cost investigation; #6492 closed as its duplicate."
+          },
+          {
+            "match": "4\\.7|21,962",
+            "note": "Single 8xH100: MuonH ~4.75% MFU / 21,962 tok/s / 1.492 s vs SGD 16.19% MFU / 74,848 tok/s / 0.438 s; NS ran one-matrix-at-a-time."
+          },
+          {
+            "match": "SGD",
+            "note": "SGD in #6493 is a cost-isolation CONTROL, not a real optimizer option."
+          },
+          {
+            "match": "did not improve|grouped",
+            "note": "Grouped/stacked NS amortization did NOT succeed in training; only stack_batch_4d_sharded won in the isolated harness; exit path was pipeline parallelism."
+          },
+          {
+            "match": "shelve|dropped|No muon",
+            "note": "GPU/Blackwell track DROPPED Muon (June-26 OA meeting); it's a separate future-readiness track for the Sept ~512B-A16B run, not a retreat from GPU to TPU."
+          },
+          {
+            "match": "free|XLA|1\\.5",
+            "note": "On TPU Muon is essentially free (XLA hides NS); ~206ms/~0.9% of step on v4-1024; 1.49M tok/s MuonH vs 1.51M AdamH."
+          },
+          {
+            "match": "18\\.6",
+            "note": "Live main run holds ~18.6% MFU on v4-2048 (resume15k_v2 after batch doubled to 67.1M tokens)."
+          },
+          {
+            "match": "2\\.27|2\\.2772",
+            "note": "First 2T cooldown (#6811) closed at Paloma macro_loss 2.2772 / bpb 0.8242."
+          },
+          {
+            "match": "2\\.269",
+            "note": "Preregistered stage-1 target (seqlen 8192, 1024 seqs, pre-cooldown, 80% mark, first 8T tokens)."
+          },
+          {
+            "match": "apples",
+            "note": "2.2772 vs 2.269 is NOT apples-to-apples (cooldown fully decays LR, phase-2 mix, evaluates at 8x context)."
+          },
+          {
+            "match": "6811",
+            "note": "Intermediate-cooldown umbrella AND the open MuonH->Adam swap question on the 8 cooldown checkpoints."
+          },
+          {
+            "match": "swap|Adam",
+            "note": "Live OPEN optimizer question (Larry, 2026-07-11): swap MuonH->Adam for mid-training and whether to carry optimizer state; unanswered in-corpus."
+          },
+          {
+            "match": "Kaiyue Wen|WhenWen",
+            "note": "WhenWen = Kaiyue Wen \u2014 same person owns the gates (#5596/#5619) AND the frontier Hessian-corrected speedrun #7118; not a separate outsider."
+          },
+          {
+            "match": "readiness|memory wall|19.9",
+            "note": "TPU chosen due to GPU cluster not ready (first-step memory wall + ~19.9% MFU) not raw MFU (H100 dry-run hit 23.8%); TPU is the mature native platform."
+          }
+        ],
+        "note": "Definitive gold written and fully corpus-verified: MuonH (Newton-Schulz + Hyperball) in the May Recipe (#6153) on the TPU 67B-A2B hero run \u2014 with the 2.12x correctly relabeled projected/origin=#6074, the #5596 gate-2 crossover surfaced-then-resolved, GPU amortization shown to have failed, platform attribution corrected (TPU-native, GPU track dropped Muon), and live cooldown/#6811 open MuonH->Adam question added."
+      }
+    },
+    {
+      "id": "ablations",
+      "candidate": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/candidates/opus48-marin-research/ablations.md",
+        "citations": [
+          "163",
+          "274",
+          "100",
+          "185",
+          "399",
+          "63",
+          "390",
+          "596",
+          "963",
+          "605",
+          "3535",
+          "3049",
+          "3191",
+          "6739",
+          "6849",
+          "6860",
+          "820",
+          "934",
+          "936",
+          "2351",
+          "2404",
+          "6602",
+          "6603",
+          "6608",
+          "6611",
+          "6045",
+          "6716"
+        ],
+        "note": "Surveyed Marin data ablations across two tracks \u2014 quality-classifier comparisons (fastText vs BERT #163, Dolmino/source classifiers, Luxical embeddings #3535, fast-transformer #6739, datakit domain-bias diagnostics #6849/#6860) and data-mixture ablations (cooldown mixes #820/#934, RegMix-style #2404, DSP/OLMix scaled on the Delphi ladder 3e18\u20131e21 #6602/#6603/#6608/#6611, datakit-vs-nemotron feature chain, DCLM-CORE curation Pareto #2351) \u2014 with sizes and test sets (Paloma, DCLM CORE, Uncheatable, OLMoBaseEval Table-9, MMLU); flagged that #6716's exact Paloma numbers are summary-sourced and #6969/#6972 aren't in the frozen corpus."
+      },
+      "weaknesses": [
+        "Buries the single most important recent mixture-ablation result in a 'gaps' caveat. The draft says #6969 (mixing_via_embeddings) and #6972 are 'not present in this frozen corpus, so specifics can't be cited beyond the summary narrative' \u2014 but the 2026-07-06 summary carries fully quantified specifics the draft never extracted: the embedding surrogate priced a never-swept bucket (dolma_starcoder) at 0.9410 uncheatable BPB vs olmix-reuse 0.9495 / token-proportional 0.9759 / the sweep's own best-ever 0.9554 (a -0.0145 margin the significance check put at ~8sigma), with a preregistered winner's-curse caveat of ~0.031 BPB, off one embedding job. This is a headline data-mixture ablation reported as unciteable.",
+        "Omits #6757 entirely \u2014 the recorded curated-vs-proportional datakit iso-FLOP head-to-head (MoE, d512-d1280, Will Held, v5p reproduction on rav's east5 datakit store_8ac06c74), whose close-out verdict is 'curated and proportional are statistically indistinguishable at this compute; take curated as a weak default.' The draft folds the entire curation story into only #2351 (the DCLM-CORE high_quality vs dclm_random track / Michael Ryan) and misses the parallel datakit-mix primary. #6757's parent epic #6713 and its sibling #6712 (Data-selection diagnostics) \u2014 the two organizing epics for all 2026 data-mixture/classifier work \u2014 are never named.",
+        "Stale run-structure for the OLMix/DSP mixture work. The draft's '3 mixtures x 4 Delphi scales = 12 runs' rests on June baseline threads (#6602/#6603/#6608/#6611) and on #2404 (filed Jan 2026, auto-closed stale in April, framed as 'Dolmino-3 Pool / 24 WebOrganizer categories'). The current, in-corpus structure is different: #6607 trains proportional + UniMax-8 baselines over 39 Dolma3/Dolmino buckets on the 4-rung Delphi ladder, and #6609 is the live one-phase validation panel (OLMix delta=0.01/KL=0.05/cap=4 vs DSP effective-exposure LINEAR_REG=0.01/KL=0.1, 4 Delphi scales, native OLMoBaseEval Table-9), with #6972 the KL scale-up (KL=0.1 for uncheatable BPB vs KL=0.005 for Table-9, launched at 2e19/3e20/1e21). The draft cites none of #6607, #6609, #6972, #6801, #6931.",
+        "Presents archived/year-old cooldown ablations as current findings without dating them. #934 ('definite improvements across the board from dolmino') was ARCHIVED Nov 2025 (PR #1999, tag archive/20251114); #820 is Feb 2025. Worse, #820's actual load-bearing finding is omitted: HQ data beat the DCLM control on Paloma macro average but that improvement did NOT show up in downstream benchmarks \u2014 the same 'a val-loss win doesn't transfer' lesson the 2026 Pareto reality check re-discovers, a through-line the draft misses.",
+        "#6739 (fast-transformer classifier) reported shallowly and only as a target/baseline. The draft gives 'AUC 0.875' but omits the achieved 0.41M FLOPs/token, the 5,613 gold-label train / 961-doc holdout, the Spearman 0.703 vs fasttext 0.846/0.641, and \u2014 most importantly \u2014 the close-out diagnosis: distilling three free teachers (source-of-origin prior, Nemotron quality buckets, FineWeb-Edu score) all landed BELOW training from scratch on the 5.6k gold labels, so ~0.87 is a LABEL-QUALITY CEILING, not a modeling limit. That is the actual answer to 'why do the classifiers plateau,' and it is missing.",
+        "Misses the test-data integrity / decontamination layer that gates every mixture ablation's numbers: #6742 found Nemotron-CC-Math has 10-gram overlap with 28.2% of MATH-500 test and 17 of 30 AIME24 problems despite claimed dedup, and that cleaning the validation split cut the Delphi 1e22 math endpoint error from ~18.6% to ~2.8%. Also omits #6096 (base-model BPB on verified math traces predicts post-RL math accuracy, r=-0.89 to -0.97) and the new data-selection feature #6750 (web-graph centrality) and #7128/#7127 (medical midtraining corpus) \u2014 all part of the current 'what data signals we compare' picture.",
+        "The #6716 caveat is correct (the thread is genuinely a 3-line stub in this corpus, so the feature-ablation Paloma numbers 3.7103 -> 3.6954 -> 3.6359 are summary-sourced), but the draft doesn't attribute them to their real primary structure \u2014 Larry Dial's two d512 compute-optimal GPU chains on CoreWeave 8xH100 with datakit data, under the 11B-A1.5B validation epic \u2014 and doesn't note that #6045 (the June 10T hero-run mix) closed as completed on July 7. The datakit-vs-nemotron platform attribution is otherwise handled well.",
+        "The quality-classifier section mixes 2024-2025 seed experiments (#163 fastText-vs-BERT on 100k MMLU labels, #274, #100/#185, #399, #605 Dolmino per-source, #63/#390/#596/#963) with the live 2026 datakit v0 audit without marking the vintage or that the old classifiers are largely superseded; and the datakit v0 audit is a much larger cluster than the two issues cited (#6849, #6860) \u2014 it spans #6849-#6860 plus #7124 and #7126 (quality, luxical embeddings, fuzzy dedup, decontam recall, over-sharding, truncated-4KB scoring)."
+      ],
+      "n_digests": 5,
+      "gold": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/golds-proposed/ablations.md",
+        "must_have_citations": [
+          "6757",
+          "2351",
+          "6608",
+          "6609",
+          "6611",
+          "6607",
+          "6739",
+          "5810",
+          "6849",
+          "6860",
+          "6742",
+          "6969",
+          "6713",
+          "6712",
+          "163",
+          "934",
+          "820"
+        ],
+        "nice_citations": [
+          "6096",
+          "7067",
+          "6972",
+          "6931",
+          "6801",
+          "6045",
+          "6716",
+          "6750",
+          "7128",
+          "7127",
+          "3535",
+          "3049",
+          "274",
+          "100",
+          "185",
+          "399",
+          "63",
+          "390",
+          "596",
+          "963",
+          "605",
+          "6852",
+          "6711",
+          "6074"
+        ],
+        "forbidden_citations": [
+          "2404"
+        ],
+        "key_facts": [
+          {
+            "match": "1\\.78",
+            "note": "#6757 curated vs nemotron macro uncheatable BPB 1.78x [1.45,2.24] achieved"
+          },
+          {
+            "match": "1\\.14",
+            "note": "#6757 curated vs proportional 1.14x [0.93,1.41] \u2014 NOT significant, a tie; the actual head-to-head verdict"
+          },
+          {
+            "match": "indistinguishable",
+            "note": "#6757 recorded verdict: curated and proportional statistically indistinguishable; curated a weak default"
+          },
+          {
+            "match": "0\\.9410",
+            "note": "#6969 embedding surrogate priced never-swept dolma_starcoder at 0.9410 uncheatable BPB, beating sweep best 0.9554 / olmix-reuse 0.9495 / proportional 0.9759 (~8 sigma), summary-sourced"
+          },
+          {
+            "match": "0\\.846",
+            "note": "deployed fastText v0 quality classifier AUC 0.846 / rho 0.641 (#5810), the baseline"
+          },
+          {
+            "match": "0\\.875",
+            "note": "#6739 fast-transformer AUC 0.875 / rho 0.703 at 0.41M FLOPs/token, beats fastText"
+          },
+          {
+            "match": "label.?quality ceiling|label ceiling",
+            "note": "#6739 plateau diagnosis: ~0.87 is a label-quality ceiling of the 5,613-doc oracle set; 3 free-teacher distillations all land below from-scratch"
+          },
+          {
+            "match": "0\\.852",
+            "note": "#6739/#6849 source-of-origin alone predicts the oracle at AUC 0.852 (reading no text) \u2014 root cause of domain-sorting"
+          },
+          {
+            "match": "28\\.2",
+            "note": "#6742 Nemotron-CC-Math contaminates 28.2% of MATH-500 test (and 17/30 AIME24)"
+          },
+          {
+            "match": "2\\.83",
+            "note": "#6742 cleaning the val split cut Delphi 1e22 math endpoint error from +18.56% to +2.83%"
+          },
+          {
+            "match": "39 Dolma3|39 Dolma",
+            "note": "current OLMix/DSP mixture basis is 39 Dolma3/Dolmino buckets, 0.8/0.2 phase schedule (#6607/#6608/#6609/#6611)"
+          },
+          {
+            "match": "3e18.*1e21|3e18, 2e19, 3e20, 1e21",
+            "note": "Delphi scaling ladder training-data sizes: 3e18/2e19/3e20/1e21 FLOPs"
+          },
+          {
+            "match": "KL=0\\.1|KL=0\\.005",
+            "note": "#6972 target-specific KL: KL=0.1 for uncheatable BPB, KL=0.005 for Table-9 macro (summary-sourced)"
+          },
+          {
+            "match": "0\\.918",
+            "note": "#6611 effective-exposure DSP linear_reg=1e-4 OOF Spearman 0.918 on 51-component Table-9 macro, beats single_tied OLMix 0.380"
+          },
+          {
+            "match": "5,?613",
+            "note": "classifier train set = 5,613 usable Sonnet-4.6 oracle labels / 961 holdout, reused across #5810/#6739"
+          },
+          {
+            "match": "12 of 98",
+            "note": "#6860 datakit v0 near-constant within-source: 12 of 98 sources stddev <0.1; massive_function_calling exactly 0.0"
+          },
+          {
+            "match": "3\\.7103",
+            "note": "GPU feature-ablation chain Paloma 3.7103->3.6954->3.6359 (Larry Dial d512 CoreWeave 8xH100 datakit, under #6716; summary-sourced)"
+          },
+          {
+            "match": "100k MMLU|100,000",
+            "note": "#163 fastText vs BERT trained on 100k MMLU positives + 100k DCLM negatives, top-{1,5,10,20}%; BERT top-20% won"
+          },
+          {
+            "match": "dolmino",
+            "note": "#934 cooldown 4-mix ablation (DCLM+StarCoder / Nemotron / +Dolmino / +Marin) \u2014 'definite improvements across the board from dolmino'; ARCHIVED Nov 2025"
+          },
+          {
+            "match": "did not|didn't|not.*downstream|not reflected",
+            "note": "#820 HQ data beat DCLM on Paloma macro but did NOT transfer to downstream benchmarks \u2014 same val-loss-doesn't-transfer lesson as #2351"
+          },
+          {
+            "match": "935",
+            "note": "#2351 curation reality check: high_quality not Pareto-dominant even at 3k; 935-doc dev set hand-labelled (summary-sourced)"
+          }
+        ],
+        "note": "Verified gold answer written; every GitHub citation re-checked via mum-frozen show and every load-bearing number grounded, with post-freeze results (#6969/#6972/#7067/#7127/#7128, #6716 feature-chain) explicitly marked summary-sourced and W&B-only per-rung BPB ladders described structurally rather than quoted."
+      }
+    },
+    {
+      "id": "classifier",
+      "candidate": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/candidates/opus48-marin-research/classifier.md",
+        "citations": [
+          "5810",
+          "5360",
+          "6739",
+          "6741",
+          "6849",
+          "6860"
+        ],
+        "note": "The classifier is the LLM-oracle fastText quality model (#5810, run sonnet46-thr05): binary fastText trained on 5,613 Claude-Sonnet-4.6 rubric labels, eval AUC 0.846/\u03c1 0.641 on a 961-doc holdout (later beaten by the #6739 fast-transformer at 0.875/0.703); weight-sharing is unresolved in-corpus given full Claude-distillation provenance and Marin's stated aversion to distillation."
+      },
+      "weaknesses": [
+        "STALE STATE / MISSING THIRD GENERATION (most serious): the answer frames \"the classifier\" as two generations (fastText v0 -> fast-transformer) and treats those as the current frontier. It entirely misses the third, latest generation from early July 2026 (two weeks before freeze): issues #6849 (\"sorts documents by domain, not intrinsic quality\") and #6860 (\"near-constant scores, no within-source discrimination\") diagnose a fundamental flaw in BOTH prior models, and a validated fix lives on branch `rav/quality-coherence` (`experiments/datakit/cluster/quality/calibrated/`) with a content-type-aware, source-blind rubric + pooled ranker (Spearman vs coherent-quality 0.44->0.69, beats the deployed model on every content type). rav's PR #7040 (2026-07-10) is an RFC with a public report at gs://marin-public/rav/quality-score-debugging/2026.07.10.1/index.html. None of this appears in the answer.",
+        "EVALUATION VALIDITY UNQUESTIONED: the answer celebrates AUC 0.846 (fastText) / 0.875 (fast-transformer) and \"~4x better than dolma3\" as headline wins, but the corpus later establishes that SOURCE IDENTITY ALONE predicts the oracle at AUC 0.852 (eta^2 = 0.41; #6849 root-cause, #6739 source-prior comment). That is higher than fastText's 0.846 and close to the fast-transformer's 0.875 - meaning most of the celebrated oracle-AUC is measuring recoverable domain/source signal, not intrinsic quality. The team concludes 'raising oracle-AUC does not fix' the real problem. The answer reports these numbers uncritically and even calls 0.87 a 'label-quality ceiling' without noting the metric itself is now considered flawed.",
+        "TARGET-VS-ACHIEVED / DEPLOYMENT AMBIGUITY: the answer presents the fast-transformer as a live 'second generation' of the classifier ('the classifier now spans two generations'). But the fast-transformer's 'win' was a recommendation, not a deployment - the deployed classifier remained fastText v0 (rav on Discord 2026-06-29: 'both domain and quality classifiers are v0'; the July bug reports #6849/#6860 target `experiments/datakit/cluster/quality/v0`, not the fast-transformer). There is no evidence the fast-transformer was adopted into the `classify_fasttext_step` inference path.",
+        "'SHIPPED' FRAMING OMITS THE PLACEHOLDER CAVEAT: the answer calls sonnet46-thr05 'the shipped v0 run' as if it were a finished production artifact. rav explicitly frames it as a stopgap: 'both domain and quality classifiers are v0 - the goal was to have e2e pipeline. We can definitely do better!' The 'v0' label and this quote reframe the whole model as an intentionally-provisional first pass, which the answer does not convey.",
+        "SHARING SECTION BUILT ON A TANGENTIAL THREAD, MISSES CONCRETE SIGNALS: the answer's 'can weights be shared' analysis leans almost entirely on the Colin Raffel / Percy Liang Discord exchange (2026-07-15), which is a GENERAL debate about LLM distillation attacks (GLM 5.2, MAI, Claude traces for the trained model) and never mentions the quality classifier. Meanwhile it misses concrete, directly-relevant openness signals in the corpus: (a) rav already published a classifier debugging report to the PUBLIC bucket gs://marin-public/rav/quality-score-debugging/; (b) the dolma3 comparison baseline is AllenAI's openly-released `allenai/dolma3-fasttext-quality-classifier` on HuggingFace at a pinned commit (#5812) - direct precedent that such classifiers are released openly; (c) Marin keeps its entire data pool public on HF (token-count-viewer). The 'internal GCS bucket = not public' framing is undercut by the public marin-public report.",
+        "QUOTE ATTRIBUTION IMPRECISE: the answer says 'Colin Raffel framed... and Percy Liang responded that...' The corpus shows Colin's Discord message is him RELAYING a private exchange (he asked Percy; the 'overblown / giant mess' text is Percy's quoted answer). It is not a live back-and-forth in the channel, and a parallel willheld message ('I recently asked Percy Liang:') immediately follows that the answer did not read - possible additional nuance missed. More importantly, none of this exchange is about the classifier.",
+        "SOURCE-COUNT AND SCOPE DRIFT UNVERIFIED: the answer repeatedly states '104 active Datakit sources', but the July bug report #6860 counts '12 of 98 sources' - the active-source set drifted (104 -> 98) between the May run and the freeze. Well-sourced numbers (5,613 labels, $32.73, 0.5 threshold = raw>=3) are fine, but source-count and whether sonnet46-thr05 is still the live model are stale.",
+        "PLATFORM / ORCHESTRATION ATTRIBUTION THIN: the answer names no compute or orchestration stack. The fast-transformer is JAX/Equinox (commit d5d05ef) on TPU v6e-4, launched via Iris (`/power/ft-quality-sweep-v1`), data prepped via Zephyr, agent-driven under 'weaver #329', PR #6741; per-source scoring/debugging uses ducky/duckdb. The oracle pipeline is budget-capped and resume-safe. These attributions are absent."
+      ],
+      "n_digests": 5,
+      "gold": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/golds-proposed/classifier.md",
+        "must_have_citations": [
+          "5810",
+          "6739",
+          "6849",
+          "6860",
+          "7040"
+        ],
+        "nice_citations": [
+          "5360",
+          "6741",
+          "5812",
+          "6816",
+          "6859",
+          "6798",
+          "5105",
+          "6760"
+        ],
+        "forbidden_citations": [],
+        "key_facts": [
+          {
+            "match": "sonnet46-thr05",
+            "note": "The deployed v0 fastText run name; the actual live classifier at freeze"
+          },
+          {
+            "match": "fastText",
+            "note": "Gen-1 deployed model architecture (bag-of-hashed-ngrams -> linear, binary P(high))"
+          },
+          {
+            "match": "claude-sonnet-4-6",
+            "note": "The oracle model producing 1-5 pretraining-utility rubric labels"
+          },
+          {
+            "match": "0.846",
+            "note": "fastText v0 held-out AUC (achieved, n=961 seed=43)"
+          },
+          {
+            "match": "0.641",
+            "note": "fastText v0 held-out Spearman rho vs oracle"
+          },
+          {
+            "match": "5,?613",
+            "note": "usable oracle labels after 1387 API/parse failures from 7000 sampled"
+          },
+          {
+            "match": "\\$32\\.73",
+            "note": "API spend, under the $50 cap (the one hard target)"
+          },
+          {
+            "match": "0.875",
+            "note": "fast-transformer AUC (gen-2), a recommendation not a deployment"
+          },
+          {
+            "match": "0.41M",
+            "note": "fast-transformer FLOPs/token, under the <1M budget"
+          },
+          {
+            "match": "0.852",
+            "note": "source identity alone predicts oracle at AUC 0.852 (eta^2=0.41) -- the confound; above fastText's 0.846"
+          },
+          {
+            "match": "raising oracle-AUC does not fix",
+            "note": "team conclusion that the metric itself is flawed / domain-sorting defect unfixed by higher AUC"
+          },
+          {
+            "match": "6849",
+            "note": "gen-3 bug: sorts by domain not intrinsic quality; root cause = source-recoverable label"
+          },
+          {
+            "match": "6860",
+            "note": "gen-3 bug: near-constant scores; 12 of 98 sources stddev<0.1"
+          },
+          {
+            "match": "7040",
+            "note": "gen-3 RFC (calibrated/coherent), open 2026-07-10, NOT merged/deployed"
+          },
+          {
+            "match": "rav/quality-coherence",
+            "note": "branch holding the content-type-aware, source-blind rubric + pooled ranker fix"
+          },
+          {
+            "match": "0.44|0.69",
+            "note": "Spearman vs NEW coherent-quality target 0.44->0.69 (not comparable to old oracle-AUC)"
+          },
+          {
+            "match": "both domain and quality classifiers are v0",
+            "note": "rav quote framing v0 as intentionally-provisional e2e placeholder"
+          },
+          {
+            "match": "not.*deploy|never.*wire|recommendation",
+            "note": "fast-transformer was recommended, not adopted into the inference path; deployed = v0"
+          },
+          {
+            "match": "marin-public|quality-score-debugging",
+            "note": "classifier debugging report already published to world-readable public bucket"
+          },
+          {
+            "match": "dolma3-fasttext-quality",
+            "note": "AllenAI openly-released analogous classifier, consumed by Marin (#5812) -- open precedent"
+          },
+          {
+            "match": "no.*(decision|explicit)|unarticulated|gap",
+            "note": "no explicit weight-release decision or ToS blocker exists in corpus; provenance (Claude labels) is real but undiscussed"
+          },
+          {
+            "match": "distill",
+            "note": "labels distilled entirely from Claude outputs -- the one genuine provenance constraint"
+          },
+          {
+            "match": "v6e",
+            "note": "fast-transformer ran on TPU v6e-4 (JAX/Equinox, Iris launch, eu-west4)"
+          }
+        ],
+        "note": "Gold answer written and fully corpus-verified: three generations (deployed fastText v0 sonnet46-thr05 #5810; recommended-not-deployed fast-transformer #6739/#6741; open-RFC calibrated relabel #6849/#6860/#7040), oracle-AUC confounded by source-recoverability (0.852), and default-open but undecided weight sharing."
+      }
+    },
+    {
+      "id": "benchmarks",
+      "candidate": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/candidates/opus48-marin-research/benchmarks.md",
+        "citations": [
+          "5819",
+          "5836",
+          "5254",
+          "6070",
+          "6712",
+          "5005",
+          "5519",
+          "5803",
+          "5318",
+          "6811",
+          "6044",
+          "5863",
+          "5277",
+          "6238",
+          "5401",
+          "4550"
+        ],
+        "note": "Two-tier eval strategy: target benchmarks = Artificial Analysis Intelligence Index components (run generatively via evalchemy, Qwen3-32B comparator); development proxies = the benchmark-leak-safe perplexity-gap suite, validated by PPL-to-downstream rank correlation."
+      },
+      "weaknesses": [
+        "Timeframe/altitude skew: the answer is almost entirely the May-2026 AA-competency proxy redesign (#5819) and treats the Artificial Analysis Intelligence Index as THE canonical target. It omits the historically load-bearing eval tiers that actually ran during most of Marin's training: the DCLM CORE benchmark set + MMLU wired into `default_eval`/lm-eval-harness (PR #574 '14/22 CORE tasks', PR #817 stanford-crfm soft-metrics fork, #781 MMLU-on-Levanter debug, #448/#553), and the ~200-eval 'Mega-Evals' harness (PR #2663, Helw150). A reader would think AA is the only target framework.",
+        "Target-vs-achieved conflation in the target list: GDPval-AA, tau2-Bench Telecom, Terminal-Bench Hard, AA-LCR, AA-Omniscience, CritPt are listed as 'our target benchmarks,' but the corpus only shows Marin actually *running* an evalchemy/lm-eval subset (MATH500, AIME24/25/26, GPQA-Diamond, HLE, LiveCodeBench, MMLU-Pro). The full AA index components are aspirational competencies-to-approximate, not evals in the pipeline \u2014 the draft merges 'what AA measures' with 'what we execute.'",
+        "Entire subsystem missing: the Delphi scaling suite / #downstream-scaling 'proxy evals project.' No mention of #1337 (modernized-Pythia scaling suite), #3292 (Delphi Scaling Setup), stem issue #4550, #4389 (soft proxy for agentic benchmarks), the #downstream-scaling channel, or the *pre-registered Paloma macro-loss scaling targets* (1e21:2.75, 1e22:2.55, 1e23:2.40 from Helw150/#1337). Pre-registered scaling-law prediction is arguably the core development-proxy mechanism and is absent.",
+        "Missing the current live mixture-selection proxy objective: OLMoBaseEval Easy 'Table-9' BPB macro \u2014 the unweighted mean of 51 Table-9 BPB components (#6602, #6603, #6611, #6658, #6726, Calvin-Xu). #6608 explicitly records that this Table-9 macro objective *superseded* the uncheatable-eval-only objective. The draft cites Uncheatable Eval as a static proxy bundle but misses that the optimization target evolved \u2014 a stale-vs-close-out error.",
+        "Platform/harness attribution is thin: evalchemy and lm-eval-harness are named, but the Iris platform (iris.oa.dev job ladder), the Delphi scaling ladder, W&B eval logging (marin_moe / marin-community projects, metric keys like `eval/uncheatable_eval/bpb`), the stanford-crfm lm-eval-harness *fork* with soft metrics, and OLMES (8-shot COT harness differences that changed marin-32b numbers) are omitted. The answer doesn't say *where* each tier is computed.",
+        "Ownership skew: nearly every claim is attributed to dlwh. The evals area is led/populated by willheld (William Held, #evals + Mega-Evals + 32B), with Calvin-Xu (OLMix/Table-9 scaling), ClassicLarry/Larry Dial (67B-A2B pre-registration), Helw150 + kothasuhas + rohithck/RohithKuditipudi (downstream-scaling proxies), nikil-ravi (default_eval/CORE), Kevin Xiang Li (32B). Mis-attribution obscures who owns each definition.",
+        "Citation-precision / target-vs-achieved slip on the Paloma numbers: the '2.269 preregistered stage-1 target' is actually in #6044 (ClassicLarry, 2026-06-27, seqlen 8192 / 1024 seqs), not #6811. #6811 is ihodes' *hero-run* issue whose acceptance criteria are still a placeholder ('pass@256 on X Y Z evals'), so it should not be cited as the source of a preregistered loss target. The '2.277 2T cooldown' reading is unpinned.",
+        "marin-32b target-vs-achieved understated: the draft reduces the 32B target to a Qwen3-32B *bpb gap* (#5093-#5098, +0.0142 bpb). The real released-model story is the downstream *generation-benchmark* comparison and harness caveats in #marin-32b (OLMES 8-shot COT vs lm-eval, 'excluding generation benchmarks for now', 'our Qwen must be mildly different') \u2014 i.e. what 'beating Qwen' means on actual benchmarks vs. perplexity."
+      ],
+      "n_digests": 5,
+      "gold": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/golds-proposed/benchmarks.md",
+        "must_have_citations": [
+          "574",
+          "817",
+          "1337",
+          "6611",
+          "6726",
+          "6608",
+          "5819",
+          "2779",
+          "4550",
+          "6044"
+        ],
+        "nice_citations": [
+          "482",
+          "448",
+          "658",
+          "672",
+          "781",
+          "2663",
+          "3690",
+          "4447",
+          "4697",
+          "4389",
+          "3292",
+          "6602",
+          "6665",
+          "5519",
+          "6757",
+          "6712",
+          "5005",
+          "5254",
+          "5836",
+          "6811",
+          "1125",
+          "1215",
+          "6362",
+          "5053"
+        ],
+        "forbidden_citations": [
+          "6603"
+        ],
+        "key_facts": [
+          {
+            "match": "14/22",
+            "note": "PR #574 wired 14 of 22 DCLM CORE MCQ tasks into default_eval (nikil-ravi); the load-bearing during-training MCQ tier for most of training."
+          },
+          {
+            "match": "soft metrics",
+            "note": "PR #817 switched to the stanford-crfm/lm-evaluation-harness fork logging soft/BPB metrics; fork mainly de-Torches lm-eval; being retired toward EleutherAI mainline in 2026."
+          },
+          {
+            "match": "2.75",
+            "note": "Delphi #1337 pre-registration (Helw150, 1.9 asymptote): 1e21:2.75, 1e22:2.55, 1e23:2.40 Paloma macro-loss vs FLOPs \u2014 the core scaling-proxy mechanism; projected/target, not achieved."
+          },
+          {
+            "match": "2.53",
+            "note": "Achieved 1e22 Delphi-Nemotron macro loss = 2.53, beat the 2.55 forecast; 1e21 achieved 2.7581; no final 1e23 number in corpus."
+          },
+          {
+            "match": "2.234",
+            "note": "MoE isoflop 1e23 (#4697, d5120 129B/16B) final Paloma macro loss 2.234 vs predicted 2.252 \u2014 same L\u221e+A\u00b7C^(-\u03b1) pre-registration methodology, separate ladder from Delphi."
+          },
+          {
+            "match": "Table.9|table9|51",
+            "note": "Current live mixture/DSP-selection objective = OLMoBaseEval Easy Table-9 unweighted 51-component BPB macro (Calvin-Xu, #6611/#6726), computed natively in Levanter/TPU fp32 byte-denominator."
+          },
+          {
+            "match": "supersed",
+            "note": "#6608: the Table-9 macro objective superseded the Uncheatable-Eval-only objective for mixture selection, but eval/uncheatable_eval/bpb remained a coexisting validation target (scoped, not total)."
+          },
+          {
+            "match": "v4.0.4",
+            "note": "AA Intelligence Index v4.0.4 (#5819) is the headline TARGET framework: GDPval-AA, tau2-Bench Telecom, Terminal-Bench Hard, SciCode, AA-LCR, AA-Omniscience, IFBench, HLE, GPQA Diamond, CritPt \u2014 competencies to approximate, mostly NOT executed."
+          },
+          {
+            "match": "[Ee]valchemy",
+            "note": "Only a reasoning subset is actually executed as generative evals via Evalchemy on TPU/vLLM (#2779/#3690): AIME24/25/26, MATH500, GPQA Diamond, LiveCodeBench, HumanEval+/MBPP+, etc. \u2014 target-vs-executed distinction."
+          },
+          {
+            "match": "4550|downstream.scaling",
+            "note": "#4550 downstream-scaling proxy-evals project (RohithKuditipudi): predict held-out largest model's downstream perf from cheaper ladder runs; #4389 (soft agentic proxy, negative result) superseded by it."
+          },
+          {
+            "match": "2.269",
+            "note": "67B-A2B hero-run stage-1 (8T-token) preregistered Paloma target 2.269 @ seqlen 8192/1024 seqs is in #6044 (ClassicLarry), a PROJECTION; NOT #6811 (which is an ihodes placeholder 'pass@256 on X Y Z')."
+          },
+          {
+            "match": "61.96|64.66",
+            "note": "Comparator target 'beat Qwen': marin-32b-base 61.96 vs Qwen2.5-32B 64.66, Olmo-3-32B 63.20 on lm-eval pretraining suite; gaps in math/code/reasoning; OLMES 8-shot-COT harness caveats on generation benchmarks."
+          },
+          {
+            "match": "Mega-Evals|~?200",
+            "note": "Mega-Evals (#2663, ~200 lm-eval tasks, Helw150) never merged (auto-closed for inactivity); not the load-bearing default set."
+          }
+        ],
+        "note": "Verified gold synthesizes the historical default_eval tier (#574/#817), the pre-registered Paloma macro-loss scaling proxies (#1337/#4697), the current Table-9 BPB macro objective (#6611/#6726, superseding uncheatable #6608), the AA v4.0.4 target framework vs executed Evalchemy subset (#5819/#2779), downstream-scaling proxies (#4550), and hero-run loss targets (#6044); fixed the draft's #6811\u2192#6044 misattribution and the #5836 issue\u2192PR slip."
+      }
+    },
+    {
+      "id": "h100-67b",
+      "candidate": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/candidates/opus48-marin-research/h100-67b.md",
+        "citations": [
+          "4302",
+          "6052",
+          "6367",
+          "6493",
+          "6532",
+          "6534",
+          "6597",
+          "6716",
+          "6044",
+          "4312",
+          "6693",
+          "6998",
+          "6979",
+          "6711",
+          "7116"
+        ],
+        "note": "The 67B-A2B was originally the June H100 hero run but stalled on a first-step memory wall + Muon/PP interconnect costs, topped out at ~19.9% MFU (4 nodes, SGD/Adam, never cleared 20%), and was moved to TPU v4-2048; later H100 numbers (23.8% d2048 validation, 26.5% weak-scale) are smaller/different shapes, not the 67B-A2B itself."
+      },
+      "weaknesses": [
+        "STALE CLOSE-OUT (biggest gap): The draft's 'what didn't work' concludes PP was parked (#6534 closed, moved to rjpower/marin-experiments#11) and H100 became validation-only for the 67B. That is the June-26 verdict. The frozen July 6-12 corpus reverses it: David Hall's fused EP kernel (#6597) is 'showing promise at getting genuine overlap with the all-gathers where nothing else had,' and on July 10 he flagged JaxPP pipeline-parallel MoE training (#7024) 'declaring Hopper is back on the menu.' The GPU Upskilling Master Plan (#6998) names PP as 'the real fix' and sets an explicit XXB-A2B-on-Hopper target of 20-25% MFU on 128-256 H100s. The answer reads as 'we gave up on H100 for the 67B,' when the close-out state is an active, re-scoped Hopper push.",
+        "MISSING THE ITEMIZED ROOFLINE: The most definitive 'what worked / what cost what' artifact is Larry Dial's GPU MFU Learning Path (#6979), which builds the Hopper story from an lm_head-only CE bench at 50.3% MFU, to a full dense d2560/26-layer model at 56.2% (FA4 CUTLASS, ZeRO-1, scan+full remat), then an itemized give-back to 26.7% for full model.py as each MoE correctness feature is switched on, with real Muon's Newton-Schulz the single biggest give-back (~3.7 pts) and each norm ~0.4-1 pt. The draft gives only top-line numbers and never surfaces this per-feature attribution, nor the June MAY-042 16-node profile (65.7% compute / 33.7% comm; forward/backward split MoE 43% / XLA CE 17% / FA4 10% / collectives 5%).",
+        "TARGET-VS-ACHIEVED / SCALE AMBIGUITY ON THE 'FINAL MFU': The load-bearing 19.9% is on FOUR nodes (= 32 GPUs), with SGD/Adam (Muon shelved), on a proxy shape \u2014 not the 256-expert d2560 production shape, not the production optimizer, and at 1/4 the scale of the actual bar (#6693 = '>20% MFU at 128 GPUs'). The draft says 'four nodes' without converting to GPU count or flagging that the bar sits at a 4x-larger scale. The weak-scaling finding (flat 26.7->26.5% from 8 to 64 GPUs via DDP replica, but sharding the model across nodes 'costs about 4 points') is exactly the evidence for whether a 4-node number projects to 128, and is not connected to the 19.9% figure.",
+        "UNRECONCILED FAILED FULL-SHAPE RUNS: The draft's caveat says Larry Dial's dial-h100-fullmodelpy-d2560-e64-muonh-sonic runs (7/07) are all 'state=failed' so 'there is no clean full-shape H100 training MFU.' But that d2560/64-expert model.py IS the '26.5% weak-scaling' config (Larry proposed dropping 256->64 experts as 'the H100 working copy'), so a measured MFU for it does exist. The draft conflates 'wandb state=failed' (likely short/killed profile runs) with 'no MFU was measured.' The cw-may-d2560-e128-sgd-n8-b128/b64 runs (7/06, also failed) are the 8-node (64-GPU) SGD points and are left un-analyzed.",
+        "TPU RESOLUTION MFU IMPRECISION: The draft reports the June 67B run 'measured ~21.5% MFU' at EP=1 as if that were the launched run's number. Per #6044 / the summaries, 21.5% is the v4-1024 (512-chip) per-chip best that projected ~78 days; the team deliberately chose the full v4-2048 (1,024 chips), accepting LOWER per-chip MFU (~13-18.6%, sustained ~18.6% on the resumed run) for absolute throughput and ~45-day wall-clock. The 'final' TPU MFU is ~18.6%, not 21.5%.",
+        "BLACKWELL TIMELINE LOOSE: The draft says the H100 upskilling is 'ahead of the September Blackwell run.' The corpus shows two distinct Blackwell runs the work feeds: an Aug-1 ~120B-A8B on 2 NVL72 B200 (gated on B200 MFU clearing 20%; currently 17.8% via Tri Dao's QuACK/SonicMoE kernel, #7012/#6706/#6710) and a ~Sept-15 ~512B-A16B on 20T tokens on 12 NVL72. Collapsing these into one 'September Blackwell run' loses the near-term gate the H100 numbers actually serve.",
+        "MINOR CITATION SLIP: The quote 'hoping we don't have to switch to megatron!' is the body of #4312 (Improve end-to-end MFU of MOE on 8xH100 node), not a #4302 comment. #4302's framing is 'derisk whether... we need to move the training stack to Megatron/TE.' Also the partial-success side of DeepEP is understated: internode dispatch/combine smokes DID pass once launched under a supervised process-per-GPU shape (2 Iris tasks of H100x8 each spawning 8 workers), and the process-model incompatibility was filed upstream as jax-ml/jax#38551 (#6470)."
+      ],
+      "n_digests": 5,
+      "gold": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/golds-proposed/h100-67b.md",
+        "must_have_citations": [
+          "6044",
+          "6693",
+          "6367",
+          "6493",
+          "6532",
+          "4302",
+          "4312",
+          "6979",
+          "6998",
+          "7024",
+          "6597"
+        ],
+        "nice_citations": [
+          "6534",
+          "6470",
+          "6716",
+          "7012",
+          "6706",
+          "6710",
+          "6704",
+          "6811",
+          "6052",
+          "7116",
+          "7117"
+        ],
+        "forbidden_citations": [
+          "6042",
+          "6049",
+          "4300"
+        ],
+        "key_facts": [
+          {
+            "match": "19\\.9",
+            "note": "The load-bearing achieved June H100 headline: ~19.9% MFU on the production d2560/256-expert shape, SGD/Adam"
+          },
+          {
+            "match": "4 nodes|32 (H100|GPU)",
+            "note": "The 19.9% is at 4 nodes = 32 H100 \u2014 must convert/flag; the bar sits at 128 GPUs (4x scale)"
+          },
+          {
+            "match": "SGD/Adam|SGD.?Adam|Muon needs to go|shelve",
+            "note": "19.9% is on a SUBSTITUTE optimizer (SGD/Adam); production MuonH was shelved on GPU"
+          },
+          {
+            "match": "128 GPU|>20|20% bar",
+            "note": "The bar (#6693) is >20 MFU at 128 GPUs; never cleared on H100"
+          },
+          {
+            "match": "4\\.75|1\\.49",
+            "note": "Single-node MuonH ~4.75% MFU / 1.49 s-step vs SGD ~16.2% \u2014 the Muon tax, achieved"
+          },
+          {
+            "match": "121\\.9|122|expert-weight|all-gather",
+            "note": "Muon's real cost is the ~122 GiB bf16 re-shard that doesn't scale away with nodes"
+          },
+          {
+            "match": "OOM|memory wall|74 GiB|63.?74",
+            "note": "First-step memory wall on full-depth d2560/seq-4096: ~63-74 GiB before step 0 (#6367)"
+          },
+          {
+            "match": "TPU|v4-2048",
+            "note": "The 67B hero run was MOVED off GPU to TPU (v4-2048); 67B never trained on H100"
+          },
+          {
+            "match": "18\\.6",
+            "note": "The FINAL sustained TPU MFU is ~18.6% on v4-2048 (resume15k_v2) \u2014 NOT 21.5%"
+          },
+          {
+            "match": "21\\.5|21\\.54",
+            "note": "21.54% is the v4-1024 EP=1 per-chip best (78-day projection), not the launched-run final"
+          },
+          {
+            "match": "26\\.7|26\\.5",
+            "note": "July weak-scaling: flat 26.7% (8 GPU) -> 26.5% (64 H100), achieved, on the reduced 64-expert working copy"
+          },
+          {
+            "match": "64.?expert|18B|working copy",
+            "note": "26.5% is on the 64-expert ~18B working copy, NOT the 67B/256-expert production shape"
+          },
+          {
+            "match": "50\\.3|56\\.2",
+            "note": "The #6979 roofline: lm_head-only CE 50.3% and dense d2560 56.2% are CEILINGS, not delivered trainable MFU"
+          },
+          {
+            "match": "3\\.7",
+            "note": "In the give-back ladder, real Muon Newton-Schulz is the single biggest give-back at ~3.7 pts; each norm ~0.4-1 pt"
+          },
+          {
+            "match": "JaxPP|jaxpp|7024|18\\.26",
+            "note": "July close-out revival: JaxPP PP best measured 18.26% mean MFU on 32 H100, ~1.74 pts below bar"
+          },
+          {
+            "match": "back on the menu",
+            "note": "July verdict reverses the June 'PP parked' close-out: Hopper is back on the menu (#7024, July 10)"
+          },
+          {
+            "match": "6597|fused|overlap.*all-gather",
+            "note": "Fused EP kernel (#6597) finally overlaps the all-gathers on NVLink; the July 'real fix' vehicle"
+          },
+          {
+            "match": "20.?25|128.?256",
+            "note": "Target (#6998): 20-25% MFU on 128-256 H100 for the XXB-A2B on Hopper"
+          },
+          {
+            "match": "6534|parked|closed unmerged",
+            "note": "June hand-rolled PP (#6532/PR#6534) was parked/closed unmerged after failing to beat FSDP on GPU (2.62x slower)"
+          },
+          {
+            "match": "megatron|Megatron",
+            "note": "Strategic frame: derisk whether to stay JAX-native or move to Megatron/TE (#4302); 'hoping we dont have to switch to megatron' is #4312's body"
+          },
+          {
+            "match": "ring",
+            "note": "Ring EP stayed the fastest measured backend; DeepEP (~19.7 vs ~16) never beat it and never reached a train step"
+          },
+          {
+            "match": "23\\.8",
+            "note": "The ~23.8% is a smaller ~11B-A1.5B d2048 validation POC (#6716), NOT the 67B-A2B"
+          },
+          {
+            "match": "17\\.8|B200|Blackwell",
+            "note": "H100 work feeds a near-term B200 20% gate (17.8% achieved) for the ~Aug-1 ~120B-A8B run, distinct from the ~Sept-15 ~512B-A16B run"
+          }
+        ],
+        "note": "Gold written and fully verified; both June 15-21 and July 6-12 weekly summaries are in-corpus and ground the post-freeze issues (#6979/#6998/#7024/#7012), correcting the draft's stale 'gave-up-on-H100' arc, missing roofline, and 21.5%-vs-18.6% TPU-final slip."
+      }
+    },
+    {
+      "id": "inference",
+      "candidate": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/candidates/opus48-marin-research/inference.md",
+        "citations": [
+          "6867",
+          "6709",
+          "6042",
+          "6041",
+          "6664",
+          "6891",
+          "6966",
+          "6869",
+          "6870",
+          "7052",
+          "6335",
+          "6983",
+          "7113",
+          "7117",
+          "7085",
+          "7097",
+          "7025",
+          "7094",
+          "7111",
+          "7133",
+          "7106",
+          "7107"
+        ],
+        "note": "Two inference tracks: Romain Yon owns GrugMoE vLLM enablement (TPU closed via #6664, GPU EP8 validated), Isaac Hodes owns rollout-speed epic #6709 (still baseline-stage); MarinSkyRL (Feuer) gives the only real perf numbers (~2.5h/step, ~10M tok/step, 64xH100); open issues incl. #7117 NCCL export error, #7085 TPU RPA v3, #6983 vLLM wedge, #6870 undefined perf DoD."
+      },
+      "weaknesses": [
+        "MISSING SUBSYSTEM (Iris): The draft frames 'inference' almost entirely as (a) GrugMoE vLLM enablement and (b) RL rollout speed, and omits the actual serving substrate that both ride on \u2014 the Iris inference service (Romain Yon/yonromai). Iris is a vLLM-only service that owns lifecycle, readiness, request brokering, cleanup and diagnostics behind a RunningModel/OpenAI-compatible HTTP handoff (Design PR #5400, MVP #5351, RFC 01 #4841, 'Served Model Eval Handoff' RFC #5285, actor-proxy #4109). Critically, the #6983 'brokered vLLM wedge' the draft lists is a wedge in exactly this brokering layer, but the draft never names Iris as the broker \u2014 so the reader can't tell where the bug lives.",
+        "MISSING ROLE/COMPONENTS (#6500): The draft never mentions the [Epic] Inference / Serving Infrastructure Specialist (#6500, penfever = Benjamin Feuer), which is the public definition of who owns inference. It scopes THREE components \u2014 Marin Inference Server, Marin Format Library (authoritative render/parse of chat format), and Marin Agent Harness (Bash/Read/Write/Subagent/WebFetch/WebSearch, LLM-judge, trace extraction). The draft covers only the server-ish slice and omits Format Library and Agent Harness entirely, so 'who is doing inference work' is under-answered.",
+        "PLATFORM ATTRIBUTION ERROR: The draft asserts MarinSkyRL / 131k RL 'is now running on CoreWeave H100s (#7052).' But the MoE bring-up primary (#6335, 'Stand up router replay and TIS on MarinSkyRL', penfever) is on JSC (J\u00fclich) and hits GH200 device-pinning issues \u2014 i.e. GH200s, not H100s. The '64\u00d7H100' fit numbers and the JSC GH200 80B work are two different clusters/chips, and the draft conflates them into one CoreWeave/H100 story. Cluster of the 64\u00d7H100 run is itself unverified.",
+        "TARGET-VS-ACHIEVED / METRIC MISLABELING: The draft files '~2.5hr/step, ~10M tokens/step, 64\u00d7H100' under 'RL rollout THROUGHPUT.' The source thread shows this is an RL *step* time (inference passes + gather + train), and Russell Power explicitly asks Feuer to decompose it \u2014 it is not a pure inference/serving throughput (tok/s) number and is never decomposed into inference-vs-train. No genuine serving tok/s baseline exists; presenting step-time as inference throughput overstates the performance evidence.",
+        "'NO BASELINE' OVERSTATED \u2014 IGNORES PRIOR QUANTIFIED WORK: The draft says the rollout-speed epic (#6709) has 'no baseline.' But #6709 itself cites #2237 (AlienKevin's 'Benchmark and speed up async RL', closed with a measured 4.1\u21924.15.4 req/s, 3.7x speedup, sequence-packing/vocab-tiling findings) and #4719 (SWE-ZERO 3.4x per-worker rollout throughput). Real, quantified rollout-throughput baselines exist in-corpus; the draft neither surfaces them nor notes they're the natural baseline #6709 should build on.",
+        "INCOMPLETE PEOPLE MAP: The draft's roster is GrugMoE-serving-centric (Yon, Hodes, Feuer, Held, Kuditipudi, Power). It misses AlienKevin (async-RL perf lead, #2237/#4719), the Iris consumers/stakeholders (moojink, XenonMolecule, Mrinal Kumar, Ahmed M Ahmed), Ayush Alag (inference-time scaling), and eramis73 (vLLM CPU/GPU server utils #2124). It also never confirms penfever = Benjamin Feuer (it does), leaving the #6500 role owner implicit.",
+        "FORK ATTRIBUTION GAP: The draft references only 'Marin-owned vllm/tpu-inference forks.' The RL/MarinSkyRL track actually pulls from a separate mlfoundations/vllm fork (penfever/working branch, per Feuer's 2026-07-14 #inference message), distinct from marin-community/vllm used for GrugMoE serving. Two vLLM forks with different owners is a real 'where is it' fact the draft flattens.",
+        "STALE-VS-CLOSE-OUT + SINGLE-SUMMARY RELIANCE: The draft's whole 'open issues' section for the newest items (#7052, #6983, #7085, #7113, #7117, #7097) rests on ONE weekly summary because those bodies aren't in the frozen corpus (correctly flagged) \u2014 but it under-mines the in-corpus primaries it DOES have (#6335 router-replay/TIS/OOM detail; #6891 EP8 CoreWeave validation logs). Also #4401 (Iris low-priority inference RFC, Helw150) was auto-CLOSED as stale on 2026-07-04 and #5400 went stale \u2014 the draft doesn't register that the eval-serving RFC track partly stalled/closed vs. the GrugMoE track that actively closed as completed."
+      ],
+      "n_digests": 5,
+      "gold": {
+        "path": "/Users/isaach/workspace/mumwelt/evals/golds-proposed/inference.md",
+        "must_have_citations": [
+          "6500",
+          "6626",
+          "6627",
+          "6709",
+          "6867",
+          "6870",
+          "6042",
+          "6041",
+          "6664",
+          "6891",
+          "5285",
+          "5400",
+          "5887",
+          "4401",
+          "6335",
+          "6629",
+          "2237"
+        ],
+        "nice_citations": [
+          "4109",
+          "4841",
+          "5351",
+          "5368",
+          "6754",
+          "6556",
+          "6293",
+          "6966",
+          "6965",
+          "6868",
+          "6869",
+          "6655",
+          "6656",
+          "6218",
+          "4719",
+          "6227",
+          "6229",
+          "6230",
+          "6342",
+          "1876",
+          "7085",
+          "7117",
+          "7097",
+          "7113",
+          "7052",
+          "7111",
+          "7133",
+          "7106",
+          "7107",
+          "7164"
+        ],
+        "forbidden_citations": [],
+        "key_facts": [
+          {
+            "match": "Iris inference service",
+            "note": "The serving substrate the whole question hinges on; owned by Romain Yon (yonromai). Draft omitted it. #5285 handoff landed, #5400 design went stale, #5887 broker built."
+          },
+          {
+            "match": "Romain Yon|yonromai",
+            "note": "Owner of Iris inference service + GrugMoE vLLM enablement + the brokered path where #6983 lives."
+          },
+          {
+            "match": "6500",
+            "note": "[Epic] Inference/Serving Infrastructure Specialist (penfever=Benjamin Feuer) \u2014 the public role definition; charters 3 components (inference server, format library #6626, agent harness #6627). Role defined but not demonstrably filled."
+          },
+          {
+            "match": "6626",
+            "note": "Marin Format Library \u2014 bidirectional render/parse round-trip; chartered but NOT started; blocked on Stage-4 template decision."
+          },
+          {
+            "match": "6627",
+            "note": "Marin Agent Harness \u2014 chartered but NOT started; stopgaps = mini-swe-agent/Harbor/terminus-2."
+          },
+          {
+            "match": "2\\.5\\s*h|2\\.5hr|2\\.5 hr",
+            "note": "~2.5 hr/step is an END-TO-END RL step wall-clock (achieved), NOT a serving throughput; never decomposed into gen-vs-train. Russell Power asked for the split and got only a token count."
+          },
+          {
+            "match": "10M tokens|~10M",
+            "note": "~10M tokens GENERATED per step \u2014 a count, not a rate; the only decomposition Feuer gave."
+          },
+          {
+            "match": "64.?H100|64\u00d7H100|64xH100",
+            "note": "Qwen3-Coder-30B-A3B / Qwen3.5-35B-A3B fit on 64\u00d7H100 (8 nodes) on CoreWeave; achieved. 80B PROJECTED to need 96-128\u00d7H100."
+          },
+          {
+            "match": "GH200",
+            "note": "MoE R3/TIS bring-up (#6335, penfever) is on JSC Jupiter GH200 \u2014 the device-pinning saga is GH200, NOT CoreWeave H100. Do not conflate with the 64\u00d7H100 CoreWeave state."
+          },
+          {
+            "match": "Jupiter|JSC",
+            "note": "The 30B proof-of-life (job 849580, 6 nodes/24\u00d7GH200, ~12h walltime) and 80B bring-up ran on JSC Jupiter GH200 (#6335/#6655)."
+          },
+          {
+            "match": "CoreWeave",
+            "note": "The July 64\u00d7H100 'plumbed' state is on CoreWeave cw-us-east-02a H100 (#6629/#6293); GrugMoE EP8 validation also on CoreWeave/H100 (#6891)."
+          },
+          {
+            "match": "no baseline|establish the baseline|baseline",
+            "note": "#6709 makes 'measure/document the current serving baseline' its explicit first, not-yet-done task; no H100 rollout-tok/s baseline or target exists \u2014 literally true for H100 but understates prior TPU/A100 work."
+          },
+          {
+            "match": "2237",
+            "note": "Real quantified async-RL baseline: 3.7x from 4.1->15.4 req/s \u2014 but a TRAINER number, not rollout inference (actor already ~13 req/s). Do not present as generation baseline."
+          },
+          {
+            "match": "4719",
+            "note": "SWE-ZERO 3.4x per-worker rollout throughput (prefix caching) on vLLM/TPU v6e-4 \u2014 a real rollout baseline #6709 should build on."
+          },
+          {
+            "match": "EP8|expert.parallel",
+            "note": "GPU GrugMoE correctness validated at EP8 on 8\u00d7H100 CoreWeave (#6891/#6966); #6042 closed. Perf/RL-grade explicitly out of scope, deferred to #6870 (TODO DoD)."
+          },
+          {
+            "match": "4096",
+            "note": "The reproduced #6983 'wedge' was a 4096-token position-limit NaN->HTTP 400 (marin-8b-base), masked by VLLM_ALLOW_LONG_MAX_MODEL_LEN \u2014 NOT a broker bug; broker path measured clean. Original field wedge remains genuine but unreproduced."
+          },
+          {
+            "match": "stale",
+            "note": "#5400 (Iris inference-service design) went stale 2026-06-07; #4401 (centralized low-priority inference RFC) auto-closed stale 2026-07-04 \u2014 the design track partly stalled."
+          },
+          {
+            "match": "mlfoundations|penfever/working",
+            "note": "Two vLLM forks: marin-community/vllm (+tpu-inference) for GrugMoE serving vs mlfoundations/vllm penfever/working for RL/MarinSkyRL (Feuer 2026-07-14)."
+          },
+          {
+            "match": "~10x|12%|good enough for evals",
+            "note": "dlwh's Levanter inference ~10x faster, within ~12% of vLLM-TPU; 'good enough for evals' but vLLM a hard requirement for SkyRL (#6041)."
+          },
+          {
+            "match": "penfever|Benjamin Feuer",
+            "note": "penfever = Benjamin Feuer (@benjaminfeuer); owns MarinSkyRL RL-inference load and authored the role epic #6500."
+          }
+        ],
+        "note": "Verified gold merges the Iris serving substrate, the #6500 role charter + unstarted Format Library/Agent Harness, corrected GH200-vs-H100 cluster attribution, step-time-vs-throughput labeling, and the real TPU/A100 baselines #6709 ignores; #7052/#7113/#7164 confirmed absent from the frozen corpus."
+      }
+    }
+  ]
+}

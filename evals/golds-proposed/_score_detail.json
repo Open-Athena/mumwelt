@@ -1,0 +1,3738 @@
+{
+  "gpu": {
+    "question": "explain how training on GPUs is going",
+    "A_skill_frozen": {
+      "Q": 13.3,
+      "gate_failed": false,
+      "cite_recall": 0.333,
+      "fact_cov": 0.333,
+      "trap_pass": 0.0,
+      "forbidden_penalty": 10,
+      "must_have_hit": [
+        "6706",
+        "6716"
+      ],
+      "must_have_MISS": [
+        "6044",
+        "6304",
+        "6532",
+        "6689"
+      ],
+      "forbidden_cited": [
+        "6970"
+      ],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "crashed",
+          "note": "The 11.05B MLA 500B run crash-looped x5 on 07-13 (r2/r4-nosim, b512) and was only state=running (~24-31% of 500B) on 07-14 at freeze; NO finished MLA-500B run exists. Must contradict the 'completion ~July 13-14 / healthy' narrative.",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "gqa4",
+          "note": "The only FINISHED 500B H100 run is grug-d2048-L24-gqa4-500B-r8-nosim-v2 (10.77B / param_count 1.077e10, finished 07-09, train/loss 1.629, eval/bpb 0.7273, 500B tokens) \u2014 a DIFFERENT architecture (GQA-4) than the 11.05B MLA run the summary attributes completion to.",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "23.8",
+          "note": "23.8% MFU / 1.37M tok/s / 1.53 s/step / '64xH100' is SUMMARY-ASSERTED only \u2014 no W&B run in the corpus logs throughput/mfu or tokens_per_second for the d2048-500B family. Must be labeled asserted, not measured.",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "9.37",
+          "note": "#6304 drove 90B-5.3BA MoE MFU 2.8%->9.37% (3.3x, achieved) on 256 H100 cw-us-east-02a but MISSED its ~25% target; rjpower: ~9.4% is 'the practical pure-FSDP ceiling' (comm-bound on latency-bound FSDP all-gathers). Central target-vs-achieved gap.",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "17.8",
+          "note": "B200 single-node MFU 17.8% (summary-asserted, from out-of-corpus #7012) is BELOW the >=20% gate (#6706); 25% is a September target, not a result.",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "288 B200",
+          "note": "End-of-month B200 hero run size/rack is CONTESTED: #6689 says '288 B200 (4xNVL72)' with model size/FLOP/tokens/data/loss all blank/'?'; the weekly summary says '~120B-A8B on 2xNVL72'. Unresolved; run had NOT launched (gate unmet).",
+          "pass": false
+        },
+        {
+          "id": "7",
+          "rx": "6532",
+          "note": "The only corpus-verifiable pipeline-parallelism work is #6532 (zero-bubble PP), on TPU v6e (1.22x FSDP at v6e-32, 0.78x single-host), and it was PARKED / moved to rjpower/marin-experiments#11, PR #6534 closed unmerged. No in-corpus H100 PP MFU number.",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "v4-1024",
+          "note": "The identifiable in-flight TPU hero pretraining run is the 67B-A2B (d2560) 10T-token run on v4-1024 (#6044), ~21.5% MFU achieved; v4-2048 appears only as failed/reserved smoke tests. Draft's 'v4-2048' is the wrong slice.",
+          "pass": false
+        },
+        {
+          "id": "9",
+          "rx": "cute",
+          "note": "Freshest Blackwell state at freeze is the 07-16 gb200-d1280-sonic-cute attention-kernel sweep (reference/cudnn failed; only smaller gpu_fa4_cute finished) plus a d5120/L48 ~129B multi-rack bring-up (07-16->07-17): cudaasync/intrarack-pad unblocked up to 128 GPU (largest stable = 128-GPU/2-rack); 256/512/640-GPU all crashing. No MFU logged for any GB200 run.",
+          "pass": true
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "crashed",
+          "note": "The 11.05B MLA 500B run crash-looped x5 on 07-13 (r2/r4-nosim, b512) and was only state=running (~24-31% of 500B) on 07-14 at freeze; NO finished MLA-500B run exists. Must contradict the 'completion ~July 13-14 / healthy' narrative."
+        },
+        {
+          "rx": "gqa4",
+          "note": "The only FINISHED 500B H100 run is grug-d2048-L24-gqa4-500B-r8-nosim-v2 (10.77B / param_count 1.077e10, finished 07-09, train/loss 1.629, eval/bpb 0.7273, 500B tokens) \u2014 a DIFFERENT architecture (GQA-4) than the 11.05B MLA run the summary attributes completion to."
+        },
+        {
+          "rx": "9.37",
+          "note": "#6304 drove 90B-5.3BA MoE MFU 2.8%->9.37% (3.3x, achieved) on 256 H100 cw-us-east-02a but MISSED its ~25% target; rjpower: ~9.4% is 'the practical pure-FSDP ceiling' (comm-bound on latency-bound FSDP all-gathers). Central target-vs-achieved gap."
+        },
+        {
+          "rx": "288 B200",
+          "note": "End-of-month B200 hero run size/rack is CONTESTED: #6689 says '288 B200 (4xNVL72)' with model size/FLOP/tokens/data/loss all blank/'?'; the weekly summary says '~120B-A8B on 2xNVL72'. Unresolved; run had NOT launched (gate unmet)."
+        },
+        {
+          "rx": "6532",
+          "note": "The only corpus-verifiable pipeline-parallelism work is #6532 (zero-bubble PP), on TPU v6e (1.22x FSDP at v6e-32, 0.78x single-host), and it was PARKED / moved to rjpower/marin-experiments#11, PR #6534 closed unmerged. No in-corpus H100 PP MFU number."
+        },
+        {
+          "rx": "v4-1024",
+          "note": "The identifiable in-flight TPU hero pretraining run is the 67B-A2B (d2560) 10T-token run on v4-1024 (#6044), ~21.5% MFU achieved; v4-2048 appears only as failed/reserved smoke tests. Draft's 'v4-2048' is the wrong slice."
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": false,
+          "why": "cites forbidden #6970"
+        }
+      ]
+    },
+    "B_noskill_live": {
+      "Q": 33.9,
+      "gate_failed": false,
+      "cite_recall": 0.0,
+      "fact_cov": 0.111,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [],
+      "must_have_MISS": [
+        "6044",
+        "6304",
+        "6532",
+        "6689",
+        "6706",
+        "6716"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "crashed",
+          "note": "The 11.05B MLA 500B run crash-looped x5 on 07-13 (r2/r4-nosim, b512) and was only state=running (~24-31% of 500B) on 07-14 at freeze; NO finished MLA-500B run exists. Must contradict the 'completion ~July 13-14 / healthy' narrative.",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "gqa4",
+          "note": "The only FINISHED 500B H100 run is grug-d2048-L24-gqa4-500B-r8-nosim-v2 (10.77B / param_count 1.077e10, finished 07-09, train/loss 1.629, eval/bpb 0.7273, 500B tokens) \u2014 a DIFFERENT architecture (GQA-4) than the 11.05B MLA run the summary attributes completion to.",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "23.8",
+          "note": "23.8% MFU / 1.37M tok/s / 1.53 s/step / '64xH100' is SUMMARY-ASSERTED only \u2014 no W&B run in the corpus logs throughput/mfu or tokens_per_second for the d2048-500B family. Must be labeled asserted, not measured.",
+          "pass": false
+        },
+        {
+          "id": "4",
+          "rx": "9.37",
+          "note": "#6304 drove 90B-5.3BA MoE MFU 2.8%->9.37% (3.3x, achieved) on 256 H100 cw-us-east-02a but MISSED its ~25% target; rjpower: ~9.4% is 'the practical pure-FSDP ceiling' (comm-bound on latency-bound FSDP all-gathers). Central target-vs-achieved gap.",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "17.8",
+          "note": "B200 single-node MFU 17.8% (summary-asserted, from out-of-corpus #7012) is BELOW the >=20% gate (#6706); 25% is a September target, not a result.",
+          "pass": false
+        },
+        {
+          "id": "6",
+          "rx": "288 B200",
+          "note": "End-of-month B200 hero run size/rack is CONTESTED: #6689 says '288 B200 (4xNVL72)' with model size/FLOP/tokens/data/loss all blank/'?'; the weekly summary says '~120B-A8B on 2xNVL72'. Unresolved; run had NOT launched (gate unmet).",
+          "pass": false
+        },
+        {
+          "id": "7",
+          "rx": "6532",
+          "note": "The only corpus-verifiable pipeline-parallelism work is #6532 (zero-bubble PP), on TPU v6e (1.22x FSDP at v6e-32, 0.78x single-host), and it was PARKED / moved to rjpower/marin-experiments#11, PR #6534 closed unmerged. No in-corpus H100 PP MFU number.",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "v4-1024",
+          "note": "The identifiable in-flight TPU hero pretraining run is the 67B-A2B (d2560) 10T-token run on v4-1024 (#6044), ~21.5% MFU achieved; v4-2048 appears only as failed/reserved smoke tests. Draft's 'v4-2048' is the wrong slice.",
+          "pass": false
+        },
+        {
+          "id": "9",
+          "rx": "cute",
+          "note": "Freshest Blackwell state at freeze is the 07-16 gb200-d1280-sonic-cute attention-kernel sweep (reference/cudnn failed; only smaller gpu_fa4_cute finished) plus a d5120/L48 ~129B multi-rack bring-up (07-16->07-17): cudaasync/intrarack-pad unblocked up to 128 GPU (largest stable = 128-GPU/2-rack); 256/512/640-GPU all crashing. No MFU logged for any GB200 run.",
+          "pass": true
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "crashed",
+          "note": "The 11.05B MLA 500B run crash-looped x5 on 07-13 (r2/r4-nosim, b512) and was only state=running (~24-31% of 500B) on 07-14 at freeze; NO finished MLA-500B run exists. Must contradict the 'completion ~July 13-14 / healthy' narrative."
+        },
+        {
+          "rx": "gqa4",
+          "note": "The only FINISHED 500B H100 run is grug-d2048-L24-gqa4-500B-r8-nosim-v2 (10.77B / param_count 1.077e10, finished 07-09, train/loss 1.629, eval/bpb 0.7273, 500B tokens) \u2014 a DIFFERENT architecture (GQA-4) than the 11.05B MLA run the summary attributes completion to."
+        },
+        {
+          "rx": "23.8",
+          "note": "23.8% MFU / 1.37M tok/s / 1.53 s/step / '64xH100' is SUMMARY-ASSERTED only \u2014 no W&B run in the corpus logs throughput/mfu or tokens_per_second for the d2048-500B family. Must be labeled asserted, not measured."
+        },
+        {
+          "rx": "9.37",
+          "note": "#6304 drove 90B-5.3BA MoE MFU 2.8%->9.37% (3.3x, achieved) on 256 H100 cw-us-east-02a but MISSED its ~25% target; rjpower: ~9.4% is 'the practical pure-FSDP ceiling' (comm-bound on latency-bound FSDP all-gathers). Central target-vs-achieved gap."
+        },
+        {
+          "rx": "17.8",
+          "note": "B200 single-node MFU 17.8% (summary-asserted, from out-of-corpus #7012) is BELOW the >=20% gate (#6706); 25% is a September target, not a result."
+        },
+        {
+          "rx": "288 B200",
+          "note": "End-of-month B200 hero run size/rack is CONTESTED: #6689 says '288 B200 (4xNVL72)' with model size/FLOP/tokens/data/loss all blank/'?'; the weekly summary says '~120B-A8B on 2xNVL72'. Unresolved; run had NOT launched (gate unmet)."
+        },
+        {
+          "rx": "6532",
+          "note": "The only corpus-verifiable pipeline-parallelism work is #6532 (zero-bubble PP), on TPU v6e (1.22x FSDP at v6e-32, 0.78x single-host), and it was PARKED / moved to rjpower/marin-experiments#11, PR #6534 closed unmerged. No in-corpus H100 PP MFU number."
+        },
+        {
+          "rx": "v4-1024",
+          "note": "The identifiable in-flight TPU hero pretraining run is the 67B-A2B (d2560) 10T-token run on v4-1024 (#6044), ~21.5% MFU achieved; v4-2048 appears only as failed/reserved smoke tests. Draft's 'v4-2048' is the wrong slice."
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": true,
+          "why": ""
+        }
+      ]
+    },
+    "gold_targets": {
+      "must_have": [
+        "#6304",
+        "#6689",
+        "#6706",
+        "#6716",
+        "#6532",
+        "#6044"
+      ],
+      "forbidden": [
+        "#6970"
+      ],
+      "n_facts": 9
+    }
+  },
+  "h100-67b": {
+    "question": "What happened when we tried to bring the 67B A2B up on H100s? What did we try, what worked, what didn't, and what were the final MFUs?",
+    "A_skill_frozen": {
+      "Q": 87.7,
+      "gate_failed": false,
+      "cite_recall": 0.909,
+      "fact_cov": 0.739,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "4302",
+        "4312",
+        "6044",
+        "6367",
+        "6493",
+        "6532",
+        "6597",
+        "6693",
+        "6979",
+        "6998"
+      ],
+      "must_have_MISS": [
+        "7024"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "19\\.9",
+          "note": "The load-bearing achieved June H100 headline: ~19.9% MFU on the production d2560/256-expert shape, SGD/Adam",
+          "pass": true
+        },
+        {
+          "id": "2",
+          "rx": "4 nodes|32 (H100|GPU)",
+          "note": "The 19.9% is at 4 nodes = 32 H100 \u2014 must convert/flag; the bar sits at 128 GPUs (4x scale)",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "SGD/Adam|SGD.?Adam|Muon needs to go|shelve",
+          "note": "19.9% is on a SUBSTITUTE optimizer (SGD/Adam); production MuonH was shelved on GPU",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "128 GPU|>20|20% bar",
+          "note": "The bar (#6693) is >20 MFU at 128 GPUs; never cleared on H100",
+          "pass": true
+        },
+        {
+          "id": "5",
+          "rx": "4\\.75|1\\.49",
+          "note": "Single-node MuonH ~4.75% MFU / 1.49 s-step vs SGD ~16.2% \u2014 the Muon tax, achieved",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "121\\.9|122|expert-weight|all-gather",
+          "note": "Muon's real cost is the ~122 GiB bf16 re-shard that doesn't scale away with nodes",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "OOM|memory wall|74 GiB|63.?74",
+          "note": "First-step memory wall on full-depth d2560/seq-4096: ~63-74 GiB before step 0 (#6367)",
+          "pass": true
+        },
+        {
+          "id": "8",
+          "rx": "TPU|v4-2048",
+          "note": "The 67B hero run was MOVED off GPU to TPU (v4-2048); 67B never trained on H100",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "18\\.6",
+          "note": "The FINAL sustained TPU MFU is ~18.6% on v4-2048 (resume15k_v2) \u2014 NOT 21.5%",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "21\\.5|21\\.54",
+          "note": "21.54% is the v4-1024 EP=1 per-chip best (78-day projection), not the launched-run final",
+          "pass": true
+        },
+        {
+          "id": "11",
+          "rx": "26\\.7|26\\.5",
+          "note": "July weak-scaling: flat 26.7% (8 GPU) -> 26.5% (64 H100), achieved, on the reduced 64-expert working copy",
+          "pass": true
+        },
+        {
+          "id": "12",
+          "rx": "64.?expert|18B|working copy",
+          "note": "26.5% is on the 64-expert ~18B working copy, NOT the 67B/256-expert production shape",
+          "pass": true
+        },
+        {
+          "id": "13",
+          "rx": "50\\.3|56\\.2",
+          "note": "The #6979 roofline: lm_head-only CE 50.3% and dense d2560 56.2% are CEILINGS, not delivered trainable MFU",
+          "pass": false
+        },
+        {
+          "id": "14",
+          "rx": "3\\.7",
+          "note": "In the give-back ladder, real Muon Newton-Schulz is the single biggest give-back at ~3.7 pts; each norm ~0.4-1 pt",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "JaxPP|jaxpp|7024|18\\.26",
+          "note": "July close-out revival: JaxPP PP best measured 18.26% mean MFU on 32 H100, ~1.74 pts below bar",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "back on the menu",
+          "note": "July verdict reverses the June 'PP parked' close-out: Hopper is back on the menu (#7024, July 10)",
+          "pass": false
+        },
+        {
+          "id": "17",
+          "rx": "6597|fused|overlap.*all-gather",
+          "note": "Fused EP kernel (#6597) finally overlaps the all-gathers on NVLink; the July 'real fix' vehicle",
+          "pass": true
+        },
+        {
+          "id": "18",
+          "rx": "20.?25|128.?256",
+          "note": "Target (#6998): 20-25% MFU on 128-256 H100 for the XXB-A2B on Hopper",
+          "pass": true
+        },
+        {
+          "id": "19",
+          "rx": "6534|parked|closed unmerged",
+          "note": "June hand-rolled PP (#6532/PR#6534) was parked/closed unmerged after failing to beat FSDP on GPU (2.62x slower)",
+          "pass": true
+        },
+        {
+          "id": "20",
+          "rx": "megatron|Megatron",
+          "note": "Strategic frame: derisk whether to stay JAX-native or move to Megatron/TE (#4302); 'hoping we dont have to switch to megatron' is #4312's body",
+          "pass": true
+        },
+        {
+          "id": "21",
+          "rx": "ring",
+          "note": "Ring EP stayed the fastest measured backend; DeepEP (~19.7 vs ~16) never beat it and never reached a train step",
+          "pass": true
+        },
+        {
+          "id": "22",
+          "rx": "23\\.8",
+          "note": "The ~23.8% is a smaller ~11B-A1.5B d2048 validation POC (#6716), NOT the 67B-A2B",
+          "pass": true
+        },
+        {
+          "id": "23",
+          "rx": "17\\.8|B200|Blackwell",
+          "note": "H100 work feeds a near-term B200 20% gate (17.8% achieved) for the ~Aug-1 ~120B-A8B run, distinct from the ~Sept-15 ~512B-A16B run",
+          "pass": true
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "4 nodes|32 (H100|GPU)",
+          "note": "The 19.9% is at 4 nodes = 32 H100 \u2014 must convert/flag; the bar sits at 128 GPUs (4x scale)"
+        },
+        {
+          "rx": "18\\.6",
+          "note": "The FINAL sustained TPU MFU is ~18.6% on v4-2048 (resume15k_v2) \u2014 NOT 21.5%"
+        },
+        {
+          "rx": "50\\.3|56\\.2",
+          "note": "The #6979 roofline: lm_head-only CE 50.3% and dense d2560 56.2% are CEILINGS, not delivered trainable MFU"
+        },
+        {
+          "rx": "3\\.7",
+          "note": "In the give-back ladder, real Muon Newton-Schulz is the single biggest give-back at ~3.7 pts; each norm ~0.4-1 pt"
+        },
+        {
+          "rx": "JaxPP|jaxpp|7024|18\\.26",
+          "note": "July close-out revival: JaxPP PP best measured 18.26% mean MFU on 32 H100, ~1.74 pts below bar"
+        },
+        {
+          "rx": "back on the menu",
+          "note": "July verdict reverses the June 'PP parked' close-out: Hopper is back on the menu (#7024, July 10)"
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": true,
+          "why": ""
+        }
+      ]
+    },
+    "B_noskill_live": {
+      "Q": 70.4,
+      "gate_failed": false,
+      "cite_recall": 0.545,
+      "fact_cov": 0.609,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "4302",
+        "4312",
+        "6044",
+        "6367",
+        "6979",
+        "6998"
+      ],
+      "must_have_MISS": [
+        "6493",
+        "6532",
+        "6597",
+        "6693",
+        "7024"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "19\\.9",
+          "note": "The load-bearing achieved June H100 headline: ~19.9% MFU on the production d2560/256-expert shape, SGD/Adam",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "4 nodes|32 (H100|GPU)",
+          "note": "The 19.9% is at 4 nodes = 32 H100 \u2014 must convert/flag; the bar sits at 128 GPUs (4x scale)",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "SGD/Adam|SGD.?Adam|Muon needs to go|shelve",
+          "note": "19.9% is on a SUBSTITUTE optimizer (SGD/Adam); production MuonH was shelved on GPU",
+          "pass": false
+        },
+        {
+          "id": "4",
+          "rx": "128 GPU|>20|20% bar",
+          "note": "The bar (#6693) is >20 MFU at 128 GPUs; never cleared on H100",
+          "pass": true
+        },
+        {
+          "id": "5",
+          "rx": "4\\.75|1\\.49",
+          "note": "Single-node MuonH ~4.75% MFU / 1.49 s-step vs SGD ~16.2% \u2014 the Muon tax, achieved",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "121\\.9|122|expert-weight|all-gather",
+          "note": "Muon's real cost is the ~122 GiB bf16 re-shard that doesn't scale away with nodes",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "OOM|memory wall|74 GiB|63.?74",
+          "note": "First-step memory wall on full-depth d2560/seq-4096: ~63-74 GiB before step 0 (#6367)",
+          "pass": true
+        },
+        {
+          "id": "8",
+          "rx": "TPU|v4-2048",
+          "note": "The 67B hero run was MOVED off GPU to TPU (v4-2048); 67B never trained on H100",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "18\\.6",
+          "note": "The FINAL sustained TPU MFU is ~18.6% on v4-2048 (resume15k_v2) \u2014 NOT 21.5%",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "21\\.5|21\\.54",
+          "note": "21.54% is the v4-1024 EP=1 per-chip best (78-day projection), not the launched-run final",
+          "pass": true
+        },
+        {
+          "id": "11",
+          "rx": "26\\.7|26\\.5",
+          "note": "July weak-scaling: flat 26.7% (8 GPU) -> 26.5% (64 H100), achieved, on the reduced 64-expert working copy",
+          "pass": true
+        },
+        {
+          "id": "12",
+          "rx": "64.?expert|18B|working copy",
+          "note": "26.5% is on the 64-expert ~18B working copy, NOT the 67B/256-expert production shape",
+          "pass": true
+        },
+        {
+          "id": "13",
+          "rx": "50\\.3|56\\.2",
+          "note": "The #6979 roofline: lm_head-only CE 50.3% and dense d2560 56.2% are CEILINGS, not delivered trainable MFU",
+          "pass": true
+        },
+        {
+          "id": "14",
+          "rx": "3\\.7",
+          "note": "In the give-back ladder, real Muon Newton-Schulz is the single biggest give-back at ~3.7 pts; each norm ~0.4-1 pt",
+          "pass": true
+        },
+        {
+          "id": "15",
+          "rx": "JaxPP|jaxpp|7024|18\\.26",
+          "note": "July close-out revival: JaxPP PP best measured 18.26% mean MFU on 32 H100, ~1.74 pts below bar",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "back on the menu",
+          "note": "July verdict reverses the June 'PP parked' close-out: Hopper is back on the menu (#7024, July 10)",
+          "pass": false
+        },
+        {
+          "id": "17",
+          "rx": "6597|fused|overlap.*all-gather",
+          "note": "Fused EP kernel (#6597) finally overlaps the all-gathers on NVLink; the July 'real fix' vehicle",
+          "pass": false
+        },
+        {
+          "id": "18",
+          "rx": "20.?25|128.?256",
+          "note": "Target (#6998): 20-25% MFU on 128-256 H100 for the XXB-A2B on Hopper",
+          "pass": true
+        },
+        {
+          "id": "19",
+          "rx": "6534|parked|closed unmerged",
+          "note": "June hand-rolled PP (#6532/PR#6534) was parked/closed unmerged after failing to beat FSDP on GPU (2.62x slower)",
+          "pass": false
+        },
+        {
+          "id": "20",
+          "rx": "megatron|Megatron",
+          "note": "Strategic frame: derisk whether to stay JAX-native or move to Megatron/TE (#4302); 'hoping we dont have to switch to megatron' is #4312's body",
+          "pass": true
+        },
+        {
+          "id": "21",
+          "rx": "ring",
+          "note": "Ring EP stayed the fastest measured backend; DeepEP (~19.7 vs ~16) never beat it and never reached a train step",
+          "pass": true
+        },
+        {
+          "id": "22",
+          "rx": "23\\.8",
+          "note": "The ~23.8% is a smaller ~11B-A1.5B d2048 validation POC (#6716), NOT the 67B-A2B",
+          "pass": false
+        },
+        {
+          "id": "23",
+          "rx": "17\\.8|B200|Blackwell",
+          "note": "H100 work feeds a near-term B200 20% gate (17.8% achieved) for the ~Aug-1 ~120B-A8B run, distinct from the ~Sept-15 ~512B-A16B run",
+          "pass": true
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "19\\.9",
+          "note": "The load-bearing achieved June H100 headline: ~19.9% MFU on the production d2560/256-expert shape, SGD/Adam"
+        },
+        {
+          "rx": "4 nodes|32 (H100|GPU)",
+          "note": "The 19.9% is at 4 nodes = 32 H100 \u2014 must convert/flag; the bar sits at 128 GPUs (4x scale)"
+        },
+        {
+          "rx": "SGD/Adam|SGD.?Adam|Muon needs to go|shelve",
+          "note": "19.9% is on a SUBSTITUTE optimizer (SGD/Adam); production MuonH was shelved on GPU"
+        },
+        {
+          "rx": "18\\.6",
+          "note": "The FINAL sustained TPU MFU is ~18.6% on v4-2048 (resume15k_v2) \u2014 NOT 21.5%"
+        },
+        {
+          "rx": "JaxPP|jaxpp|7024|18\\.26",
+          "note": "July close-out revival: JaxPP PP best measured 18.26% mean MFU on 32 H100, ~1.74 pts below bar"
+        },
+        {
+          "rx": "back on the menu",
+          "note": "July verdict reverses the June 'PP parked' close-out: Hopper is back on the menu (#7024, July 10)"
+        },
+        {
+          "rx": "6597|fused|overlap.*all-gather",
+          "note": "Fused EP kernel (#6597) finally overlaps the all-gathers on NVLink; the July 'real fix' vehicle"
+        },
+        {
+          "rx": "6534|parked|closed unmerged",
+          "note": "June hand-rolled PP (#6532/PR#6534) was parked/closed unmerged after failing to beat FSDP on GPU (2.62x slower)"
+        },
+        {
+          "rx": "23\\.8",
+          "note": "The ~23.8% is a smaller ~11B-A1.5B d2048 validation POC (#6716), NOT the 67B-A2B"
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": true,
+          "why": ""
+        }
+      ]
+    },
+    "gold_targets": {
+      "must_have": [
+        "#6044",
+        "#6693",
+        "#6367",
+        "#6493",
+        "#6532",
+        "#4302",
+        "#4312",
+        "#6979",
+        "#6998",
+        "#7024",
+        "#6597"
+      ],
+      "forbidden": [
+        "#6042",
+        "#6049",
+        "#4300"
+      ],
+      "n_facts": 23
+    }
+  },
+  "muon": {
+    "question": "what is our current muon approach, and how did we end up here?",
+    "A_skill_frozen": {
+      "Q": 84.8,
+      "gate_failed": false,
+      "cite_recall": 0.889,
+      "fact_cov": 0.677,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "4034",
+        "5167",
+        "5596",
+        "5951",
+        "6044",
+        "6153",
+        "6493",
+        "6811"
+      ],
+      "must_have_MISS": [
+        "6074"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "MuonH",
+          "note": "Current production optimizer name; Muon + LR heuristic + Hyperball/Frobenius-hyperball constraint on matrix params.",
+          "pass": true
+        },
+        {
+          "id": "2",
+          "rx": "Newton-Schulz",
+          "note": "Core mechanism: momentum then Newton-Schulz orthogonalization of each 2-D update.",
+          "pass": true
+        },
+        {
+          "id": "3",
+          "rx": "May Recipe",
+          "note": "The recipe MuonH ships inside; merged to main in PR #6153 (ClassicLarry, 2026-06-04).",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "6153",
+          "note": "PR that merged the May Recipe (MuonH on the weight-matrix group) to main; RESTATES but is NOT the origin of the 2.12x.",
+          "pass": true
+        },
+        {
+          "id": "5",
+          "rx": "lm_head|output_proj",
+          "note": "Only lm_head/output_proj stays on AdamH; MuonH covers attn matmuls, MoE experts, shared expert, GatedNorms.",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "5719",
+          "note": "Attempt to move attention K,V to AdamH REGRESSED (+0.0140 loss at d512), so K/V stay on MuonH.",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "5951",
+          "note": "MuonH's own LR law refit for May Recipe; lr_coeff ~0.097, lr_tokens_exp -0.395, R^2=0.996 \u2014 but a units-bug self-correction cascade, so treat as committed direction not audited digits.",
+          "pass": true
+        },
+        {
+          "id": "8",
+          "rx": "67B",
+          "note": "Hero run = 67B-total / 2.01B-active MoE, d=2560, 256 experts K=4, ~10.07T tokens (~1.2e23 FLOPs), MuonH.",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "v4-2048",
+          "note": "Hero run is native to TPU v4-2048 us-central2; MuonH is the optimizer.",
+          "pass": true
+        },
+        {
+          "id": "10",
+          "rx": "2\\.12",
+          "note": "Must be labeled PROJECTED/scaling-law-derived (drop-1e18 fit, whole-recipe not Muon-alone), NOT a measured achieved result.",
+          "pass": true
+        },
+        {
+          "id": "11",
+          "rx": "6074",
+          "note": "TRUE origin of the 2.12x (ClassicLarry 2026-05-31 17:16); drop-1e18 fit pins alpha=0.0941 to v16 baseline -> uniform by construction.",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "drop|1e18",
+          "note": "Larry distrusts the 1e18 point ('Muon does disproportionately well at very small size with 1pct warmup'); the 2.12x depends on dropping it.",
+          "pass": false
+        },
+        {
+          "id": "13",
+          "rx": "mixed verdict|crossover",
+          "note": "#5596 gate-2 was a 'mixed verdict' with a projected crossover near C~1.65e21; left OPEN, not 'passed both gates'.",
+          "pass": false
+        },
+        {
+          "id": "14",
+          "rx": "0.0906|shallow|monotonic",
+          "note": "MuonH's Paloma exponent came in shallow and the loss advantage shrinks with scale (d512 -0.056 -> d1280 -0.0177); crossover retired as a warmup artifact via #5619 no-warmup PASS.",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "1[-\\s]*2%|overhead",
+          "note": "The load-bearing argument is measured wall-clock: 30-40% step speedup vs 1-2% Muon overhead, sound regardless of loss fit.",
+          "pass": true
+        },
+        {
+          "id": "16",
+          "rx": "4034",
+          "note": "Original 2026-03 question 'is Muon a net win/loss/wash on MoE?' (dlwh); closed 'Integrated MuonH' 2026-06-06.",
+          "pass": true
+        },
+        {
+          "id": "17",
+          "rx": "5167",
+          "note": "April bake-off (MuonH heuristic / AdamH-2x / Muon Vizier search); closed 'we went with MuonH here'.",
+          "pass": true
+        },
+        {
+          "id": "18",
+          "rx": "6493",
+          "note": "GPU cost investigation; #6492 closed as its duplicate.",
+          "pass": true
+        },
+        {
+          "id": "19",
+          "rx": "4\\.7|21,962",
+          "note": "Single 8xH100: MuonH ~4.75% MFU / 21,962 tok/s / 1.492 s vs SGD 16.19% MFU / 74,848 tok/s / 0.438 s; NS ran one-matrix-at-a-time.",
+          "pass": true
+        },
+        {
+          "id": "20",
+          "rx": "SGD",
+          "note": "SGD in #6493 is a cost-isolation CONTROL, not a real optimizer option.",
+          "pass": true
+        },
+        {
+          "id": "21",
+          "rx": "did not improve|grouped",
+          "note": "Grouped/stacked NS amortization did NOT succeed in training; only stack_batch_4d_sharded won in the isolated harness; exit path was pipeline parallelism.",
+          "pass": true
+        },
+        {
+          "id": "22",
+          "rx": "shelve|dropped|No muon",
+          "note": "GPU/Blackwell track DROPPED Muon (June-26 OA meeting); it's a separate future-readiness track for the Sept ~512B-A16B run, not a retreat from GPU to TPU.",
+          "pass": true
+        },
+        {
+          "id": "23",
+          "rx": "free|XLA|1\\.5",
+          "note": "On TPU Muon is essentially free (XLA hides NS); ~206ms/~0.9% of step on v4-1024; 1.49M tok/s MuonH vs 1.51M AdamH.",
+          "pass": false
+        },
+        {
+          "id": "24",
+          "rx": "18\\.6",
+          "note": "Live main run holds ~18.6% MFU on v4-2048 (resume15k_v2 after batch doubled to 67.1M tokens).",
+          "pass": false
+        },
+        {
+          "id": "25",
+          "rx": "2\\.27|2\\.2772",
+          "note": "First 2T cooldown (#6811) closed at Paloma macro_loss 2.2772 / bpb 0.8242.",
+          "pass": false
+        },
+        {
+          "id": "26",
+          "rx": "2\\.269",
+          "note": "Preregistered stage-1 target (seqlen 8192, 1024 seqs, pre-cooldown, 80% mark, first 8T tokens).",
+          "pass": false
+        },
+        {
+          "id": "27",
+          "rx": "apples",
+          "note": "2.2772 vs 2.269 is NOT apples-to-apples (cooldown fully decays LR, phase-2 mix, evaluates at 8x context).",
+          "pass": false
+        },
+        {
+          "id": "28",
+          "rx": "6811",
+          "note": "Intermediate-cooldown umbrella AND the open MuonH->Adam swap question on the 8 cooldown checkpoints.",
+          "pass": true
+        },
+        {
+          "id": "29",
+          "rx": "swap|Adam",
+          "note": "Live OPEN optimizer question (Larry, 2026-07-11): swap MuonH->Adam for mid-training and whether to carry optimizer state; unanswered in-corpus.",
+          "pass": true
+        },
+        {
+          "id": "30",
+          "rx": "Kaiyue Wen|WhenWen",
+          "note": "WhenWen = Kaiyue Wen \u2014 same person owns the gates (#5596/#5619) AND the frontier Hessian-corrected speedrun #7118; not a separate outsider.",
+          "pass": true
+        },
+        {
+          "id": "31",
+          "rx": "readiness|memory wall|19.9",
+          "note": "TPU chosen due to GPU cluster not ready (first-step memory wall + ~19.9% MFU) not raw MFU (H100 dry-run hit 23.8%); TPU is the mature native platform.",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "6074",
+          "note": "TRUE origin of the 2.12x (ClassicLarry 2026-05-31 17:16); drop-1e18 fit pins alpha=0.0941 to v16 baseline -> uniform by construction."
+        },
+        {
+          "rx": "drop|1e18",
+          "note": "Larry distrusts the 1e18 point ('Muon does disproportionately well at very small size with 1pct warmup'); the 2.12x depends on dropping it."
+        },
+        {
+          "rx": "mixed verdict|crossover",
+          "note": "#5596 gate-2 was a 'mixed verdict' with a projected crossover near C~1.65e21; left OPEN, not 'passed both gates'."
+        },
+        {
+          "rx": "0.0906|shallow|monotonic",
+          "note": "MuonH's Paloma exponent came in shallow and the loss advantage shrinks with scale (d512 -0.056 -> d1280 -0.0177); crossover retired as a warmup artifact via #5619 no-warmup PASS."
+        },
+        {
+          "rx": "free|XLA|1\\.5",
+          "note": "On TPU Muon is essentially free (XLA hides NS); ~206ms/~0.9% of step on v4-1024; 1.49M tok/s MuonH vs 1.51M AdamH."
+        },
+        {
+          "rx": "18\\.6",
+          "note": "Live main run holds ~18.6% MFU on v4-2048 (resume15k_v2 after batch doubled to 67.1M tokens)."
+        },
+        {
+          "rx": "2\\.27|2\\.2772",
+          "note": "First 2T cooldown (#6811) closed at Paloma macro_loss 2.2772 / bpb 0.8242."
+        },
+        {
+          "rx": "2\\.269",
+          "note": "Preregistered stage-1 target (seqlen 8192, 1024 seqs, pre-cooldown, 80% mark, first 8T tokens)."
+        },
+        {
+          "rx": "apples",
+          "note": "2.2772 vs 2.269 is NOT apples-to-apples (cooldown fully decays LR, phase-2 mix, evaluates at 8x context)."
+        },
+        {
+          "rx": "readiness|memory wall|19.9",
+          "note": "TPU chosen due to GPU cluster not ready (first-step memory wall + ~19.9% MFU) not raw MFU (H100 dry-run hit 23.8%); TPU is the mature native platform."
+        }
+      ],
+      "traps": []
+    },
+    "B_noskill_live": {
+      "Q": 74.2,
+      "gate_failed": false,
+      "cite_recall": 0.778,
+      "fact_cov": 0.484,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "4034",
+        "5167",
+        "5596",
+        "6044",
+        "6153",
+        "6493",
+        "6811"
+      ],
+      "must_have_MISS": [
+        "5951",
+        "6074"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "MuonH",
+          "note": "Current production optimizer name; Muon + LR heuristic + Hyperball/Frobenius-hyperball constraint on matrix params.",
+          "pass": true
+        },
+        {
+          "id": "2",
+          "rx": "Newton-Schulz",
+          "note": "Core mechanism: momentum then Newton-Schulz orthogonalization of each 2-D update.",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "May Recipe",
+          "note": "The recipe MuonH ships inside; merged to main in PR #6153 (ClassicLarry, 2026-06-04).",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "6153",
+          "note": "PR that merged the May Recipe (MuonH on the weight-matrix group) to main; RESTATES but is NOT the origin of the 2.12x.",
+          "pass": true
+        },
+        {
+          "id": "5",
+          "rx": "lm_head|output_proj",
+          "note": "Only lm_head/output_proj stays on AdamH; MuonH covers attn matmuls, MoE experts, shared expert, GatedNorms.",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "5719",
+          "note": "Attempt to move attention K,V to AdamH REGRESSED (+0.0140 loss at d512), so K/V stay on MuonH.",
+          "pass": false
+        },
+        {
+          "id": "7",
+          "rx": "5951",
+          "note": "MuonH's own LR law refit for May Recipe; lr_coeff ~0.097, lr_tokens_exp -0.395, R^2=0.996 \u2014 but a units-bug self-correction cascade, so treat as committed direction not audited digits.",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "67B",
+          "note": "Hero run = 67B-total / 2.01B-active MoE, d=2560, 256 experts K=4, ~10.07T tokens (~1.2e23 FLOPs), MuonH.",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "v4-2048",
+          "note": "Hero run is native to TPU v4-2048 us-central2; MuonH is the optimizer.",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "2\\.12",
+          "note": "Must be labeled PROJECTED/scaling-law-derived (drop-1e18 fit, whole-recipe not Muon-alone), NOT a measured achieved result.",
+          "pass": true
+        },
+        {
+          "id": "11",
+          "rx": "6074",
+          "note": "TRUE origin of the 2.12x (ClassicLarry 2026-05-31 17:16); drop-1e18 fit pins alpha=0.0941 to v16 baseline -> uniform by construction.",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "drop|1e18",
+          "note": "Larry distrusts the 1e18 point ('Muon does disproportionately well at very small size with 1pct warmup'); the 2.12x depends on dropping it.",
+          "pass": false
+        },
+        {
+          "id": "13",
+          "rx": "mixed verdict|crossover",
+          "note": "#5596 gate-2 was a 'mixed verdict' with a projected crossover near C~1.65e21; left OPEN, not 'passed both gates'.",
+          "pass": true
+        },
+        {
+          "id": "14",
+          "rx": "0.0906|shallow|monotonic",
+          "note": "MuonH's Paloma exponent came in shallow and the loss advantage shrinks with scale (d512 -0.056 -> d1280 -0.0177); crossover retired as a warmup artifact via #5619 no-warmup PASS.",
+          "pass": true
+        },
+        {
+          "id": "15",
+          "rx": "1[-\\s]*2%|overhead",
+          "note": "The load-bearing argument is measured wall-clock: 30-40% step speedup vs 1-2% Muon overhead, sound regardless of loss fit.",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "4034",
+          "note": "Original 2026-03 question 'is Muon a net win/loss/wash on MoE?' (dlwh); closed 'Integrated MuonH' 2026-06-06.",
+          "pass": true
+        },
+        {
+          "id": "17",
+          "rx": "5167",
+          "note": "April bake-off (MuonH heuristic / AdamH-2x / Muon Vizier search); closed 'we went with MuonH here'.",
+          "pass": true
+        },
+        {
+          "id": "18",
+          "rx": "6493",
+          "note": "GPU cost investigation; #6492 closed as its duplicate.",
+          "pass": true
+        },
+        {
+          "id": "19",
+          "rx": "4\\.7|21,962",
+          "note": "Single 8xH100: MuonH ~4.75% MFU / 21,962 tok/s / 1.492 s vs SGD 16.19% MFU / 74,848 tok/s / 0.438 s; NS ran one-matrix-at-a-time.",
+          "pass": false
+        },
+        {
+          "id": "20",
+          "rx": "SGD",
+          "note": "SGD in #6493 is a cost-isolation CONTROL, not a real optimizer option.",
+          "pass": true
+        },
+        {
+          "id": "21",
+          "rx": "did not improve|grouped",
+          "note": "Grouped/stacked NS amortization did NOT succeed in training; only stack_batch_4d_sharded won in the isolated harness; exit path was pipeline parallelism.",
+          "pass": true
+        },
+        {
+          "id": "22",
+          "rx": "shelve|dropped|No muon",
+          "note": "GPU/Blackwell track DROPPED Muon (June-26 OA meeting); it's a separate future-readiness track for the Sept ~512B-A16B run, not a retreat from GPU to TPU.",
+          "pass": false
+        },
+        {
+          "id": "23",
+          "rx": "free|XLA|1\\.5",
+          "note": "On TPU Muon is essentially free (XLA hides NS); ~206ms/~0.9% of step on v4-1024; 1.49M tok/s MuonH vs 1.51M AdamH.",
+          "pass": false
+        },
+        {
+          "id": "24",
+          "rx": "18\\.6",
+          "note": "Live main run holds ~18.6% MFU on v4-2048 (resume15k_v2 after batch doubled to 67.1M tokens).",
+          "pass": false
+        },
+        {
+          "id": "25",
+          "rx": "2\\.27|2\\.2772",
+          "note": "First 2T cooldown (#6811) closed at Paloma macro_loss 2.2772 / bpb 0.8242.",
+          "pass": false
+        },
+        {
+          "id": "26",
+          "rx": "2\\.269",
+          "note": "Preregistered stage-1 target (seqlen 8192, 1024 seqs, pre-cooldown, 80% mark, first 8T tokens).",
+          "pass": false
+        },
+        {
+          "id": "27",
+          "rx": "apples",
+          "note": "2.2772 vs 2.269 is NOT apples-to-apples (cooldown fully decays LR, phase-2 mix, evaluates at 8x context).",
+          "pass": false
+        },
+        {
+          "id": "28",
+          "rx": "6811",
+          "note": "Intermediate-cooldown umbrella AND the open MuonH->Adam swap question on the 8 cooldown checkpoints.",
+          "pass": true
+        },
+        {
+          "id": "29",
+          "rx": "swap|Adam",
+          "note": "Live OPEN optimizer question (Larry, 2026-07-11): swap MuonH->Adam for mid-training and whether to carry optimizer state; unanswered in-corpus.",
+          "pass": true
+        },
+        {
+          "id": "30",
+          "rx": "Kaiyue Wen|WhenWen",
+          "note": "WhenWen = Kaiyue Wen \u2014 same person owns the gates (#5596/#5619) AND the frontier Hessian-corrected speedrun #7118; not a separate outsider.",
+          "pass": false
+        },
+        {
+          "id": "31",
+          "rx": "readiness|memory wall|19.9",
+          "note": "TPU chosen due to GPU cluster not ready (first-step memory wall + ~19.9% MFU) not raw MFU (H100 dry-run hit 23.8%); TPU is the mature native platform.",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "Newton-Schulz",
+          "note": "Core mechanism: momentum then Newton-Schulz orthogonalization of each 2-D update."
+        },
+        {
+          "rx": "5719",
+          "note": "Attempt to move attention K,V to AdamH REGRESSED (+0.0140 loss at d512), so K/V stay on MuonH."
+        },
+        {
+          "rx": "5951",
+          "note": "MuonH's own LR law refit for May Recipe; lr_coeff ~0.097, lr_tokens_exp -0.395, R^2=0.996 \u2014 but a units-bug self-correction cascade, so treat as committed direction not audited digits."
+        },
+        {
+          "rx": "v4-2048",
+          "note": "Hero run is native to TPU v4-2048 us-central2; MuonH is the optimizer."
+        },
+        {
+          "rx": "6074",
+          "note": "TRUE origin of the 2.12x (ClassicLarry 2026-05-31 17:16); drop-1e18 fit pins alpha=0.0941 to v16 baseline -> uniform by construction."
+        },
+        {
+          "rx": "drop|1e18",
+          "note": "Larry distrusts the 1e18 point ('Muon does disproportionately well at very small size with 1pct warmup'); the 2.12x depends on dropping it."
+        },
+        {
+          "rx": "1[-\\s]*2%|overhead",
+          "note": "The load-bearing argument is measured wall-clock: 30-40% step speedup vs 1-2% Muon overhead, sound regardless of loss fit."
+        },
+        {
+          "rx": "4\\.7|21,962",
+          "note": "Single 8xH100: MuonH ~4.75% MFU / 21,962 tok/s / 1.492 s vs SGD 16.19% MFU / 74,848 tok/s / 0.438 s; NS ran one-matrix-at-a-time."
+        },
+        {
+          "rx": "shelve|dropped|No muon",
+          "note": "GPU/Blackwell track DROPPED Muon (June-26 OA meeting); it's a separate future-readiness track for the Sept ~512B-A16B run, not a retreat from GPU to TPU."
+        },
+        {
+          "rx": "free|XLA|1\\.5",
+          "note": "On TPU Muon is essentially free (XLA hides NS); ~206ms/~0.9% of step on v4-1024; 1.49M tok/s MuonH vs 1.51M AdamH."
+        },
+        {
+          "rx": "18\\.6",
+          "note": "Live main run holds ~18.6% MFU on v4-2048 (resume15k_v2 after batch doubled to 67.1M tokens)."
+        },
+        {
+          "rx": "2\\.27|2\\.2772",
+          "note": "First 2T cooldown (#6811) closed at Paloma macro_loss 2.2772 / bpb 0.8242."
+        },
+        {
+          "rx": "2\\.269",
+          "note": "Preregistered stage-1 target (seqlen 8192, 1024 seqs, pre-cooldown, 80% mark, first 8T tokens)."
+        },
+        {
+          "rx": "apples",
+          "note": "2.2772 vs 2.269 is NOT apples-to-apples (cooldown fully decays LR, phase-2 mix, evaluates at 8x context)."
+        },
+        {
+          "rx": "Kaiyue Wen|WhenWen",
+          "note": "WhenWen = Kaiyue Wen \u2014 same person owns the gates (#5596/#5619) AND the frontier Hessian-corrected speedrun #7118; not a separate outsider."
+        },
+        {
+          "rx": "readiness|memory wall|19.9",
+          "note": "TPU chosen due to GPU cluster not ready (first-step memory wall + ~19.9% MFU) not raw MFU (H100 dry-run hit 23.8%); TPU is the mature native platform."
+        }
+      ],
+      "traps": []
+    },
+    "gold_targets": {
+      "must_have": [
+        "#6044",
+        "#6153",
+        "#6074",
+        "#5596",
+        "#5951",
+        "#4034",
+        "#5167",
+        "#6493",
+        "#6811"
+      ],
+      "forbidden": [],
+      "n_facts": 31
+    }
+  },
+  "july": {
+    "question": "explain our july 2026 plan",
+    "A_skill_frozen": {
+      "Q": 86.9,
+      "gate_failed": false,
+      "cite_recall": 1.0,
+      "fact_cov": 0.625,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "6689",
+        "6704",
+        "6705",
+        "6706",
+        "6710",
+        "6716",
+        "6811",
+        "7073",
+        "7074"
+      ],
+      "must_have_MISS": [],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "preparation month",
+          "note": "July is explicitly a readiness/preparation month running to mid-August, not a finish line",
+          "pass": true
+        },
+        {
+          "id": "2",
+          "rx": "complete 67B",
+          "note": "milestone verbatim: complete 67B-A2B MoE; start XB-AYB MoE on B200s; start post-training Marin MoEs",
+          "pass": true
+        },
+        {
+          "id": "3",
+          "rx": "placeholder",
+          "note": "must flag that headline model sizes (120B-A8B, 512B-A16B, XB-AYB) are narrator/summary placeholders, not preregistered specs; #6689 title is 'nB-AmB XT on B200s'",
+          "pass": false
+        },
+        {
+          "id": "4",
+          "rx": "512B",
+          "note": "September hero run ~512B-A16B on 20T tokens when twelve NVL72 racks land ~Sept 15 (approximate, summary prose)",
+          "pass": true
+        },
+        {
+          "id": "5",
+          "rx": "120B",
+          "note": "end-of-month ~120B-A8B B200 run on 2 NVL72 (approximate)",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "August 30",
+          "note": "67B-A2B 10T TPU v4-2048 run targeted to land ~Aug 30; at step 39,000 ~2.1T tokens (~21% of 10.07T) at ~18.6% MFU",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "2.277",
+          "note": "2T intermediate cooldown finished at 2.2772 Paloma macro-loss, favorable early read vs the 2.269 preregistered stage-1 target",
+          "pass": true
+        },
+        {
+          "id": "8",
+          "rx": "2.269",
+          "note": "preregistered stage-1 target at 8T/80% mark, seqlen 8192, before cooldown; comparison to 2.277 is NOT apples-to-apples",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "23.8",
+          "note": "11B-A1.5B validation run on 64xH100 cleared ~23.8% MFU as a Blackwell dry run, deliberately overtrained to 500B tokens",
+          "pass": true
+        },
+        {
+          "id": "10",
+          "rx": "17.8",
+          "note": "B200 MFU reached 17.8% single-node 8xB200 at d5120 via QuACK/SonicMoE, below the 20% bar (14.9% d2560, 12.5% H100-parity)",
+          "pass": true
+        },
+        {
+          "id": "11",
+          "rx": "18.26",
+          "note": "separate multinode JaxPP pipeline-parallel result: mean MFU 18.26 at ~414k tok/s, 1.74 pts below 20% bar (#7024)",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "20%",
+          "note": "B200 20% bar (#6706, posed as a question 'Need to be at 20%+?') gates the end-of-month run; not yet met",
+          "pass": true
+        },
+        {
+          "id": "13",
+          "rx": "25%",
+          "note": "distinct 25% MFU target for the September run (#6710), separate from the 20% Aug bar and the Hopper 20-25% upskilling target",
+          "pass": true
+        },
+        {
+          "id": "14",
+          "rx": "GQA",
+          "note": "grouped-query attention is the one genuinely-decided September architecture element; MLA rejected on +17-20% FLOP accounting (#6522)",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "0.25",
+          "note": "post-training priced at ~0.25-0.9x the 10T pretrain in HW-FLOPs (projection, #7074), ~5-20% of the 120B run, ~5x env speedup divides by five",
+          "pass": true
+        },
+        {
+          "id": "16",
+          "rx": "Nemotron",
+          "note": "post-training pipeline: RL over 10 experts THEN multi-teacher on-policy distillation (MOPD) into the student on the Nemotron path, dominated by RL leg",
+          "pass": false
+        },
+        {
+          "id": "17",
+          "rx": "4/14",
+          "note": "data/arch/preregistered-loss lock for the Aug-1 B200 run (#7073) still open at 4/14 sub-issues, no decision recorded this week",
+          "pass": false
+        },
+        {
+          "id": "18",
+          "rx": "Pareto",
+          "note": "curation reality check (#2351): Marin high_quality curation is NOT Pareto-dominant at compute-matched DCLM CORE, even at 3k scale",
+          "pass": false
+        },
+        {
+          "id": "19",
+          "rx": "SuperBPE",
+          "note": "SuperBPE tokenizer edge reverses at scale (#6796 closed); decision trending to GPT-OSS tokenizer on OPD/pass@K ecosystem grounds, not compression",
+          "pass": false
+        },
+        {
+          "id": "20",
+          "rx": "0.8",
+          "note": "xorl cross-framework win (+12.3 MATH500) walked back July 10 by Ashwinee Panda's same-ruler audit to ~+0.8-1.4 MATH500 vs reference +8.4 (Muon-vs-AdamW confound)",
+          "pass": true
+        },
+        {
+          "id": "21",
+          "rx": "14,211",
+          "note": "Executor retirement #6649 diff is +7,646/-14,211 (net ~-6.5k); -14k is deletions not net",
+          "pass": false
+        },
+        {
+          "id": "22",
+          "rx": "Iris",
+          "note": "Iris cross-cluster federation went live: marin hands whole jobs to CoreWeave (#7064/#7034)",
+          "pass": true
+        },
+        {
+          "id": "23",
+          "rx": "131k",
+          "note": "MarinSkyRL 131k-context RL on MoEs plumbed on CoreWeave (#7052): 30B/35B-A3B fit 64xH100 at ~2.5h/step; feasibility envelope only, no quality metric",
+          "pass": true
+        },
+        {
+          "id": "24",
+          "rx": "0.9410",
+          "note": "mixing-via-embeddings surrogate (#6969) priced a never-swept bucket at 0.9410 uncheatable BPB, beating sweep best 0.9554; winner's-curse caveat ~0.031 BPB",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "placeholder",
+          "note": "must flag that headline model sizes (120B-A8B, 512B-A16B, XB-AYB) are narrator/summary placeholders, not preregistered specs; #6689 title is 'nB-AmB XT on B200s'"
+        },
+        {
+          "rx": "18.26",
+          "note": "separate multinode JaxPP pipeline-parallel result: mean MFU 18.26 at ~414k tok/s, 1.74 pts below 20% bar (#7024)"
+        },
+        {
+          "rx": "GQA",
+          "note": "grouped-query attention is the one genuinely-decided September architecture element; MLA rejected on +17-20% FLOP accounting (#6522)"
+        },
+        {
+          "rx": "Nemotron",
+          "note": "post-training pipeline: RL over 10 experts THEN multi-teacher on-policy distillation (MOPD) into the student on the Nemotron path, dominated by RL leg"
+        },
+        {
+          "rx": "4/14",
+          "note": "data/arch/preregistered-loss lock for the Aug-1 B200 run (#7073) still open at 4/14 sub-issues, no decision recorded this week"
+        },
+        {
+          "rx": "Pareto",
+          "note": "curation reality check (#2351): Marin high_quality curation is NOT Pareto-dominant at compute-matched DCLM CORE, even at 3k scale"
+        },
+        {
+          "rx": "SuperBPE",
+          "note": "SuperBPE tokenizer edge reverses at scale (#6796 closed); decision trending to GPT-OSS tokenizer on OPD/pass@K ecosystem grounds, not compression"
+        },
+        {
+          "rx": "14,211",
+          "note": "Executor retirement #6649 diff is +7,646/-14,211 (net ~-6.5k); -14k is deletions not net"
+        },
+        {
+          "rx": "0.9410",
+          "note": "mixing-via-embeddings surrogate (#6969) priced a never-swept bucket at 0.9410 uncheatable BPB, beating sweep best 0.9554; winner's-curse caveat ~0.031 BPB"
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": true,
+          "why": ""
+        }
+      ]
+    },
+    "B_noskill_live": {
+      "Q": 69.4,
+      "gate_failed": false,
+      "cite_recall": 1.0,
+      "fact_cov": 0.125,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "6689",
+        "6704",
+        "6705",
+        "6706",
+        "6710",
+        "6716",
+        "6811",
+        "7073",
+        "7074"
+      ],
+      "must_have_MISS": [],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "preparation month",
+          "note": "July is explicitly a readiness/preparation month running to mid-August, not a finish line",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "complete 67B",
+          "note": "milestone verbatim: complete 67B-A2B MoE; start XB-AYB MoE on B200s; start post-training Marin MoEs",
+          "pass": true
+        },
+        {
+          "id": "3",
+          "rx": "placeholder",
+          "note": "must flag that headline model sizes (120B-A8B, 512B-A16B, XB-AYB) are narrator/summary placeholders, not preregistered specs; #6689 title is 'nB-AmB XT on B200s'",
+          "pass": false
+        },
+        {
+          "id": "4",
+          "rx": "512B",
+          "note": "September hero run ~512B-A16B on 20T tokens when twelve NVL72 racks land ~Sept 15 (approximate, summary prose)",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "120B",
+          "note": "end-of-month ~120B-A8B B200 run on 2 NVL72 (approximate)",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "August 30",
+          "note": "67B-A2B 10T TPU v4-2048 run targeted to land ~Aug 30; at step 39,000 ~2.1T tokens (~21% of 10.07T) at ~18.6% MFU",
+          "pass": false
+        },
+        {
+          "id": "7",
+          "rx": "2.277",
+          "note": "2T intermediate cooldown finished at 2.2772 Paloma macro-loss, favorable early read vs the 2.269 preregistered stage-1 target",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "2.269",
+          "note": "preregistered stage-1 target at 8T/80% mark, seqlen 8192, before cooldown; comparison to 2.277 is NOT apples-to-apples",
+          "pass": false
+        },
+        {
+          "id": "9",
+          "rx": "23.8",
+          "note": "11B-A1.5B validation run on 64xH100 cleared ~23.8% MFU as a Blackwell dry run, deliberately overtrained to 500B tokens",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "17.8",
+          "note": "B200 MFU reached 17.8% single-node 8xB200 at d5120 via QuACK/SonicMoE, below the 20% bar (14.9% d2560, 12.5% H100-parity)",
+          "pass": false
+        },
+        {
+          "id": "11",
+          "rx": "18.26",
+          "note": "separate multinode JaxPP pipeline-parallel result: mean MFU 18.26 at ~414k tok/s, 1.74 pts below 20% bar (#7024)",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "20%",
+          "note": "B200 20% bar (#6706, posed as a question 'Need to be at 20%+?') gates the end-of-month run; not yet met",
+          "pass": true
+        },
+        {
+          "id": "13",
+          "rx": "25%",
+          "note": "distinct 25% MFU target for the September run (#6710), separate from the 20% Aug bar and the Hopper 20-25% upskilling target",
+          "pass": false
+        },
+        {
+          "id": "14",
+          "rx": "GQA",
+          "note": "grouped-query attention is the one genuinely-decided September architecture element; MLA rejected on +17-20% FLOP accounting (#6522)",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "0.25",
+          "note": "post-training priced at ~0.25-0.9x the 10T pretrain in HW-FLOPs (projection, #7074), ~5-20% of the 120B run, ~5x env speedup divides by five",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "Nemotron",
+          "note": "post-training pipeline: RL over 10 experts THEN multi-teacher on-policy distillation (MOPD) into the student on the Nemotron path, dominated by RL leg",
+          "pass": false
+        },
+        {
+          "id": "17",
+          "rx": "4/14",
+          "note": "data/arch/preregistered-loss lock for the Aug-1 B200 run (#7073) still open at 4/14 sub-issues, no decision recorded this week",
+          "pass": false
+        },
+        {
+          "id": "18",
+          "rx": "Pareto",
+          "note": "curation reality check (#2351): Marin high_quality curation is NOT Pareto-dominant at compute-matched DCLM CORE, even at 3k scale",
+          "pass": false
+        },
+        {
+          "id": "19",
+          "rx": "SuperBPE",
+          "note": "SuperBPE tokenizer edge reverses at scale (#6796 closed); decision trending to GPT-OSS tokenizer on OPD/pass@K ecosystem grounds, not compression",
+          "pass": false
+        },
+        {
+          "id": "20",
+          "rx": "0.8",
+          "note": "xorl cross-framework win (+12.3 MATH500) walked back July 10 by Ashwinee Panda's same-ruler audit to ~+0.8-1.4 MATH500 vs reference +8.4 (Muon-vs-AdamW confound)",
+          "pass": false
+        },
+        {
+          "id": "21",
+          "rx": "14,211",
+          "note": "Executor retirement #6649 diff is +7,646/-14,211 (net ~-6.5k); -14k is deletions not net",
+          "pass": false
+        },
+        {
+          "id": "22",
+          "rx": "Iris",
+          "note": "Iris cross-cluster federation went live: marin hands whole jobs to CoreWeave (#7064/#7034)",
+          "pass": false
+        },
+        {
+          "id": "23",
+          "rx": "131k",
+          "note": "MarinSkyRL 131k-context RL on MoEs plumbed on CoreWeave (#7052): 30B/35B-A3B fit 64xH100 at ~2.5h/step; feasibility envelope only, no quality metric",
+          "pass": false
+        },
+        {
+          "id": "24",
+          "rx": "0.9410",
+          "note": "mixing-via-embeddings surrogate (#6969) priced a never-swept bucket at 0.9410 uncheatable BPB, beating sweep best 0.9554; winner's-curse caveat ~0.031 BPB",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "preparation month",
+          "note": "July is explicitly a readiness/preparation month running to mid-August, not a finish line"
+        },
+        {
+          "rx": "placeholder",
+          "note": "must flag that headline model sizes (120B-A8B, 512B-A16B, XB-AYB) are narrator/summary placeholders, not preregistered specs; #6689 title is 'nB-AmB XT on B200s'"
+        },
+        {
+          "rx": "512B",
+          "note": "September hero run ~512B-A16B on 20T tokens when twelve NVL72 racks land ~Sept 15 (approximate, summary prose)"
+        },
+        {
+          "rx": "August 30",
+          "note": "67B-A2B 10T TPU v4-2048 run targeted to land ~Aug 30; at step 39,000 ~2.1T tokens (~21% of 10.07T) at ~18.6% MFU"
+        },
+        {
+          "rx": "2.277",
+          "note": "2T intermediate cooldown finished at 2.2772 Paloma macro-loss, favorable early read vs the 2.269 preregistered stage-1 target"
+        },
+        {
+          "rx": "2.269",
+          "note": "preregistered stage-1 target at 8T/80% mark, seqlen 8192, before cooldown; comparison to 2.277 is NOT apples-to-apples"
+        },
+        {
+          "rx": "23.8",
+          "note": "11B-A1.5B validation run on 64xH100 cleared ~23.8% MFU as a Blackwell dry run, deliberately overtrained to 500B tokens"
+        },
+        {
+          "rx": "17.8",
+          "note": "B200 MFU reached 17.8% single-node 8xB200 at d5120 via QuACK/SonicMoE, below the 20% bar (14.9% d2560, 12.5% H100-parity)"
+        },
+        {
+          "rx": "18.26",
+          "note": "separate multinode JaxPP pipeline-parallel result: mean MFU 18.26 at ~414k tok/s, 1.74 pts below 20% bar (#7024)"
+        },
+        {
+          "rx": "25%",
+          "note": "distinct 25% MFU target for the September run (#6710), separate from the 20% Aug bar and the Hopper 20-25% upskilling target"
+        },
+        {
+          "rx": "GQA",
+          "note": "grouped-query attention is the one genuinely-decided September architecture element; MLA rejected on +17-20% FLOP accounting (#6522)"
+        },
+        {
+          "rx": "0.25",
+          "note": "post-training priced at ~0.25-0.9x the 10T pretrain in HW-FLOPs (projection, #7074), ~5-20% of the 120B run, ~5x env speedup divides by five"
+        },
+        {
+          "rx": "Nemotron",
+          "note": "post-training pipeline: RL over 10 experts THEN multi-teacher on-policy distillation (MOPD) into the student on the Nemotron path, dominated by RL leg"
+        },
+        {
+          "rx": "4/14",
+          "note": "data/arch/preregistered-loss lock for the Aug-1 B200 run (#7073) still open at 4/14 sub-issues, no decision recorded this week"
+        },
+        {
+          "rx": "Pareto",
+          "note": "curation reality check (#2351): Marin high_quality curation is NOT Pareto-dominant at compute-matched DCLM CORE, even at 3k scale"
+        },
+        {
+          "rx": "SuperBPE",
+          "note": "SuperBPE tokenizer edge reverses at scale (#6796 closed); decision trending to GPT-OSS tokenizer on OPD/pass@K ecosystem grounds, not compression"
+        },
+        {
+          "rx": "0.8",
+          "note": "xorl cross-framework win (+12.3 MATH500) walked back July 10 by Ashwinee Panda's same-ruler audit to ~+0.8-1.4 MATH500 vs reference +8.4 (Muon-vs-AdamW confound)"
+        },
+        {
+          "rx": "14,211",
+          "note": "Executor retirement #6649 diff is +7,646/-14,211 (net ~-6.5k); -14k is deletions not net"
+        },
+        {
+          "rx": "Iris",
+          "note": "Iris cross-cluster federation went live: marin hands whole jobs to CoreWeave (#7064/#7034)"
+        },
+        {
+          "rx": "131k",
+          "note": "MarinSkyRL 131k-context RL on MoEs plumbed on CoreWeave (#7052): 30B/35B-A3B fit 64xH100 at ~2.5h/step; feasibility envelope only, no quality metric"
+        },
+        {
+          "rx": "0.9410",
+          "note": "mixing-via-embeddings surrogate (#6969) priced a never-swept bucket at 0.9410 uncheatable BPB, beating sweep best 0.9554; winner's-curse caveat ~0.031 BPB"
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": true,
+          "why": ""
+        }
+      ]
+    },
+    "gold_targets": {
+      "must_have": [
+        "#6689",
+        "#6704",
+        "#6811",
+        "#6706",
+        "#6710",
+        "#7073",
+        "#7074",
+        "#6716",
+        "#6705"
+      ],
+      "forbidden": [
+        "#4300",
+        "#6304",
+        "#4986",
+        "#6532",
+        "#6534"
+      ],
+      "n_facts": 24
+    }
+  },
+  "april": {
+    "question": "how did we do on our april 2026 milestone?",
+    "A_skill_frozen": {
+      "Q": 75.3,
+      "gate_failed": false,
+      "cite_recall": 0.647,
+      "fact_cov": 0.647,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "4256",
+        "4266",
+        "4269",
+        "4270",
+        "4273",
+        "4281",
+        "4282",
+        "4283",
+        "4300",
+        "4447",
+        "4697"
+      ],
+      "must_have_MISS": [
+        "3100",
+        "3192",
+        "4474",
+        "4719",
+        "4760",
+        "4898"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "2\\.234",
+          "note": "Final 1e23 paloma macro loss achieved (#4697), beat the pre-registered ~1%",
+          "pass": true
+        },
+        {
+          "id": "2",
+          "rx": "2\\.252",
+          "note": "The pre-registered forecast (L\u221e=1.6 isoflop fit, #4447 c4225593039); NOT 2.25 alone. Answer should name this as the registered number",
+          "pass": true
+        },
+        {
+          "id": "3",
+          "rx": "(pregistered|100B-A13B|1\\.2T)",
+          "note": "Milestone title: 'Kick-off pre-trained 100B-A13B 1.2T token MoE (pregistered)'",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "[Ss]tretch",
+          "note": "1e23 completion was an explicit STRETCH goal ('Stretch: 1e23 completed (~16 days on v4-2048)'); committed goal was launch+pre-register only",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "(pollute|removed from|scaffolding|deliberately)",
+          "note": "#4256/#4266 were REMOVED from the milestone and closed so they wouldn't 'pollute our completion count' \u2014 they are not the scorecard parents",
+          "pass": false
+        },
+        {
+          "id": "6",
+          "rx": "(319k|94\\.5%|three attempts|all.{0,6}crashed)",
+          "note": "Three v4-1024 attempts burned 319k chip-hrs (94.5% of week's TPU) and all crashed before April end",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "16\\.4",
+          "note": "~16.4% MFU (crashed v4-1024 resume45207 intermediate) vs the made-up 25-30% band",
+          "pass": true
+        },
+        {
+          "id": "8",
+          "rx": "good enough",
+          "note": "dlwh closed the MFU target #4300 as 'good enough' 2026-05-31; the 25-30% band was self-described as made up. Not a flat 'missed'",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "(60%|9/9|GPU canary)",
+          "note": "Canary #4270: TPU ferry 9/9 (100%) but GPU regressed to ~60% on JAX 0.9.2 \u2014 the clearest quantitative miss",
+          "pass": true
+        },
+        {
+          "id": "10",
+          "rx": "(5\\.3%|0%.{0,20}(3\\.3|dose))",
+          "note": "SWE-bench dose-response on Marin-8B: 0% -> 3.3% -> 4.0% -> 5.3% (#4898) \u2014 the post-training pillar's one WIN",
+          "pass": false
+        },
+        {
+          "id": "11",
+          "rx": "(52%|6\\.5M|6,5|~half)",
+          "note": "140B SWE-ZERO scale-out (#4719) reached only ~52% coverage / ~6.5M rollouts before capacity collapse",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "(2/87|20\\.9|10.?x|10.?\u00d7)",
+          "note": "Marin-32B TerminalCorpus (#4760): 2/87 (~2.3%) vs Qwen3-32B 18/86 (~20.9%), ~10x gap \u2014 negative result",
+          "pass": true
+        },
+        {
+          "id": "13",
+          "rx": "(post-training|synthetic data|3192)",
+          "note": "The third pillar the draft omits entirely: post-training/synthetic-data (#3192)",
+          "pass": false
+        },
+        {
+          "id": "14",
+          "rx": "(v4-2048|us-central2|EP8|ragged)",
+          "note": "The completed run finished on v4-2048 EP8 ragged in us-central2 (launched on v4-1024 EP4 ring)",
+          "pass": true
+        },
+        {
+          "id": "15",
+          "rx": "(19T|20T)",
+          "note": "Data sources #3100: target 20T, achieved >19T \u2014 met",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "(never.{0,20}complete|no.{0,20}(percentage|completion)|two sweeps|05-03|06-05)",
+          "note": "No formal 'milestone complete' declaration or % in corpus; wound down issue-by-issue on 2026-05-03 and 2026-06-05",
+          "pass": true
+        },
+        {
+          "id": "17",
+          "rx": "(AdamH|5184)",
+          "note": "Agentify #4282 win: AdamH-embed (#5184) first Gate-2-promotable agent-driven change; but goal was ~3 full decisions, not fully demonstrated",
+          "pass": true
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "[Ss]tretch",
+          "note": "1e23 completion was an explicit STRETCH goal ('Stretch: 1e23 completed (~16 days on v4-2048)'); committed goal was launch+pre-register only"
+        },
+        {
+          "rx": "(pollute|removed from|scaffolding|deliberately)",
+          "note": "#4256/#4266 were REMOVED from the milestone and closed so they wouldn't 'pollute our completion count' \u2014 they are not the scorecard parents"
+        },
+        {
+          "rx": "(5\\.3%|0%.{0,20}(3\\.3|dose))",
+          "note": "SWE-bench dose-response on Marin-8B: 0% -> 3.3% -> 4.0% -> 5.3% (#4898) \u2014 the post-training pillar's one WIN"
+        },
+        {
+          "rx": "(52%|6\\.5M|6,5|~half)",
+          "note": "140B SWE-ZERO scale-out (#4719) reached only ~52% coverage / ~6.5M rollouts before capacity collapse"
+        },
+        {
+          "rx": "(post-training|synthetic data|3192)",
+          "note": "The third pillar the draft omits entirely: post-training/synthetic-data (#3192)"
+        },
+        {
+          "rx": "(19T|20T)",
+          "note": "Data sources #3100: target 20T, achieved >19T \u2014 met"
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": true,
+          "why": ""
+        }
+      ]
+    },
+    "B_noskill_live": {
+      "Q": 54.7,
+      "gate_failed": false,
+      "cite_recall": 0.588,
+      "fact_cov": 0.118,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "3100",
+        "4256",
+        "4266",
+        "4269",
+        "4270",
+        "4273",
+        "4281",
+        "4282",
+        "4283",
+        "4474"
+      ],
+      "must_have_MISS": [
+        "3192",
+        "4300",
+        "4447",
+        "4697",
+        "4719",
+        "4760",
+        "4898"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "2\\.234",
+          "note": "Final 1e23 paloma macro loss achieved (#4697), beat the pre-registered ~1%",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "2\\.252",
+          "note": "The pre-registered forecast (L\u221e=1.6 isoflop fit, #4447 c4225593039); NOT 2.25 alone. Answer should name this as the registered number",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "(pregistered|100B-A13B|1\\.2T)",
+          "note": "Milestone title: 'Kick-off pre-trained 100B-A13B 1.2T token MoE (pregistered)'",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "[Ss]tretch",
+          "note": "1e23 completion was an explicit STRETCH goal ('Stretch: 1e23 completed (~16 days on v4-2048)'); committed goal was launch+pre-register only",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "(pollute|removed from|scaffolding|deliberately)",
+          "note": "#4256/#4266 were REMOVED from the milestone and closed so they wouldn't 'pollute our completion count' \u2014 they are not the scorecard parents",
+          "pass": false
+        },
+        {
+          "id": "6",
+          "rx": "(319k|94\\.5%|three attempts|all.{0,6}crashed)",
+          "note": "Three v4-1024 attempts burned 319k chip-hrs (94.5% of week's TPU) and all crashed before April end",
+          "pass": false
+        },
+        {
+          "id": "7",
+          "rx": "16\\.4",
+          "note": "~16.4% MFU (crashed v4-1024 resume45207 intermediate) vs the made-up 25-30% band",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "good enough",
+          "note": "dlwh closed the MFU target #4300 as 'good enough' 2026-05-31; the 25-30% band was self-described as made up. Not a flat 'missed'",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "(60%|9/9|GPU canary)",
+          "note": "Canary #4270: TPU ferry 9/9 (100%) but GPU regressed to ~60% on JAX 0.9.2 \u2014 the clearest quantitative miss",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "(5\\.3%|0%.{0,20}(3\\.3|dose))",
+          "note": "SWE-bench dose-response on Marin-8B: 0% -> 3.3% -> 4.0% -> 5.3% (#4898) \u2014 the post-training pillar's one WIN",
+          "pass": false
+        },
+        {
+          "id": "11",
+          "rx": "(52%|6\\.5M|6,5|~half)",
+          "note": "140B SWE-ZERO scale-out (#4719) reached only ~52% coverage / ~6.5M rollouts before capacity collapse",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "(2/87|20\\.9|10.?x|10.?\u00d7)",
+          "note": "Marin-32B TerminalCorpus (#4760): 2/87 (~2.3%) vs Qwen3-32B 18/86 (~20.9%), ~10x gap \u2014 negative result",
+          "pass": false
+        },
+        {
+          "id": "13",
+          "rx": "(post-training|synthetic data|3192)",
+          "note": "The third pillar the draft omits entirely: post-training/synthetic-data (#3192)",
+          "pass": false
+        },
+        {
+          "id": "14",
+          "rx": "(v4-2048|us-central2|EP8|ragged)",
+          "note": "The completed run finished on v4-2048 EP8 ragged in us-central2 (launched on v4-1024 EP4 ring)",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "(19T|20T)",
+          "note": "Data sources #3100: target 20T, achieved >19T \u2014 met",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "(never.{0,20}complete|no.{0,20}(percentage|completion)|two sweeps|05-03|06-05)",
+          "note": "No formal 'milestone complete' declaration or % in corpus; wound down issue-by-issue on 2026-05-03 and 2026-06-05",
+          "pass": false
+        },
+        {
+          "id": "17",
+          "rx": "(AdamH|5184)",
+          "note": "Agentify #4282 win: AdamH-embed (#5184) first Gate-2-promotable agent-driven change; but goal was ~3 full decisions, not fully demonstrated",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "2\\.234",
+          "note": "Final 1e23 paloma macro loss achieved (#4697), beat the pre-registered ~1%"
+        },
+        {
+          "rx": "2\\.252",
+          "note": "The pre-registered forecast (L\u221e=1.6 isoflop fit, #4447 c4225593039); NOT 2.25 alone. Answer should name this as the registered number"
+        },
+        {
+          "rx": "[Ss]tretch",
+          "note": "1e23 completion was an explicit STRETCH goal ('Stretch: 1e23 completed (~16 days on v4-2048)'); committed goal was launch+pre-register only"
+        },
+        {
+          "rx": "(pollute|removed from|scaffolding|deliberately)",
+          "note": "#4256/#4266 were REMOVED from the milestone and closed so they wouldn't 'pollute our completion count' \u2014 they are not the scorecard parents"
+        },
+        {
+          "rx": "(319k|94\\.5%|three attempts|all.{0,6}crashed)",
+          "note": "Three v4-1024 attempts burned 319k chip-hrs (94.5% of week's TPU) and all crashed before April end"
+        },
+        {
+          "rx": "16\\.4",
+          "note": "~16.4% MFU (crashed v4-1024 resume45207 intermediate) vs the made-up 25-30% band"
+        },
+        {
+          "rx": "(60%|9/9|GPU canary)",
+          "note": "Canary #4270: TPU ferry 9/9 (100%) but GPU regressed to ~60% on JAX 0.9.2 \u2014 the clearest quantitative miss"
+        },
+        {
+          "rx": "(5\\.3%|0%.{0,20}(3\\.3|dose))",
+          "note": "SWE-bench dose-response on Marin-8B: 0% -> 3.3% -> 4.0% -> 5.3% (#4898) \u2014 the post-training pillar's one WIN"
+        },
+        {
+          "rx": "(52%|6\\.5M|6,5|~half)",
+          "note": "140B SWE-ZERO scale-out (#4719) reached only ~52% coverage / ~6.5M rollouts before capacity collapse"
+        },
+        {
+          "rx": "(2/87|20\\.9|10.?x|10.?\u00d7)",
+          "note": "Marin-32B TerminalCorpus (#4760): 2/87 (~2.3%) vs Qwen3-32B 18/86 (~20.9%), ~10x gap \u2014 negative result"
+        },
+        {
+          "rx": "(post-training|synthetic data|3192)",
+          "note": "The third pillar the draft omits entirely: post-training/synthetic-data (#3192)"
+        },
+        {
+          "rx": "(v4-2048|us-central2|EP8|ragged)",
+          "note": "The completed run finished on v4-2048 EP8 ragged in us-central2 (launched on v4-1024 EP4 ring)"
+        },
+        {
+          "rx": "(19T|20T)",
+          "note": "Data sources #3100: target 20T, achieved >19T \u2014 met"
+        },
+        {
+          "rx": "(never.{0,20}complete|no.{0,20}(percentage|completion)|two sweeps|05-03|06-05)",
+          "note": "No formal 'milestone complete' declaration or % in corpus; wound down issue-by-issue on 2026-05-03 and 2026-06-05"
+        },
+        {
+          "rx": "(AdamH|5184)",
+          "note": "Agentify #4282 win: AdamH-embed (#5184) first Gate-2-promotable agent-driven change; but goal was ~3 full decisions, not fully demonstrated"
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": true,
+          "why": ""
+        }
+      ]
+    },
+    "gold_targets": {
+      "must_have": [
+        "#4266",
+        "#4256",
+        "#4697",
+        "#4447",
+        "#3192",
+        "#4898",
+        "#4719",
+        "#4760",
+        "#4281",
+        "#4282",
+        "#4283",
+        "#4300",
+        "#4270",
+        "#4269",
+        "#4273",
+        "#4474",
+        "#3100"
+      ],
+      "forbidden": [
+        "#1337",
+        "#6044"
+      ],
+      "n_facts": 17
+    }
+  },
+  "ablations": {
+    "question": "Can you share more details about the data ablations we've run so far? What data mixes / data classifiers were compared, on what training-data sizes and on what test data?",
+    "A_skill_frozen": {
+      "Q": 66.3,
+      "gate_failed": false,
+      "cite_recall": 0.588,
+      "fact_cov": 0.45,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "163",
+        "820",
+        "934",
+        "2351",
+        "6608",
+        "6611",
+        "6739",
+        "6849",
+        "6860",
+        "6969"
+      ],
+      "must_have_MISS": [
+        "5810",
+        "6607",
+        "6609",
+        "6712",
+        "6713",
+        "6742",
+        "6757"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "1\\.78",
+          "note": "#6757 curated vs nemotron macro uncheatable BPB 1.78x [1.45,2.24] achieved",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "1\\.14",
+          "note": "#6757 curated vs proportional 1.14x [0.93,1.41] \u2014 NOT significant, a tie; the actual head-to-head verdict",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "indistinguishable",
+          "note": "#6757 recorded verdict: curated and proportional statistically indistinguishable; curated a weak default",
+          "pass": false
+        },
+        {
+          "id": "4",
+          "rx": "0\\.9410",
+          "note": "#6969 embedding surrogate priced never-swept dolma_starcoder at 0.9410 uncheatable BPB, beating sweep best 0.9554 / olmix-reuse 0.9495 / proportional 0.9759 (~8 sigma), summary-sourced",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "0\\.846",
+          "note": "deployed fastText v0 quality classifier AUC 0.846 / rho 0.641 (#5810), the baseline",
+          "pass": false
+        },
+        {
+          "id": "6",
+          "rx": "0\\.875",
+          "note": "#6739 fast-transformer AUC 0.875 / rho 0.703 at 0.41M FLOPs/token, beats fastText",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "label.?quality ceiling|label ceiling",
+          "note": "#6739 plateau diagnosis: ~0.87 is a label-quality ceiling of the 5,613-doc oracle set; 3 free-teacher distillations all land below from-scratch",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "0\\.852",
+          "note": "#6739/#6849 source-of-origin alone predicts the oracle at AUC 0.852 (reading no text) \u2014 root cause of domain-sorting",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "28\\.2",
+          "note": "#6742 Nemotron-CC-Math contaminates 28.2% of MATH-500 test (and 17/30 AIME24)",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "2\\.83",
+          "note": "#6742 cleaning the val split cut Delphi 1e22 math endpoint error from +18.56% to +2.83%",
+          "pass": false
+        },
+        {
+          "id": "11",
+          "rx": "3e18.*1e21|3e18, 2e19, 3e20, 1e21",
+          "note": "Delphi scaling ladder training-data sizes: 3e18/2e19/3e20/1e21 FLOPs",
+          "pass": true
+        },
+        {
+          "id": "12",
+          "rx": "KL=0\\.1|KL=0\\.005",
+          "note": "#6972 target-specific KL: KL=0.1 for uncheatable BPB, KL=0.005 for Table-9 macro (summary-sourced)",
+          "pass": false
+        },
+        {
+          "id": "13",
+          "rx": "0\\.918",
+          "note": "#6611 effective-exposure DSP linear_reg=1e-4 OOF Spearman 0.918 on 51-component Table-9 macro, beats single_tied OLMix 0.380",
+          "pass": true
+        },
+        {
+          "id": "14",
+          "rx": "5,?613",
+          "note": "classifier train set = 5,613 usable Sonnet-4.6 oracle labels / 961 holdout, reused across #5810/#6739",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "12 of 98",
+          "note": "#6860 datakit v0 near-constant within-source: 12 of 98 sources stddev <0.1; massive_function_calling exactly 0.0",
+          "pass": true
+        },
+        {
+          "id": "16",
+          "rx": "3\\.7103",
+          "note": "GPU feature-ablation chain Paloma 3.7103->3.6954->3.6359 (Larry Dial d512 CoreWeave 8xH100 datakit, under #6716; summary-sourced)",
+          "pass": true
+        },
+        {
+          "id": "17",
+          "rx": "100k MMLU|100,000",
+          "note": "#163 fastText vs BERT trained on 100k MMLU positives + 100k DCLM negatives, top-{1,5,10,20}%; BERT top-20% won",
+          "pass": true
+        },
+        {
+          "id": "18",
+          "rx": "dolmino",
+          "note": "#934 cooldown 4-mix ablation (DCLM+StarCoder / Nemotron / +Dolmino / +Marin) \u2014 'definite improvements across the board from dolmino'; ARCHIVED Nov 2025",
+          "pass": true
+        },
+        {
+          "id": "19",
+          "rx": "did not|didn't|not.*downstream|not reflected",
+          "note": "#820 HQ data beat DCLM on Paloma macro but did NOT transfer to downstream benchmarks \u2014 same val-loss-doesn't-transfer lesson as #2351",
+          "pass": false
+        },
+        {
+          "id": "20",
+          "rx": "935",
+          "note": "#2351 curation reality check: high_quality not Pareto-dominant even at 3k; 935-doc dev set hand-labelled (summary-sourced)",
+          "pass": true
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "1\\.78",
+          "note": "#6757 curated vs nemotron macro uncheatable BPB 1.78x [1.45,2.24] achieved"
+        },
+        {
+          "rx": "1\\.14",
+          "note": "#6757 curated vs proportional 1.14x [0.93,1.41] \u2014 NOT significant, a tie; the actual head-to-head verdict"
+        },
+        {
+          "rx": "indistinguishable",
+          "note": "#6757 recorded verdict: curated and proportional statistically indistinguishable; curated a weak default"
+        },
+        {
+          "rx": "0\\.9410",
+          "note": "#6969 embedding surrogate priced never-swept dolma_starcoder at 0.9410 uncheatable BPB, beating sweep best 0.9554 / olmix-reuse 0.9495 / proportional 0.9759 (~8 sigma), summary-sourced"
+        },
+        {
+          "rx": "0\\.846",
+          "note": "deployed fastText v0 quality classifier AUC 0.846 / rho 0.641 (#5810), the baseline"
+        },
+        {
+          "rx": "label.?quality ceiling|label ceiling",
+          "note": "#6739 plateau diagnosis: ~0.87 is a label-quality ceiling of the 5,613-doc oracle set; 3 free-teacher distillations all land below from-scratch"
+        },
+        {
+          "rx": "28\\.2",
+          "note": "#6742 Nemotron-CC-Math contaminates 28.2% of MATH-500 test (and 17/30 AIME24)"
+        },
+        {
+          "rx": "2\\.83",
+          "note": "#6742 cleaning the val split cut Delphi 1e22 math endpoint error from +18.56% to +2.83%"
+        },
+        {
+          "rx": "KL=0\\.1|KL=0\\.005",
+          "note": "#6972 target-specific KL: KL=0.1 for uncheatable BPB, KL=0.005 for Table-9 macro (summary-sourced)"
+        },
+        {
+          "rx": "5,?613",
+          "note": "classifier train set = 5,613 usable Sonnet-4.6 oracle labels / 961 holdout, reused across #5810/#6739"
+        },
+        {
+          "rx": "did not|didn't|not.*downstream|not reflected",
+          "note": "#820 HQ data beat DCLM on Paloma macro but did NOT transfer to downstream benchmarks \u2014 same val-loss-doesn't-transfer lesson as #2351"
+        }
+      ],
+      "traps": []
+    },
+    "B_noskill_live": {
+      "Q": 54.9,
+      "gate_failed": false,
+      "cite_recall": 0.412,
+      "fact_cov": 0.3,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "163",
+        "5810",
+        "6713",
+        "6739",
+        "6757",
+        "6849",
+        "6860"
+      ],
+      "must_have_MISS": [
+        "820",
+        "934",
+        "2351",
+        "6607",
+        "6608",
+        "6609",
+        "6611",
+        "6712",
+        "6742",
+        "6969"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "1\\.78",
+          "note": "#6757 curated vs nemotron macro uncheatable BPB 1.78x [1.45,2.24] achieved",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "1\\.14",
+          "note": "#6757 curated vs proportional 1.14x [0.93,1.41] \u2014 NOT significant, a tie; the actual head-to-head verdict",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "indistinguishable",
+          "note": "#6757 recorded verdict: curated and proportional statistically indistinguishable; curated a weak default",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "0\\.9410",
+          "note": "#6969 embedding surrogate priced never-swept dolma_starcoder at 0.9410 uncheatable BPB, beating sweep best 0.9554 / olmix-reuse 0.9495 / proportional 0.9759 (~8 sigma), summary-sourced",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "0\\.846",
+          "note": "deployed fastText v0 quality classifier AUC 0.846 / rho 0.641 (#5810), the baseline",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "0\\.875",
+          "note": "#6739 fast-transformer AUC 0.875 / rho 0.703 at 0.41M FLOPs/token, beats fastText",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "label.?quality ceiling|label ceiling",
+          "note": "#6739 plateau diagnosis: ~0.87 is a label-quality ceiling of the 5,613-doc oracle set; 3 free-teacher distillations all land below from-scratch",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "0\\.852",
+          "note": "#6739/#6849 source-of-origin alone predicts the oracle at AUC 0.852 (reading no text) \u2014 root cause of domain-sorting",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "28\\.2",
+          "note": "#6742 Nemotron-CC-Math contaminates 28.2% of MATH-500 test (and 17/30 AIME24)",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "2\\.83",
+          "note": "#6742 cleaning the val split cut Delphi 1e22 math endpoint error from +18.56% to +2.83%",
+          "pass": false
+        },
+        {
+          "id": "11",
+          "rx": "3e18.*1e21|3e18, 2e19, 3e20, 1e21",
+          "note": "Delphi scaling ladder training-data sizes: 3e18/2e19/3e20/1e21 FLOPs",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "KL=0\\.1|KL=0\\.005",
+          "note": "#6972 target-specific KL: KL=0.1 for uncheatable BPB, KL=0.005 for Table-9 macro (summary-sourced)",
+          "pass": false
+        },
+        {
+          "id": "13",
+          "rx": "0\\.918",
+          "note": "#6611 effective-exposure DSP linear_reg=1e-4 OOF Spearman 0.918 on 51-component Table-9 macro, beats single_tied OLMix 0.380",
+          "pass": false
+        },
+        {
+          "id": "14",
+          "rx": "5,?613",
+          "note": "classifier train set = 5,613 usable Sonnet-4.6 oracle labels / 961 holdout, reused across #5810/#6739",
+          "pass": true
+        },
+        {
+          "id": "15",
+          "rx": "12 of 98",
+          "note": "#6860 datakit v0 near-constant within-source: 12 of 98 sources stddev <0.1; massive_function_calling exactly 0.0",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "3\\.7103",
+          "note": "GPU feature-ablation chain Paloma 3.7103->3.6954->3.6359 (Larry Dial d512 CoreWeave 8xH100 datakit, under #6716; summary-sourced)",
+          "pass": false
+        },
+        {
+          "id": "17",
+          "rx": "100k MMLU|100,000",
+          "note": "#163 fastText vs BERT trained on 100k MMLU positives + 100k DCLM negatives, top-{1,5,10,20}%; BERT top-20% won",
+          "pass": false
+        },
+        {
+          "id": "18",
+          "rx": "dolmino",
+          "note": "#934 cooldown 4-mix ablation (DCLM+StarCoder / Nemotron / +Dolmino / +Marin) \u2014 'definite improvements across the board from dolmino'; ARCHIVED Nov 2025",
+          "pass": true
+        },
+        {
+          "id": "19",
+          "rx": "did not|didn't|not.*downstream|not reflected",
+          "note": "#820 HQ data beat DCLM on Paloma macro but did NOT transfer to downstream benchmarks \u2014 same val-loss-doesn't-transfer lesson as #2351",
+          "pass": false
+        },
+        {
+          "id": "20",
+          "rx": "935",
+          "note": "#2351 curation reality check: high_quality not Pareto-dominant even at 3k; 935-doc dev set hand-labelled (summary-sourced)",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "1\\.78",
+          "note": "#6757 curated vs nemotron macro uncheatable BPB 1.78x [1.45,2.24] achieved"
+        },
+        {
+          "rx": "1\\.14",
+          "note": "#6757 curated vs proportional 1.14x [0.93,1.41] \u2014 NOT significant, a tie; the actual head-to-head verdict"
+        },
+        {
+          "rx": "0\\.9410",
+          "note": "#6969 embedding surrogate priced never-swept dolma_starcoder at 0.9410 uncheatable BPB, beating sweep best 0.9554 / olmix-reuse 0.9495 / proportional 0.9759 (~8 sigma), summary-sourced"
+        },
+        {
+          "rx": "label.?quality ceiling|label ceiling",
+          "note": "#6739 plateau diagnosis: ~0.87 is a label-quality ceiling of the 5,613-doc oracle set; 3 free-teacher distillations all land below from-scratch"
+        },
+        {
+          "rx": "28\\.2",
+          "note": "#6742 Nemotron-CC-Math contaminates 28.2% of MATH-500 test (and 17/30 AIME24)"
+        },
+        {
+          "rx": "2\\.83",
+          "note": "#6742 cleaning the val split cut Delphi 1e22 math endpoint error from +18.56% to +2.83%"
+        },
+        {
+          "rx": "3e18.*1e21|3e18, 2e19, 3e20, 1e21",
+          "note": "Delphi scaling ladder training-data sizes: 3e18/2e19/3e20/1e21 FLOPs"
+        },
+        {
+          "rx": "KL=0\\.1|KL=0\\.005",
+          "note": "#6972 target-specific KL: KL=0.1 for uncheatable BPB, KL=0.005 for Table-9 macro (summary-sourced)"
+        },
+        {
+          "rx": "0\\.918",
+          "note": "#6611 effective-exposure DSP linear_reg=1e-4 OOF Spearman 0.918 on 51-component Table-9 macro, beats single_tied OLMix 0.380"
+        },
+        {
+          "rx": "12 of 98",
+          "note": "#6860 datakit v0 near-constant within-source: 12 of 98 sources stddev <0.1; massive_function_calling exactly 0.0"
+        },
+        {
+          "rx": "3\\.7103",
+          "note": "GPU feature-ablation chain Paloma 3.7103->3.6954->3.6359 (Larry Dial d512 CoreWeave 8xH100 datakit, under #6716; summary-sourced)"
+        },
+        {
+          "rx": "100k MMLU|100,000",
+          "note": "#163 fastText vs BERT trained on 100k MMLU positives + 100k DCLM negatives, top-{1,5,10,20}%; BERT top-20% won"
+        },
+        {
+          "rx": "did not|didn't|not.*downstream|not reflected",
+          "note": "#820 HQ data beat DCLM on Paloma macro but did NOT transfer to downstream benchmarks \u2014 same val-loss-doesn't-transfer lesson as #2351"
+        },
+        {
+          "rx": "935",
+          "note": "#2351 curation reality check: high_quality not Pareto-dominant even at 3k; 935-doc dev set hand-labelled (summary-sourced)"
+        }
+      ],
+      "traps": []
+    },
+    "gold_targets": {
+      "must_have": [
+        "#6757",
+        "#2351",
+        "#6608",
+        "#6609",
+        "#6611",
+        "#6607",
+        "#6739",
+        "#5810",
+        "#6849",
+        "#6860",
+        "#6742",
+        "#6969",
+        "#6713",
+        "#6712",
+        "#163",
+        "#934",
+        "#820"
+      ],
+      "forbidden": [],
+      "n_facts": 20
+    }
+  },
+  "classifier": {
+    "question": "What is the data-classifier model and how was it trained and evaluated? (See marin-community/marin#5810.) Can the model weights be shared?",
+    "A_skill_frozen": {
+      "Q": 79.3,
+      "gate_failed": false,
+      "cite_recall": 0.8,
+      "fact_cov": 0.609,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "5810",
+        "6739",
+        "6849",
+        "6860"
+      ],
+      "must_have_MISS": [
+        "7040"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "sonnet46-thr05",
+          "note": "The deployed v0 fastText run name; the actual live classifier at freeze",
+          "pass": true
+        },
+        {
+          "id": "2",
+          "rx": "fastText",
+          "note": "Gen-1 deployed model architecture (bag-of-hashed-ngrams -> linear, binary P(high))",
+          "pass": true
+        },
+        {
+          "id": "3",
+          "rx": "claude-sonnet-4-6",
+          "note": "The oracle model producing 1-5 pretraining-utility rubric labels",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "0.846",
+          "note": "fastText v0 held-out AUC (achieved, n=961 seed=43)",
+          "pass": true
+        },
+        {
+          "id": "5",
+          "rx": "0.641",
+          "note": "fastText v0 held-out Spearman rho vs oracle",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "5,?613",
+          "note": "usable oracle labels after 1387 API/parse failures from 7000 sampled",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "\\$32\\.73",
+          "note": "API spend, under the $50 cap (the one hard target)",
+          "pass": true
+        },
+        {
+          "id": "8",
+          "rx": "0.875",
+          "note": "fast-transformer AUC (gen-2), a recommendation not a deployment",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "0.41M",
+          "note": "fast-transformer FLOPs/token, under the <1M budget",
+          "pass": true
+        },
+        {
+          "id": "10",
+          "rx": "0.852",
+          "note": "source identity alone predicts oracle at AUC 0.852 (eta^2=0.41) -- the confound; above fastText's 0.846",
+          "pass": false
+        },
+        {
+          "id": "11",
+          "rx": "raising oracle-AUC does not fix",
+          "note": "team conclusion that the metric itself is flawed / domain-sorting defect unfixed by higher AUC",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "6849",
+          "note": "gen-3 bug: sorts by domain not intrinsic quality; root cause = source-recoverable label",
+          "pass": true
+        },
+        {
+          "id": "13",
+          "rx": "6860",
+          "note": "gen-3 bug: near-constant scores; 12 of 98 sources stddev<0.1",
+          "pass": true
+        },
+        {
+          "id": "14",
+          "rx": "7040",
+          "note": "gen-3 RFC (calibrated/coherent), open 2026-07-10, NOT merged/deployed",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "rav/quality-coherence",
+          "note": "branch holding the content-type-aware, source-blind rubric + pooled ranker fix",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "0.44|0.69",
+          "note": "Spearman vs NEW coherent-quality target 0.44->0.69 (not comparable to old oracle-AUC)",
+          "pass": false
+        },
+        {
+          "id": "17",
+          "rx": "both domain and quality classifiers are v0",
+          "note": "rav quote framing v0 as intentionally-provisional e2e placeholder",
+          "pass": false
+        },
+        {
+          "id": "18",
+          "rx": "not.*deploy|never.*wire|recommendation",
+          "note": "fast-transformer was recommended, not adopted into the inference path; deployed = v0",
+          "pass": false
+        },
+        {
+          "id": "19",
+          "rx": "marin-public|quality-score-debugging",
+          "note": "classifier debugging report already published to world-readable public bucket",
+          "pass": false
+        },
+        {
+          "id": "20",
+          "rx": "dolma3-fasttext-quality",
+          "note": "AllenAI openly-released analogous classifier, consumed by Marin (#5812) -- open precedent",
+          "pass": true
+        },
+        {
+          "id": "21",
+          "rx": "no.*(decision|explicit)|unarticulated|gap",
+          "note": "no explicit weight-release decision or ToS blocker exists in corpus; provenance (Claude labels) is real but undiscussed",
+          "pass": true
+        },
+        {
+          "id": "22",
+          "rx": "distill",
+          "note": "labels distilled entirely from Claude outputs -- the one genuine provenance constraint",
+          "pass": true
+        },
+        {
+          "id": "23",
+          "rx": "v6e",
+          "note": "fast-transformer ran on TPU v6e-4 (JAX/Equinox, Iris launch, eu-west4)",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "0.852",
+          "note": "source identity alone predicts oracle at AUC 0.852 (eta^2=0.41) -- the confound; above fastText's 0.846"
+        },
+        {
+          "rx": "raising oracle-AUC does not fix",
+          "note": "team conclusion that the metric itself is flawed / domain-sorting defect unfixed by higher AUC"
+        },
+        {
+          "rx": "7040",
+          "note": "gen-3 RFC (calibrated/coherent), open 2026-07-10, NOT merged/deployed"
+        },
+        {
+          "rx": "rav/quality-coherence",
+          "note": "branch holding the content-type-aware, source-blind rubric + pooled ranker fix"
+        },
+        {
+          "rx": "0.44|0.69",
+          "note": "Spearman vs NEW coherent-quality target 0.44->0.69 (not comparable to old oracle-AUC)"
+        },
+        {
+          "rx": "both domain and quality classifiers are v0",
+          "note": "rav quote framing v0 as intentionally-provisional e2e placeholder"
+        },
+        {
+          "rx": "not.*deploy|never.*wire|recommendation",
+          "note": "fast-transformer was recommended, not adopted into the inference path; deployed = v0"
+        },
+        {
+          "rx": "marin-public|quality-score-debugging",
+          "note": "classifier debugging report already published to world-readable public bucket"
+        },
+        {
+          "rx": "v6e",
+          "note": "fast-transformer ran on TPU v6e-4 (JAX/Equinox, Iris launch, eu-west4)"
+        }
+      ],
+      "traps": []
+    },
+    "B_noskill_live": {
+      "Q": 57.7,
+      "gate_failed": false,
+      "cite_recall": 0.4,
+      "fact_cov": 0.391,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "5810",
+        "6739"
+      ],
+      "must_have_MISS": [
+        "6849",
+        "6860",
+        "7040"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "sonnet46-thr05",
+          "note": "The deployed v0 fastText run name; the actual live classifier at freeze",
+          "pass": true
+        },
+        {
+          "id": "2",
+          "rx": "fastText",
+          "note": "Gen-1 deployed model architecture (bag-of-hashed-ngrams -> linear, binary P(high))",
+          "pass": true
+        },
+        {
+          "id": "3",
+          "rx": "claude-sonnet-4-6",
+          "note": "The oracle model producing 1-5 pretraining-utility rubric labels",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "0.846",
+          "note": "fastText v0 held-out AUC (achieved, n=961 seed=43)",
+          "pass": true
+        },
+        {
+          "id": "5",
+          "rx": "0.641",
+          "note": "fastText v0 held-out Spearman rho vs oracle",
+          "pass": true
+        },
+        {
+          "id": "6",
+          "rx": "5,?613",
+          "note": "usable oracle labels after 1387 API/parse failures from 7000 sampled",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "\\$32\\.73",
+          "note": "API spend, under the $50 cap (the one hard target)",
+          "pass": true
+        },
+        {
+          "id": "8",
+          "rx": "0.875",
+          "note": "fast-transformer AUC (gen-2), a recommendation not a deployment",
+          "pass": false
+        },
+        {
+          "id": "9",
+          "rx": "0.41M",
+          "note": "fast-transformer FLOPs/token, under the <1M budget",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "0.852",
+          "note": "source identity alone predicts oracle at AUC 0.852 (eta^2=0.41) -- the confound; above fastText's 0.846",
+          "pass": false
+        },
+        {
+          "id": "11",
+          "rx": "raising oracle-AUC does not fix",
+          "note": "team conclusion that the metric itself is flawed / domain-sorting defect unfixed by higher AUC",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "6849",
+          "note": "gen-3 bug: sorts by domain not intrinsic quality; root cause = source-recoverable label",
+          "pass": false
+        },
+        {
+          "id": "13",
+          "rx": "6860",
+          "note": "gen-3 bug: near-constant scores; 12 of 98 sources stddev<0.1",
+          "pass": false
+        },
+        {
+          "id": "14",
+          "rx": "7040",
+          "note": "gen-3 RFC (calibrated/coherent), open 2026-07-10, NOT merged/deployed",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "rav/quality-coherence",
+          "note": "branch holding the content-type-aware, source-blind rubric + pooled ranker fix",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "0.44|0.69",
+          "note": "Spearman vs NEW coherent-quality target 0.44->0.69 (not comparable to old oracle-AUC)",
+          "pass": false
+        },
+        {
+          "id": "17",
+          "rx": "both domain and quality classifiers are v0",
+          "note": "rav quote framing v0 as intentionally-provisional e2e placeholder",
+          "pass": false
+        },
+        {
+          "id": "18",
+          "rx": "not.*deploy|never.*wire|recommendation",
+          "note": "fast-transformer was recommended, not adopted into the inference path; deployed = v0",
+          "pass": false
+        },
+        {
+          "id": "19",
+          "rx": "marin-public|quality-score-debugging",
+          "note": "classifier debugging report already published to world-readable public bucket",
+          "pass": false
+        },
+        {
+          "id": "20",
+          "rx": "dolma3-fasttext-quality",
+          "note": "AllenAI openly-released analogous classifier, consumed by Marin (#5812) -- open precedent",
+          "pass": true
+        },
+        {
+          "id": "21",
+          "rx": "no.*(decision|explicit)|unarticulated|gap",
+          "note": "no explicit weight-release decision or ToS blocker exists in corpus; provenance (Claude labels) is real but undiscussed",
+          "pass": true
+        },
+        {
+          "id": "22",
+          "rx": "distill",
+          "note": "labels distilled entirely from Claude outputs -- the one genuine provenance constraint",
+          "pass": false
+        },
+        {
+          "id": "23",
+          "rx": "v6e",
+          "note": "fast-transformer ran on TPU v6e-4 (JAX/Equinox, Iris launch, eu-west4)",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "0.875",
+          "note": "fast-transformer AUC (gen-2), a recommendation not a deployment"
+        },
+        {
+          "rx": "0.41M",
+          "note": "fast-transformer FLOPs/token, under the <1M budget"
+        },
+        {
+          "rx": "0.852",
+          "note": "source identity alone predicts oracle at AUC 0.852 (eta^2=0.41) -- the confound; above fastText's 0.846"
+        },
+        {
+          "rx": "raising oracle-AUC does not fix",
+          "note": "team conclusion that the metric itself is flawed / domain-sorting defect unfixed by higher AUC"
+        },
+        {
+          "rx": "6849",
+          "note": "gen-3 bug: sorts by domain not intrinsic quality; root cause = source-recoverable label"
+        },
+        {
+          "rx": "6860",
+          "note": "gen-3 bug: near-constant scores; 12 of 98 sources stddev<0.1"
+        },
+        {
+          "rx": "7040",
+          "note": "gen-3 RFC (calibrated/coherent), open 2026-07-10, NOT merged/deployed"
+        },
+        {
+          "rx": "rav/quality-coherence",
+          "note": "branch holding the content-type-aware, source-blind rubric + pooled ranker fix"
+        },
+        {
+          "rx": "0.44|0.69",
+          "note": "Spearman vs NEW coherent-quality target 0.44->0.69 (not comparable to old oracle-AUC)"
+        },
+        {
+          "rx": "both domain and quality classifiers are v0",
+          "note": "rav quote framing v0 as intentionally-provisional e2e placeholder"
+        },
+        {
+          "rx": "not.*deploy|never.*wire|recommendation",
+          "note": "fast-transformer was recommended, not adopted into the inference path; deployed = v0"
+        },
+        {
+          "rx": "marin-public|quality-score-debugging",
+          "note": "classifier debugging report already published to world-readable public bucket"
+        },
+        {
+          "rx": "distill",
+          "note": "labels distilled entirely from Claude outputs -- the one genuine provenance constraint"
+        },
+        {
+          "rx": "v6e",
+          "note": "fast-transformer ran on TPU v6e-4 (JAX/Equinox, Iris launch, eu-west4)"
+        }
+      ],
+      "traps": []
+    },
+    "gold_targets": {
+      "must_have": [
+        "#5810",
+        "#6739",
+        "#6849",
+        "#6860",
+        "#7040"
+      ],
+      "forbidden": [],
+      "n_facts": 23
+    }
+  },
+  "benchmarks": {
+    "question": "What are our target benchmarks and our development proxies?",
+    "A_skill_frozen": {
+      "Q": 54.0,
+      "gate_failed": false,
+      "cite_recall": 0.3,
+      "fact_cov": 0.385,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "4550",
+        "5819",
+        "6044"
+      ],
+      "must_have_MISS": [
+        "574",
+        "817",
+        "1337",
+        "2779",
+        "6608",
+        "6611",
+        "6726"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "14/22",
+          "note": "PR #574 wired 14 of 22 DCLM CORE MCQ tasks into default_eval (nikil-ravi); the load-bearing during-training MCQ tier for most of training.",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "soft metrics",
+          "note": "PR #817 switched to the stanford-crfm/lm-evaluation-harness fork logging soft/BPB metrics; fork mainly de-Torches lm-eval; being retired toward EleutherAI mainline in 2026.",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "2.75",
+          "note": "Delphi #1337 pre-registration (Helw150, 1.9 asymptote): 1e21:2.75, 1e22:2.55, 1e23:2.40 Paloma macro-loss vs FLOPs \u2014 the core scaling-proxy mechanism; projected/target, not achieved.",
+          "pass": false
+        },
+        {
+          "id": "4",
+          "rx": "2.53",
+          "note": "Achieved 1e22 Delphi-Nemotron macro loss = 2.53, beat the 2.55 forecast; 1e21 achieved 2.7581; no final 1e23 number in corpus.",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "2.234",
+          "note": "MoE isoflop 1e23 (#4697, d5120 129B/16B) final Paloma macro loss 2.234 vs predicted 2.252 \u2014 same L\u221e+A\u00b7C^(-\u03b1) pre-registration methodology, separate ladder from Delphi.",
+          "pass": false
+        },
+        {
+          "id": "6",
+          "rx": "Table.9|table9|51",
+          "note": "Current live mixture/DSP-selection objective = OLMoBaseEval Easy Table-9 unweighted 51-component BPB macro (Calvin-Xu, #6611/#6726), computed natively in Levanter/TPU fp32 byte-denominator.",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "supersed",
+          "note": "#6608: the Table-9 macro objective superseded the Uncheatable-Eval-only objective for mixture selection, but eval/uncheatable_eval/bpb remained a coexisting validation target (scoped, not total).",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "v4.0.4",
+          "note": "AA Intelligence Index v4.0.4 (#5819) is the headline TARGET framework: GDPval-AA, tau2-Bench Telecom, Terminal-Bench Hard, SciCode, AA-LCR, AA-Omniscience, IFBench, HLE, GPQA Diamond, CritPt \u2014 competencies to approximate, mostly NOT executed.",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "[Ee]valchemy",
+          "note": "Only a reasoning subset is actually executed as generative evals via Evalchemy on TPU/vLLM (#2779/#3690): AIME24/25/26, MATH500, GPQA Diamond, LiveCodeBench, HumanEval+/MBPP+, etc. \u2014 target-vs-executed distinction.",
+          "pass": true
+        },
+        {
+          "id": "10",
+          "rx": "4550|downstream.scaling",
+          "note": "#4550 downstream-scaling proxy-evals project (RohithKuditipudi): predict held-out largest model's downstream perf from cheaper ladder runs; #4389 (soft agentic proxy, negative result) superseded by it.",
+          "pass": true
+        },
+        {
+          "id": "11",
+          "rx": "2.269",
+          "note": "67B-A2B hero-run stage-1 (8T-token) preregistered Paloma target 2.269 @ seqlen 8192/1024 seqs is in #6044 (ClassicLarry), a PROJECTION; NOT #6811 (which is an ihodes placeholder 'pass@256 on X Y Z').",
+          "pass": true
+        },
+        {
+          "id": "12",
+          "rx": "61.96|64.66",
+          "note": "Comparator target 'beat Qwen': marin-32b-base 61.96 vs Qwen2.5-32B 64.66, Olmo-3-32B 63.20 on lm-eval pretraining suite; gaps in math/code/reasoning; OLMES 8-shot-COT harness caveats on generation benchmarks.",
+          "pass": false
+        },
+        {
+          "id": "13",
+          "rx": "Mega-Evals|~?200",
+          "note": "Mega-Evals (#2663, ~200 lm-eval tasks, Helw150) never merged (auto-closed for inactivity); not the load-bearing default set.",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "14/22",
+          "note": "PR #574 wired 14 of 22 DCLM CORE MCQ tasks into default_eval (nikil-ravi); the load-bearing during-training MCQ tier for most of training."
+        },
+        {
+          "rx": "soft metrics",
+          "note": "PR #817 switched to the stanford-crfm/lm-evaluation-harness fork logging soft/BPB metrics; fork mainly de-Torches lm-eval; being retired toward EleutherAI mainline in 2026."
+        },
+        {
+          "rx": "2.75",
+          "note": "Delphi #1337 pre-registration (Helw150, 1.9 asymptote): 1e21:2.75, 1e22:2.55, 1e23:2.40 Paloma macro-loss vs FLOPs \u2014 the core scaling-proxy mechanism; projected/target, not achieved."
+        },
+        {
+          "rx": "2.53",
+          "note": "Achieved 1e22 Delphi-Nemotron macro loss = 2.53, beat the 2.55 forecast; 1e21 achieved 2.7581; no final 1e23 number in corpus."
+        },
+        {
+          "rx": "2.234",
+          "note": "MoE isoflop 1e23 (#4697, d5120 129B/16B) final Paloma macro loss 2.234 vs predicted 2.252 \u2014 same L\u221e+A\u00b7C^(-\u03b1) pre-registration methodology, separate ladder from Delphi."
+        },
+        {
+          "rx": "supersed",
+          "note": "#6608: the Table-9 macro objective superseded the Uncheatable-Eval-only objective for mixture selection, but eval/uncheatable_eval/bpb remained a coexisting validation target (scoped, not total)."
+        },
+        {
+          "rx": "61.96|64.66",
+          "note": "Comparator target 'beat Qwen': marin-32b-base 61.96 vs Qwen2.5-32B 64.66, Olmo-3-32B 63.20 on lm-eval pretraining suite; gaps in math/code/reasoning; OLMES 8-shot-COT harness caveats on generation benchmarks."
+        },
+        {
+          "rx": "Mega-Evals|~?200",
+          "note": "Mega-Evals (#2663, ~200 lm-eval tasks, Helw150) never merged (auto-closed for inactivity); not the load-bearing default set."
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": true,
+          "why": ""
+        }
+      ]
+    },
+    "B_noskill_live": {
+      "Q": 38.9,
+      "gate_failed": false,
+      "cite_recall": 0.1,
+      "fact_cov": 0.154,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "4550"
+      ],
+      "must_have_MISS": [
+        "574",
+        "817",
+        "1337",
+        "2779",
+        "5819",
+        "6044",
+        "6608",
+        "6611",
+        "6726"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "14/22",
+          "note": "PR #574 wired 14 of 22 DCLM CORE MCQ tasks into default_eval (nikil-ravi); the load-bearing during-training MCQ tier for most of training.",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "soft metrics",
+          "note": "PR #817 switched to the stanford-crfm/lm-evaluation-harness fork logging soft/BPB metrics; fork mainly de-Torches lm-eval; being retired toward EleutherAI mainline in 2026.",
+          "pass": false
+        },
+        {
+          "id": "3",
+          "rx": "2.75",
+          "note": "Delphi #1337 pre-registration (Helw150, 1.9 asymptote): 1e21:2.75, 1e22:2.55, 1e23:2.40 Paloma macro-loss vs FLOPs \u2014 the core scaling-proxy mechanism; projected/target, not achieved.",
+          "pass": false
+        },
+        {
+          "id": "4",
+          "rx": "2.53",
+          "note": "Achieved 1e22 Delphi-Nemotron macro loss = 2.53, beat the 2.55 forecast; 1e21 achieved 2.7581; no final 1e23 number in corpus.",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "2.234",
+          "note": "MoE isoflop 1e23 (#4697, d5120 129B/16B) final Paloma macro loss 2.234 vs predicted 2.252 \u2014 same L\u221e+A\u00b7C^(-\u03b1) pre-registration methodology, separate ladder from Delphi.",
+          "pass": false
+        },
+        {
+          "id": "6",
+          "rx": "Table.9|table9|51",
+          "note": "Current live mixture/DSP-selection objective = OLMoBaseEval Easy Table-9 unweighted 51-component BPB macro (Calvin-Xu, #6611/#6726), computed natively in Levanter/TPU fp32 byte-denominator.",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "supersed",
+          "note": "#6608: the Table-9 macro objective superseded the Uncheatable-Eval-only objective for mixture selection, but eval/uncheatable_eval/bpb remained a coexisting validation target (scoped, not total).",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "v4.0.4",
+          "note": "AA Intelligence Index v4.0.4 (#5819) is the headline TARGET framework: GDPval-AA, tau2-Bench Telecom, Terminal-Bench Hard, SciCode, AA-LCR, AA-Omniscience, IFBench, HLE, GPQA Diamond, CritPt \u2014 competencies to approximate, mostly NOT executed.",
+          "pass": false
+        },
+        {
+          "id": "9",
+          "rx": "[Ee]valchemy",
+          "note": "Only a reasoning subset is actually executed as generative evals via Evalchemy on TPU/vLLM (#2779/#3690): AIME24/25/26, MATH500, GPQA Diamond, LiveCodeBench, HumanEval+/MBPP+, etc. \u2014 target-vs-executed distinction.",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "4550|downstream.scaling",
+          "note": "#4550 downstream-scaling proxy-evals project (RohithKuditipudi): predict held-out largest model's downstream perf from cheaper ladder runs; #4389 (soft agentic proxy, negative result) superseded by it.",
+          "pass": true
+        },
+        {
+          "id": "11",
+          "rx": "2.269",
+          "note": "67B-A2B hero-run stage-1 (8T-token) preregistered Paloma target 2.269 @ seqlen 8192/1024 seqs is in #6044 (ClassicLarry), a PROJECTION; NOT #6811 (which is an ihodes placeholder 'pass@256 on X Y Z').",
+          "pass": false
+        },
+        {
+          "id": "12",
+          "rx": "61.96|64.66",
+          "note": "Comparator target 'beat Qwen': marin-32b-base 61.96 vs Qwen2.5-32B 64.66, Olmo-3-32B 63.20 on lm-eval pretraining suite; gaps in math/code/reasoning; OLMES 8-shot-COT harness caveats on generation benchmarks.",
+          "pass": false
+        },
+        {
+          "id": "13",
+          "rx": "Mega-Evals|~?200",
+          "note": "Mega-Evals (#2663, ~200 lm-eval tasks, Helw150) never merged (auto-closed for inactivity); not the load-bearing default set.",
+          "pass": false
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "14/22",
+          "note": "PR #574 wired 14 of 22 DCLM CORE MCQ tasks into default_eval (nikil-ravi); the load-bearing during-training MCQ tier for most of training."
+        },
+        {
+          "rx": "soft metrics",
+          "note": "PR #817 switched to the stanford-crfm/lm-evaluation-harness fork logging soft/BPB metrics; fork mainly de-Torches lm-eval; being retired toward EleutherAI mainline in 2026."
+        },
+        {
+          "rx": "2.75",
+          "note": "Delphi #1337 pre-registration (Helw150, 1.9 asymptote): 1e21:2.75, 1e22:2.55, 1e23:2.40 Paloma macro-loss vs FLOPs \u2014 the core scaling-proxy mechanism; projected/target, not achieved."
+        },
+        {
+          "rx": "2.53",
+          "note": "Achieved 1e22 Delphi-Nemotron macro loss = 2.53, beat the 2.55 forecast; 1e21 achieved 2.7581; no final 1e23 number in corpus."
+        },
+        {
+          "rx": "2.234",
+          "note": "MoE isoflop 1e23 (#4697, d5120 129B/16B) final Paloma macro loss 2.234 vs predicted 2.252 \u2014 same L\u221e+A\u00b7C^(-\u03b1) pre-registration methodology, separate ladder from Delphi."
+        },
+        {
+          "rx": "supersed",
+          "note": "#6608: the Table-9 macro objective superseded the Uncheatable-Eval-only objective for mixture selection, but eval/uncheatable_eval/bpb remained a coexisting validation target (scoped, not total)."
+        },
+        {
+          "rx": "v4.0.4",
+          "note": "AA Intelligence Index v4.0.4 (#5819) is the headline TARGET framework: GDPval-AA, tau2-Bench Telecom, Terminal-Bench Hard, SciCode, AA-LCR, AA-Omniscience, IFBench, HLE, GPQA Diamond, CritPt \u2014 competencies to approximate, mostly NOT executed."
+        },
+        {
+          "rx": "[Ee]valchemy",
+          "note": "Only a reasoning subset is actually executed as generative evals via Evalchemy on TPU/vLLM (#2779/#3690): AIME24/25/26, MATH500, GPQA Diamond, LiveCodeBench, HumanEval+/MBPP+, etc. \u2014 target-vs-executed distinction."
+        },
+        {
+          "rx": "2.269",
+          "note": "67B-A2B hero-run stage-1 (8T-token) preregistered Paloma target 2.269 @ seqlen 8192/1024 seqs is in #6044 (ClassicLarry), a PROJECTION; NOT #6811 (which is an ihodes placeholder 'pass@256 on X Y Z')."
+        },
+        {
+          "rx": "61.96|64.66",
+          "note": "Comparator target 'beat Qwen': marin-32b-base 61.96 vs Qwen2.5-32B 64.66, Olmo-3-32B 63.20 on lm-eval pretraining suite; gaps in math/code/reasoning; OLMES 8-shot-COT harness caveats on generation benchmarks."
+        },
+        {
+          "rx": "Mega-Evals|~?200",
+          "note": "Mega-Evals (#2663, ~200 lm-eval tasks, Helw150) never merged (auto-closed for inactivity); not the load-bearing default set."
+        }
+      ],
+      "traps": [
+        {
+          "name": "superseded",
+          "pass": true,
+          "why": ""
+        }
+      ]
+    },
+    "gold_targets": {
+      "must_have": [
+        "#574",
+        "#817",
+        "#1337",
+        "#6611",
+        "#6726",
+        "#6608",
+        "#5819",
+        "#2779",
+        "#4550",
+        "#6044"
+      ],
+      "forbidden": [
+        "#6603"
+      ],
+      "n_facts": 13
+    }
+  },
+  "inference": {
+    "question": "Who is doing inference work and where is it at? What's the current performance and are there any open issues?",
+    "A_skill_frozen": {
+      "Q": 64.0,
+      "gate_failed": false,
+      "cite_recall": 0.471,
+      "fact_cov": 0.5,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "6041",
+        "6042",
+        "6335",
+        "6664",
+        "6709",
+        "6867",
+        "6870",
+        "6891"
+      ],
+      "must_have_MISS": [
+        "2237",
+        "4401",
+        "5285",
+        "5400",
+        "5887",
+        "6500",
+        "6626",
+        "6627",
+        "6629"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "Iris inference service",
+          "note": "The serving substrate the whole question hinges on; owned by Romain Yon (yonromai). Draft omitted it. #5285 handoff landed, #5400 design went stale, #5887 broker built.",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "Romain Yon|yonromai",
+          "note": "Owner of Iris inference service + GrugMoE vLLM enablement + the brokered path where #6983 lives.",
+          "pass": true
+        },
+        {
+          "id": "3",
+          "rx": "6500",
+          "note": "[Epic] Inference/Serving Infrastructure Specialist (penfever=Benjamin Feuer) \u2014 the public role definition; charters 3 components (inference server, format library #6626, agent harness #6627). Role defined but not demonstrably filled.",
+          "pass": false
+        },
+        {
+          "id": "4",
+          "rx": "6626",
+          "note": "Marin Format Library \u2014 bidirectional render/parse round-trip; chartered but NOT started; blocked on Stage-4 template decision.",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "6627",
+          "note": "Marin Agent Harness \u2014 chartered but NOT started; stopgaps = mini-swe-agent/Harbor/terminus-2.",
+          "pass": false
+        },
+        {
+          "id": "6",
+          "rx": "2\\.5\\s*h|2\\.5hr|2\\.5 hr",
+          "note": "~2.5 hr/step is an END-TO-END RL step wall-clock (achieved), NOT a serving throughput; never decomposed into gen-vs-train. Russell Power asked for the split and got only a token count.",
+          "pass": true
+        },
+        {
+          "id": "7",
+          "rx": "10M tokens|~10M",
+          "note": "~10M tokens GENERATED per step \u2014 a count, not a rate; the only decomposition Feuer gave.",
+          "pass": true
+        },
+        {
+          "id": "8",
+          "rx": "64.?H100|64\u00d7H100|64xH100",
+          "note": "Qwen3-Coder-30B-A3B / Qwen3.5-35B-A3B fit on 64\u00d7H100 (8 nodes) on CoreWeave; achieved. 80B PROJECTED to need 96-128\u00d7H100.",
+          "pass": true
+        },
+        {
+          "id": "9",
+          "rx": "GH200",
+          "note": "MoE R3/TIS bring-up (#6335, penfever) is on JSC Jupiter GH200 \u2014 the device-pinning saga is GH200, NOT CoreWeave H100. Do not conflate with the 64\u00d7H100 CoreWeave state.",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "Jupiter|JSC",
+          "note": "The 30B proof-of-life (job 849580, 6 nodes/24\u00d7GH200, ~12h walltime) and 80B bring-up ran on JSC Jupiter GH200 (#6335/#6655).",
+          "pass": false
+        },
+        {
+          "id": "11",
+          "rx": "CoreWeave",
+          "note": "The July 64\u00d7H100 'plumbed' state is on CoreWeave cw-us-east-02a H100 (#6629/#6293); GrugMoE EP8 validation also on CoreWeave/H100 (#6891).",
+          "pass": true
+        },
+        {
+          "id": "12",
+          "rx": "no baseline|establish the baseline|baseline",
+          "note": "#6709 makes 'measure/document the current serving baseline' its explicit first, not-yet-done task; no H100 rollout-tok/s baseline or target exists \u2014 literally true for H100 but understates prior TPU/A100 work.",
+          "pass": true
+        },
+        {
+          "id": "13",
+          "rx": "2237",
+          "note": "Real quantified async-RL baseline: 3.7x from 4.1->15.4 req/s \u2014 but a TRAINER number, not rollout inference (actor already ~13 req/s). Do not present as generation baseline.",
+          "pass": false
+        },
+        {
+          "id": "14",
+          "rx": "4719",
+          "note": "SWE-ZERO 3.4x per-worker rollout throughput (prefix caching) on vLLM/TPU v6e-4 \u2014 a real rollout baseline #6709 should build on.",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "EP8|expert.parallel",
+          "note": "GPU GrugMoE correctness validated at EP8 on 8\u00d7H100 CoreWeave (#6891/#6966); #6042 closed. Perf/RL-grade explicitly out of scope, deferred to #6870 (TODO DoD).",
+          "pass": true
+        },
+        {
+          "id": "16",
+          "rx": "4096",
+          "note": "The reproduced #6983 'wedge' was a 4096-token position-limit NaN->HTTP 400 (marin-8b-base), masked by VLLM_ALLOW_LONG_MAX_MODEL_LEN \u2014 NOT a broker bug; broker path measured clean. Original field wedge remains genuine but unreproduced.",
+          "pass": true
+        },
+        {
+          "id": "17",
+          "rx": "stale",
+          "note": "#5400 (Iris inference-service design) went stale 2026-06-07; #4401 (centralized low-priority inference RFC) auto-closed stale 2026-07-04 \u2014 the design track partly stalled.",
+          "pass": false
+        },
+        {
+          "id": "18",
+          "rx": "mlfoundations|penfever/working",
+          "note": "Two vLLM forks: marin-community/vllm (+tpu-inference) for GrugMoE serving vs mlfoundations/vllm penfever/working for RL/MarinSkyRL (Feuer 2026-07-14).",
+          "pass": false
+        },
+        {
+          "id": "19",
+          "rx": "~10x|12%|good enough for evals",
+          "note": "dlwh's Levanter inference ~10x faster, within ~12% of vLLM-TPU; 'good enough for evals' but vLLM a hard requirement for SkyRL (#6041).",
+          "pass": true
+        },
+        {
+          "id": "20",
+          "rx": "penfever|Benjamin Feuer",
+          "note": "penfever = Benjamin Feuer (@benjaminfeuer); owns MarinSkyRL RL-inference load and authored the role epic #6500.",
+          "pass": true
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "Iris inference service",
+          "note": "The serving substrate the whole question hinges on; owned by Romain Yon (yonromai). Draft omitted it. #5285 handoff landed, #5400 design went stale, #5887 broker built."
+        },
+        {
+          "rx": "6500",
+          "note": "[Epic] Inference/Serving Infrastructure Specialist (penfever=Benjamin Feuer) \u2014 the public role definition; charters 3 components (inference server, format library #6626, agent harness #6627). Role defined but not demonstrably filled."
+        },
+        {
+          "rx": "6626",
+          "note": "Marin Format Library \u2014 bidirectional render/parse round-trip; chartered but NOT started; blocked on Stage-4 template decision."
+        },
+        {
+          "rx": "6627",
+          "note": "Marin Agent Harness \u2014 chartered but NOT started; stopgaps = mini-swe-agent/Harbor/terminus-2."
+        },
+        {
+          "rx": "GH200",
+          "note": "MoE R3/TIS bring-up (#6335, penfever) is on JSC Jupiter GH200 \u2014 the device-pinning saga is GH200, NOT CoreWeave H100. Do not conflate with the 64\u00d7H100 CoreWeave state."
+        },
+        {
+          "rx": "Jupiter|JSC",
+          "note": "The 30B proof-of-life (job 849580, 6 nodes/24\u00d7GH200, ~12h walltime) and 80B bring-up ran on JSC Jupiter GH200 (#6335/#6655)."
+        },
+        {
+          "rx": "2237",
+          "note": "Real quantified async-RL baseline: 3.7x from 4.1->15.4 req/s \u2014 but a TRAINER number, not rollout inference (actor already ~13 req/s). Do not present as generation baseline."
+        },
+        {
+          "rx": "4719",
+          "note": "SWE-ZERO 3.4x per-worker rollout throughput (prefix caching) on vLLM/TPU v6e-4 \u2014 a real rollout baseline #6709 should build on."
+        },
+        {
+          "rx": "stale",
+          "note": "#5400 (Iris inference-service design) went stale 2026-06-07; #4401 (centralized low-priority inference RFC) auto-closed stale 2026-07-04 \u2014 the design track partly stalled."
+        },
+        {
+          "rx": "mlfoundations|penfever/working",
+          "note": "Two vLLM forks: marin-community/vllm (+tpu-inference) for GrugMoE serving vs mlfoundations/vllm penfever/working for RL/MarinSkyRL (Feuer 2026-07-14)."
+        }
+      ],
+      "traps": []
+    },
+    "B_noskill_live": {
+      "Q": 47.0,
+      "gate_failed": false,
+      "cite_recall": 0.235,
+      "fact_cov": 0.25,
+      "trap_pass": 1.0,
+      "forbidden_penalty": 0,
+      "must_have_hit": [
+        "6500",
+        "6709",
+        "6867",
+        "6870"
+      ],
+      "must_have_MISS": [
+        "2237",
+        "4401",
+        "5285",
+        "5400",
+        "5887",
+        "6041",
+        "6042",
+        "6335",
+        "6626",
+        "6627",
+        "6629",
+        "6664",
+        "6891"
+      ],
+      "forbidden_cited": [],
+      "facts": [
+        {
+          "id": "1",
+          "rx": "Iris inference service",
+          "note": "The serving substrate the whole question hinges on; owned by Romain Yon (yonromai). Draft omitted it. #5285 handoff landed, #5400 design went stale, #5887 broker built.",
+          "pass": false
+        },
+        {
+          "id": "2",
+          "rx": "Romain Yon|yonromai",
+          "note": "Owner of Iris inference service + GrugMoE vLLM enablement + the brokered path where #6983 lives.",
+          "pass": true
+        },
+        {
+          "id": "3",
+          "rx": "6500",
+          "note": "[Epic] Inference/Serving Infrastructure Specialist (penfever=Benjamin Feuer) \u2014 the public role definition; charters 3 components (inference server, format library #6626, agent harness #6627). Role defined but not demonstrably filled.",
+          "pass": true
+        },
+        {
+          "id": "4",
+          "rx": "6626",
+          "note": "Marin Format Library \u2014 bidirectional render/parse round-trip; chartered but NOT started; blocked on Stage-4 template decision.",
+          "pass": false
+        },
+        {
+          "id": "5",
+          "rx": "6627",
+          "note": "Marin Agent Harness \u2014 chartered but NOT started; stopgaps = mini-swe-agent/Harbor/terminus-2.",
+          "pass": false
+        },
+        {
+          "id": "6",
+          "rx": "2\\.5\\s*h|2\\.5hr|2\\.5 hr",
+          "note": "~2.5 hr/step is an END-TO-END RL step wall-clock (achieved), NOT a serving throughput; never decomposed into gen-vs-train. Russell Power asked for the split and got only a token count.",
+          "pass": false
+        },
+        {
+          "id": "7",
+          "rx": "10M tokens|~10M",
+          "note": "~10M tokens GENERATED per step \u2014 a count, not a rate; the only decomposition Feuer gave.",
+          "pass": false
+        },
+        {
+          "id": "8",
+          "rx": "64.?H100|64\u00d7H100|64xH100",
+          "note": "Qwen3-Coder-30B-A3B / Qwen3.5-35B-A3B fit on 64\u00d7H100 (8 nodes) on CoreWeave; achieved. 80B PROJECTED to need 96-128\u00d7H100.",
+          "pass": false
+        },
+        {
+          "id": "9",
+          "rx": "GH200",
+          "note": "MoE R3/TIS bring-up (#6335, penfever) is on JSC Jupiter GH200 \u2014 the device-pinning saga is GH200, NOT CoreWeave H100. Do not conflate with the 64\u00d7H100 CoreWeave state.",
+          "pass": false
+        },
+        {
+          "id": "10",
+          "rx": "Jupiter|JSC",
+          "note": "The 30B proof-of-life (job 849580, 6 nodes/24\u00d7GH200, ~12h walltime) and 80B bring-up ran on JSC Jupiter GH200 (#6335/#6655).",
+          "pass": false
+        },
+        {
+          "id": "11",
+          "rx": "CoreWeave",
+          "note": "The July 64\u00d7H100 'plumbed' state is on CoreWeave cw-us-east-02a H100 (#6629/#6293); GrugMoE EP8 validation also on CoreWeave/H100 (#6891).",
+          "pass": true
+        },
+        {
+          "id": "12",
+          "rx": "no baseline|establish the baseline|baseline",
+          "note": "#6709 makes 'measure/document the current serving baseline' its explicit first, not-yet-done task; no H100 rollout-tok/s baseline or target exists \u2014 literally true for H100 but understates prior TPU/A100 work.",
+          "pass": true
+        },
+        {
+          "id": "13",
+          "rx": "2237",
+          "note": "Real quantified async-RL baseline: 3.7x from 4.1->15.4 req/s \u2014 but a TRAINER number, not rollout inference (actor already ~13 req/s). Do not present as generation baseline.",
+          "pass": false
+        },
+        {
+          "id": "14",
+          "rx": "4719",
+          "note": "SWE-ZERO 3.4x per-worker rollout throughput (prefix caching) on vLLM/TPU v6e-4 \u2014 a real rollout baseline #6709 should build on.",
+          "pass": false
+        },
+        {
+          "id": "15",
+          "rx": "EP8|expert.parallel",
+          "note": "GPU GrugMoE correctness validated at EP8 on 8\u00d7H100 CoreWeave (#6891/#6966); #6042 closed. Perf/RL-grade explicitly out of scope, deferred to #6870 (TODO DoD).",
+          "pass": false
+        },
+        {
+          "id": "16",
+          "rx": "4096",
+          "note": "The reproduced #6983 'wedge' was a 4096-token position-limit NaN->HTTP 400 (marin-8b-base), masked by VLLM_ALLOW_LONG_MAX_MODEL_LEN \u2014 NOT a broker bug; broker path measured clean. Original field wedge remains genuine but unreproduced.",
+          "pass": false
+        },
+        {
+          "id": "17",
+          "rx": "stale",
+          "note": "#5400 (Iris inference-service design) went stale 2026-06-07; #4401 (centralized low-priority inference RFC) auto-closed stale 2026-07-04 \u2014 the design track partly stalled.",
+          "pass": false
+        },
+        {
+          "id": "18",
+          "rx": "mlfoundations|penfever/working",
+          "note": "Two vLLM forks: marin-community/vllm (+tpu-inference) for GrugMoE serving vs mlfoundations/vllm penfever/working for RL/MarinSkyRL (Feuer 2026-07-14).",
+          "pass": false
+        },
+        {
+          "id": "19",
+          "rx": "~10x|12%|good enough for evals",
+          "note": "dlwh's Levanter inference ~10x faster, within ~12% of vLLM-TPU; 'good enough for evals' but vLLM a hard requirement for SkyRL (#6041).",
+          "pass": false
+        },
+        {
+          "id": "20",
+          "rx": "penfever|Benjamin Feuer",
+          "note": "penfever = Benjamin Feuer (@benjaminfeuer); owns MarinSkyRL RL-inference load and authored the role epic #6500.",
+          "pass": true
+        }
+      ],
+      "facts_FAILED": [
+        {
+          "rx": "Iris inference service",
+          "note": "The serving substrate the whole question hinges on; owned by Romain Yon (yonromai). Draft omitted it. #5285 handoff landed, #5400 design went stale, #5887 broker built."
+        },
+        {
+          "rx": "6626",
+          "note": "Marin Format Library \u2014 bidirectional render/parse round-trip; chartered but NOT started; blocked on Stage-4 template decision."
+        },
+        {
+          "rx": "6627",
+          "note": "Marin Agent Harness \u2014 chartered but NOT started; stopgaps = mini-swe-agent/Harbor/terminus-2."
+        },
+        {
+          "rx": "2\\.5\\s*h|2\\.5hr|2\\.5 hr",
+          "note": "~2.5 hr/step is an END-TO-END RL step wall-clock (achieved), NOT a serving throughput; never decomposed into gen-vs-train. Russell Power asked for the split and got only a token count."
+        },
+        {
+          "rx": "10M tokens|~10M",
+          "note": "~10M tokens GENERATED per step \u2014 a count, not a rate; the only decomposition Feuer gave."
+        },
+        {
+          "rx": "64.?H100|64\u00d7H100|64xH100",
+          "note": "Qwen3-Coder-30B-A3B / Qwen3.5-35B-A3B fit on 64\u00d7H100 (8 nodes) on CoreWeave; achieved. 80B PROJECTED to need 96-128\u00d7H100."
+        },
+        {
+          "rx": "GH200",
+          "note": "MoE R3/TIS bring-up (#6335, penfever) is on JSC Jupiter GH200 \u2014 the device-pinning saga is GH200, NOT CoreWeave H100. Do not conflate with the 64\u00d7H100 CoreWeave state."
+        },
+        {
+          "rx": "Jupiter|JSC",
+          "note": "The 30B proof-of-life (job 849580, 6 nodes/24\u00d7GH200, ~12h walltime) and 80B bring-up ran on JSC Jupiter GH200 (#6335/#6655)."
+        },
+        {
+          "rx": "2237",
+          "note": "Real quantified async-RL baseline: 3.7x from 4.1->15.4 req/s \u2014 but a TRAINER number, not rollout inference (actor already ~13 req/s). Do not present as generation baseline."
+        },
+        {
+          "rx": "4719",
+          "note": "SWE-ZERO 3.4x per-worker rollout throughput (prefix caching) on vLLM/TPU v6e-4 \u2014 a real rollout baseline #6709 should build on."
+        },
+        {
+          "rx": "EP8|expert.parallel",
+          "note": "GPU GrugMoE correctness validated at EP8 on 8\u00d7H100 CoreWeave (#6891/#6966); #6042 closed. Perf/RL-grade explicitly out of scope, deferred to #6870 (TODO DoD)."
+        },
+        {
+          "rx": "4096",
+          "note": "The reproduced #6983 'wedge' was a 4096-token position-limit NaN->HTTP 400 (marin-8b-base), masked by VLLM_ALLOW_LONG_MAX_MODEL_LEN \u2014 NOT a broker bug; broker path measured clean. Original field wedge remains genuine but unreproduced."
+        },
+        {
+          "rx": "stale",
+          "note": "#5400 (Iris inference-service design) went stale 2026-06-07; #4401 (centralized low-priority inference RFC) auto-closed stale 2026-07-04 \u2014 the design track partly stalled."
+        },
+        {
+          "rx": "mlfoundations|penfever/working",
+          "note": "Two vLLM forks: marin-community/vllm (+tpu-inference) for GrugMoE serving vs mlfoundations/vllm penfever/working for RL/MarinSkyRL (Feuer 2026-07-14)."
+        },
+        {
+          "rx": "~10x|12%|good enough for evals",
+          "note": "dlwh's Levanter inference ~10x faster, within ~12% of vLLM-TPU; 'good enough for evals' but vLLM a hard requirement for SkyRL (#6041)."
+        }
+      ],
+      "traps": []
+    },
+    "gold_targets": {
+      "must_have": [
+        "#6500",
+        "#6626",
+        "#6627",
+        "#6709",
+        "#6867",
+        "#6870",
+        "#6042",
+        "#6041",
+        "#6664",
+        "#6891",
+        "#5285",
+        "#5400",
+        "#5887",
+        "#4401",
+        "#6335",
+        "#6629",
+        "#2237"
+      ],
+      "forbidden": [],
+      "n_facts": 20
+    }
+  }
+}

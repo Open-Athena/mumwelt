@@ -1,0 +1,358 @@
+{
+  "gpu": {
+    "id": "gpu",
+    "needs_changes": true,
+    "verdict": "Our gpu gold is materially more complete than Sol and factually accurate \u2014 no corrections. But it has one real blind spot Sol/the review surface: the Muon-is-a-GPU-tax story and the resulting ~19.9% MFU / 32-H100 SGD/Adam production-shape close-out (+ the explicit \"Muon needs to go\" decision, #6693's >20%@128-GPU goal). Both are corpus-verified and directly answer \"how is GPU training going,\" yet our gold never mentions Muon or the 19.9% number at all. Recommend adding a short H100-optimizer paragraph. Everything else the review lists is already in our gold.",
+    "corrections": [],
+    "additions": [
+      {
+        "item": "The ~19.9% MFU / 32-H100 (4-node) SGD/Adam production-shape H100 close-out, plus the explicit decision to drop Muon: Discord #gpu 2026-06-26 (dlwh) 'We're currently at ~19.9 MFU on 4 nodes w/ SGD/Adam... Muon needs to go for now... We'll need much faster interconnect or PP', linking to #6693 '[tracking] >20 MFU at 128 GPUs workstream'. This is the best production-shape achieved H100 MFU in the corpus and the reason the production path runs on SGD/Adam not Muon; caveats: substitute optimizer, 32 GPU not 128, still below the >20%@128-GPU bar. Our gold cites #6693 only as 'the 128-GPU workstream' and omits both the 19.9% number and the Muon-goes decision.",
+        "verified": true,
+        "value": "high",
+        "citation": "https://discord.com/channels/1354881461060243556/1399998407657001062/1520200189690773564 (dlwh 2026-06-26); https://github.com/marin-community/marin/issues/6693 (verified body: '[tracking] >20 MFU at 128 GPUs workstream plan')"
+      },
+      {
+        "item": "Muon is a large GPU-specific optimizer tax on H100 (#6493): single-node 8xH100 matched A/B on the d2560 ring-MoE shape measured SGD (May141) at 16.19% MFU / 74,848 tok/s / 0.438 s/step vs MuonH5 (May140) at 4.75% MFU / 21,962 tok/s / 1.492 s/step; the Jun 22-28 digest confirms Muon consumed ~500ms of a ~1500ms step on a 2-node run. Explains WHY the production path dropped Muon for SGD/Adam. Our gold does not mention Muon anywhere.",
+        "verified": true,
+        "value": "medium",
+        "citation": "https://github.com/marin-community/marin/issues/6493#issuecomment-4738899640 (May141 SGD 16.1876 MFU vs May140 MuonH5 4.7499 MFU); Weekly Digest Jun 22-28 (~500ms of 1500ms step)"
+      },
+      {
+        "item": "A prior NCCL all-to-all failure was root-caused to conflicting NCCL versions and closed after a dependency pin (#5377) \u2014 a resolved historical reliability bug Sol cites. Low value: our gold already conveys the crash/reliability picture richly with fresher, corpus-primary detail, so this adds little.",
+        "verified": false,
+        "value": "low",
+        "citation": "cited by Sol as #5377; not independently re-verified in corpus this pass"
+      }
+    ],
+    "already_covered": [
+      "The 90B-5.3BA MoE #6304 target-vs-achieved miss (25% target -> 9.37% pure-FSDP ceiling, 3.3x lift) with the full experiment ledger",
+      "The finished GQA4/10.77B 500B H100 run (loss 1.629, eval/bpb 0.7273) as the sibling that resolves the apparent contradiction",
+      "The 23.8% MFU being summary-asserted, not a logged run-card metric (no throughput/mfu logged for the d2048-500B family)",
+      "The MLA-500B crash-loop x5 on 07-13 and only ~24-31% running on 07-14 (not finished), contradicting the 'completion ~July 13-14' narrative",
+      "B200 17.8% single-node summary-asserted and below the >=20% #6706 gate; 25% is a September target",
+      "#6689's contested hero-run definition (288 B200/4xNVL72 vs summary's ~120B-A8B/2xNVL72) and its unmet gate/open arch-data-loss stubs #6700/#6701/#6702",
+      "GB200 multi-rack bring-up crashing above 128 GPU at freeze (gb200-d1280-sonic-cute sweep; d5120/L48 stable through 128 GPU, 256/512/640 crashed)",
+      "Pipeline parallelism verified on TPU v6e (1.22x at v6e-32, 0.78x single-host) and PARKED, #6532 -> rjpower/marin-experiments#11, PR #6534 closed unmerged; GPU-side PP number out of corpus",
+      "The 67B-A2B hero pretraining run is on TPU v4-2048 (~18.62% sustained), with the 21.5%/v4-1024 figure being the superseded initial attempt",
+      "Provenance flags for out-of-corpus issues (#7012, #7024, etc.) as summary-asserted/unverifiable"
+    ],
+    "framing": [
+      "Our gold's H100 story is dominated by the 9.37% pure-FSDP-ceiling (90B) and the crash forensics, but omits the more favorable and more production-relevant ~19.9%/32-H100/SGD-Adam close-out. Adding it gives a fuller achieved-MFU ladder (5.4% canary -> 9.37% 90B pure-FSDP -> 19.9% SGD/Adam 32-GPU, still under the >20%@128-GPU bar) and sharpens the 'why the production path uses SGD not Muon' logic. Keep it tightly labeled (substitute optimizer, 32 not 128 GPU, below bar) so it is not read as clearing the gate.",
+      "The review's concision critique (gold scored 4/10) is fair but out of scope for a factual-improvement pass; if trimming, cut individual crash-loop table rows and GB200 suffix enumeration before cutting load-bearing numbers."
+    ]
+  },
+  "h100-67b": {
+    "id": "h100-67b",
+    "additions": [
+      {
+        "item": "The distinct sibling 90B-total/5.3B-active Grug MoE bring-up on the same CoreWeave 256-H100 pool (#6304, follow-up #6321): batching drove it 2.8% -> 9.37% MFU (3.3x, batch 1024 x seq 2048 + save_moe, 712K tok/s), closed by rjpower as the practical pure-FSDP ceiling for that shape, explicitly below the ~25% target. Add as one clearly-labeled corroborating sentence under the 'why FSDP stalled' / blockers thesis (NOT the 67B shape: 90B total / 5.3B active vs 67B total / 2.01B active). It is a second independent data point on the same hardware showing pure-FSDP all-gather comms cap MoE MFU far below target, reinforcing the gold's central structural claim. Batch 2048 and 1536 OOMed; PGLE, reshard fix, pure-bf16 params, collective-combine flags, and microbatching all regressed or OOMed -- lever space exhausted.",
+        "verified": true,
+        "value": "medium",
+        "citation": "#6304 close-out (rjpower, 2026-06-10): '2.8% -> 9.37% MFU (3.3x)... ~9.4% is the practical pure-FSDP ceiling for this 90B/5.3BA model on 256 H100'; follow-up #6321 'Deeper MoE MFU levers beyond the pure-FSDP ceiling'"
+      }
+    ],
+    "already_covered": [
+      "The ~19.9% MFU on 4 nodes / 32 H100 with SGD/Adam June headline and the 'Muon needs to go for now' decision (gold short-answer + section 3 + section 6 table + Discord cite)",
+      "The first-step memory wall / OOM before step 0 and Initialize clique rendezvous failures at 128-256 devices (gold section 3)",
+      "Muon structurally too expensive on H100, incl. the 121.9 GiB bf16 expert-weight reshuffle that does not shrink with node count (gold section 3)",
+      "Ring EP vs DeepEP: DeepEP's ~19.7% component path never beat ring and never reached a real train step (gold section 3 + section 6 table)",
+      "The single-node MuonH 4.75% vs SGD 16.19% A/B is present and correctly placed under blockers, not as the final result (gold section 3 + section 6 table)",
+      "TPU resolution: hero run moved off H100; v4-1024 EP=1 21.54% per-chip best / ~78-day projection / crashed, then chosen v4-2048 sustaining ~18.6% on resume15k_v2 (gold section 7)",
+      "July working-copy results: 26.7% (8 GPU) -> 26.5% (64 H100) on the reduced 64-expert/~18B copy, and JaxPP 18.26% on 32 H100, both labeled summary-attested via out-of-corpus #6979/#7024 (gold section 5, 6, 7, Gaps)",
+      "#6532 June hand-rolled PP parked/closed-unmerged, distinct from July's JaxPP (gold section 3 + section 7)",
+      "'No corpus-supported final >=20% MFU' is stated but not evasively -- gold explicitly gives the 19.9% and interprets the never-cleared 20% bar (gold section 4 + section 6)",
+      "Leading with the key numbers and achieved/target/projected labeling (gold short-answer + section 6 fully-labeled table)"
+    ],
+    "corrections": [],
+    "framing": [
+      "Consider a one-line explicit corroboration hook in the blockers/section-4 discussion pointing to the 90B #6304 result as a same-pool second witness to the pure-FSDP ceiling, mirroring the review's suggestion to keep it as a single corroborating sentence rather than a table row (so it does not read as a 67B number)."
+    ],
+    "needs_changes": true,
+    "verdict": "Our current gold is decisively more complete than Sol and already contains every load-bearing fact the Sol review flags as missing (19.9% on 32 H100, the TPU 18.6%/21.54% resolution, 121.9 GiB Muon reshuffle, ring-vs-DeepEP, July 26.5% working copy, JaxPP 18.26%, #6532 PP park, single-node A/B). No factual corrections needed. The single genuine, corpus-verified gap is the distinct 90B-total/5.3B-active #6304 bring-up (2.8% -> 9.37% MFU, pure-FSDP ceiling on 256 H100, below ~25% target), which Sol includes and the gold omits -- worth adding as one clearly-labeled corroborating sentence (medium value; must be marked as a different shape from the 67B). Verified #6304 and #6321 personally in the frozen corpus."
+  },
+  "inference": {
+    "id": "inference",
+    "additions": [
+      {
+        "item": "Sol cites #6106 (the GrugMoE vLLM TPU experiment-tracking issue) and #6288 (superseded fork-wiring PR). Both are the same work our gold already covers via #6041/#6664; #6288 was closed as superseded by #6453. Not load-bearing.",
+        "verified": true,
+        "value": "low",
+        "citation": "mum-frozen show 6106 (yonromai experiment, GrugMoE vLLM TPU support); mum-frozen show 6288 (closed as superseded by #6453)"
+      }
+    ],
+    "already_covered": [
+      "Iris inference service as the serving substrate owned by Romain Yon (#5285 handoff contract landed, #5887 brokered serving, #5400 formal design went stale) \u2014 gold section 2a",
+      "Full people map: Romain Yon, Benjamin Feuer/penfever, David Hall, Russell Power, AlienKevin, Isaac Hodes \u2014 gold section 1",
+      "#6500 role charter treated as a definition not a filled role, plus Format Library #6626 and Agent Harness #6627 scoped-but-unstarted \u2014 gold sections 1 and 2d",
+      "Complete achieved context: ~2.5h end-to-end RL step, ~10M tokens/step, 64xH100 / 8 nodes CoreWeave, 131k context, explicitly labeled wall-clock not isolated throughput, generation/train split never measured \u2014 gold section 3",
+      "Separate Jupiter/GH200 track (#6335 ~12h on 6 nodes/24 GH200) kept distinct from CoreWeave H100 \u2014 gold section 2c",
+      "GrugMoE EP8 correctness validated on 8xH100 CoreWeave, RL-grade perf deferred to #6870 \u2014 gold sections 2b and 3",
+      "Prior quantified baselines with guards: #2237 trainer number (4.1->15.4 req/s, not rollout), #4719 3.4x rollout from prefix caching, plus #6227/#6229/#6230 and #6218 \u2014 gold section 3",
+      "Fork divergence: marin-community/vllm + tpu-inference for serving vs mlfoundations/vllm penfever/working for RL as a coordination blocker \u2014 gold sections 2c and 4",
+      "4096-token wedge (#6983) as a position-limit NaN->HTTP 400, not a broker failure, with original field stall unreproduced, marked summary-only \u2014 gold section 4",
+      "~10x Levanter speedup within ~12% of vLLM-TPU reported as a scoped comparison \u2014 gold section 3",
+      "Refusal to invent a GPU token-rate baseline; #6709 first task is to document the missing H100 baseline \u2014 gold sections 3 and 4",
+      "Summary-only provenance of freshest bugs (#6983, #7085, #7117, #7097, #7111/#7133) explicitly flagged \u2014 gold section 5"
+    ],
+    "framing": [
+      "Sol scores higher on concision (9 vs 4) and clarity (9 vs 7). If any editorial pass is wanted, the review's suggested 'three-track map' opener (Iris/vLLM serving = Romain, Levanter/JAX reference = David, MarinSkyRL RL inference = Benjamin) and a compact performance table with a 'what this is not' column could tighten the gold \u2014 but this is optional style tightening, not a correctness fix, and the gold's completeness is deliberate."
+    ],
+    "needs_changes": false,
+    "verdict": "No changes needed. Our gold is materially more complete than Sol on every axis the question asks (who / where / performance / open issues), and the Sol review itself concludes the same. Sol contributes no verified correction and no high/medium factual addition: everything Sol would 'add' per the review is already in our gold, and the only two citations Sol has that our gold lacks (#6106, #6288) are redundant/superseded coverage of work our gold already cites via #6041/#6664. The review's critiques of the gold are purely concision/framing (too expansive), and it explicitly acknowledges the gold already labels the 2.5h step correctly and already flags summary-only sourcing and the 'owns'-vs-activity distinction. Optional: adopt Sol's tighter three-track opener if a concision pass is desired.",
+    "corrections": []
+  },
+  "july": {
+    "id": "july",
+    "needs_changes": true,
+    "verdict": "Our gold is far more complete than Sol and the review rates it \"solid\" (needs trimming, not facts). Mining Sol surfaced exactly one verified factual error: our gold mislabels epic #6711. #6711 is \"Model architecture & scaling recipe (MoE)\" per its corpus body, but our gold's section header attributes it to \"GPU upskilling for the September large run.\" Sol maps #6711 correctly. This is a minor citation-label error (the GPU-upskilling substance our gold reports \u2014 #6998 master plan, #6979 learning path, JaxPP, fused EP kernel \u2014 is accurate; only the container epic number is wrong, and the real architecture/scaling-recipe epic thereby goes unrepresented). Additions Sol has are low value: the \"areas of investment\" epic citations our gold omits (#6713 pretraining data curation & mix; #6707 RL data curation/ablations; #6700/#6701 July hero-run data-mix/architecture inputs) \u2014 all verified but marginal since our gold already covers the substance richly. Sol's #6522 numbers do NOT correct our gold. Everything else the review asks Sol to add, our gold already has. Fix the #6711 label; the epic-citation additions are optional.",
+    "corrections": [
+      {
+        "our_gold_says": "### GPU upskilling for the September large run ([#6711]) \u2014 David Hall + Larry Dial",
+        "corpus_truth": "#6711's body reads: 'Model architecture & scaling recipe (MoE) ... MoE architecture research (including long-context) and the scaling / isoflop recipe used to size and predict hero runs.' It is the architecture/scaling epic, not a GPU-upskilling epic. There is no #67xx epic named GPU upskilling in the 6707-6716 area-of-investment set (6708=RL framework, 6709=inference speed, 6710=B200 MFU & perf, 6711=arch & scaling recipe, 6712=data-selection diagnostics, 6713=pretraining data curation, 6714=SFT data, 6715=cluster infra, 6707=RL data). GPU upskilling rolls under #6998 (master plan) / #6710 (B200 MFU); its content in our gold is correct, but #6711 is the wrong epic number and the true arch/scaling epic #6711 is left unrepresented.",
+        "citation": "mum-frozen show 6711 (title 'Model architecture & scaling recipe (MoE)'); cross-checked 6708/6710/6713 titles",
+        "sol_says": "'Architecture and scaling: settle the MoE architecture, long-context approach, and isoflop/scaling recipe used to size and forecast runs [#6711].'",
+        "severity": "minor"
+      }
+    ],
+    "additions": [
+      {
+        "item": "Epic #6713 'Pretraining data curation & mix' (productionize the CoreWeave data pipeline) \u2014 the area-of-investment epic behind our gold's data section, which our gold currently cites only downstream issues (#7073, #6037, defect wall) for.",
+        "verified": true,
+        "citation": "mum-frozen show 6713",
+        "value": "low"
+      },
+      {
+        "item": "Epic #6707 'RL data curation, experiments & ablations' \u2014 the RL-data area-of-investment epic, absent from our gold's post-training section (which cites #6708 RL framework, #6714 SFT).",
+        "verified": true,
+        "citation": "mum-frozen show 6707",
+        "value": "low"
+      },
+      {
+        "item": "#6700 (data mix for July hero run) and #6701 (architecture for July hero run, incl. long-context plan) \u2014 the June-created input issues for the B200 hero run; our gold cites only #7073 for the Aug-1 shape.",
+        "verified": true,
+        "citation": "mum-frozen show 6700 / 6701",
+        "value": "low"
+      }
+    ],
+    "already_covered": [
+      "GQA-as-working-September-choice with the #6522 MLA FLOP/risk rationale (+17.4% at 4k, +19-30% at 8k) \u2014 our gold covers this; its 8k range is correct (Table 4: MLA hybrid +19.3%, all-global +30%)",
+      "Achieved 67B snapshot: ~step 39k / ~2.114T tokens / ~18.6% TPU-v4-2048 MFU",
+      "2T cooldown at Paloma macro-loss 2.2772 with the explicit NOT-apples-to-apples caveat vs the 2.269 stage-1 (8T/seqlen-8192) preregistration",
+      "20% B200 bar phrased as a question ('Need to be at 20%+?') in #6706, not an achieved number",
+      "Both B200 MFU figures below the bar: 17.8% single-node d5120 (#7012 QuACK) and 18.26 multinode JaxPP (#7024)",
+      "Distinct 25% September MFU target from #6710, kept separate from the 20% August gate and H100 upskilling",
+      "Post-training projection 0.25-0.9x the 10T pretrain in hardware FLOPs, labeled a projection; final 67B post-training waits until August (#6705)",
+      "#7073 data/architecture/loss-preregistration lock still open at 4/14 sub-issues, marked summary-only",
+      "Provenance disclosure that 7000-series issue bodies are not retrievable as primary and are summary-sourced",
+      "11B/H100 run explicitly framed as a hardware dry run, not an artifact deliverable"
+    ],
+    "framing": [
+      "Adopt Sol's 'two hero-run tracks' over our gold's 'Hero-run track: three runs in flight' heading \u2014 the review notes 'three runs' overstates parity; the 11B/H100 is a dry run, not coequal with the two strategic tracks. Our gold already says this in the body, so it's a header-level relabel, not new content.",
+      "Lead harder with the one-line milestone + the preparation-month framing before the metric deluge; the review's core critique is that our gold buries the milestone logic under weekly activity (concision 3/10). Trimming the topology incident, YaRN coefficient, Executor diff, named-owner inventory, and RL-vs-OPD aside would sharpen it without losing load-bearing facts.",
+      "Represent the architecture/scaling-recipe workstream (#6711) as its own item rather than only via the mislabeled GPU-upskilling header \u2014 ties to the correction."
+    ]
+  },
+  "april": {
+    "id": "april",
+    "needs_changes": false,
+    "verdict": "Our gold is already strictly more complete than Sol on the april question, and the review agrees (gold = better reference; Sol = \"flawed_by_omission\"). Every load-bearing fact Sol adds is either already in our gold or is a dated intermediate snapshot our gold intentionally supersedes with the close-out number \u2014 which the review itself endorses. I verified the two Sol-specific figures in the corpus; both are real but are mid-month intermediates, not improvements. No corrections (review confirms no factual error; my spot-checks confirm gold's numbers). No high/medium additions. needs_changes=false. Issues personally checked: #4719 (SWE-ZERO scale-out counters).",
+    "corrections": [],
+    "additions": [
+      {
+        "item": "April-20 SWE-ZERO intermediate snapshot: 2,194,164/12,291,000 rollouts and 25.0B/140B tokens (17.9%) as of Apr 20 4:22PM UTC. Sol uses this as its headline generation figure; our gold instead reports the FINAL ~6.5M rollouts / ~52% close-out, which the review explicitly says is the correct verdict for 'how did we do'. Adding the dated intermediate would be a regression, not an improvement.",
+        "citation": "#4719 comment 4282520669 (2026-04-20)",
+        "value": "low",
+        "verified": true
+      },
+      {
+        "item": "Corrected-counter event: the '10B checkpoint' label was inflated by error-rollout byte counting and corrected to 536,148 clean trajectories (~6.1B tokens) after dedup. Our gold already carries the same corrected-counter LESSON via the later false-'crossed 140B' reversion to ~52%; this earlier instance is duplicative and not load-bearing.",
+        "citation": "#4719 comments 4258165085 and 4261209038 (2026-04-16)",
+        "value": "low",
+        "verified": true
+      }
+    ],
+    "already_covered": [
+      "Temporal guard (launch+preregister committed vs completion stretch; 2.234 belongs to May) \u2014 gold's scorecard and modeling section make this explicit",
+      "Exact registered comparator 2.252 (fixed-L\u221e=1.6 fit, #4447), not just 'around 2.25' \u2014 gold has this plus the free-fit 2.224-2.226 caveat",
+      "#4256/#4266 were scaffolding deliberately removed from the milestone so they wouldn't 'pollute' the completion count \u2014 gold's structure section covers this with the ihodes quote",
+      "SWE-bench dose-response 0\u21923.3\u21924.0\u21925.3% curve \u2014 gold has full detail incl. the 100K retraction and !!!-degeneration note",
+      "Final scale-out ~52% / ~6.5M rollouts endpoint (vs Sol's April-20 17.9% snapshot) \u2014 gold uses the close-out number",
+      "Marin-32B TerminalCorpus negative result 2/87 (~2.3%) vs Qwen3-32B 18/86 (~20.9%) \u2014 gold has it plus the EOS-config fix and patch_gain -1.43 learning",
+      "TPU MFU ~16.4% on crashed v4-1024 vs made-up 25-30% band, closed 'good enough' 2026-05-31 \u2014 gold covers with the dlwh 'made up' quote",
+      "Canary TPU 9/9 / GPU ~60% / datakit ~71% \u2014 gold's clearest quantitative miss, fully covered",
+      "Data sources #3100: target 20T, >19T achieved, 'substantially done' \u2014 gold has it",
+      "Agentification qualifier: one clean Gate-2 AdamH-embed promotion, ~3-decision bar not demonstrated \u2014 gold labels it 'closeable/morally done, not clean 3-of-3'",
+      "319k chip-hours / three v4-1024 crashes before April ended \u2014 gold cites this from the weekly summary",
+      "d5120 129B-total/16B-active MoE, ~1T tokens, v4-1024 ring dispatch launch Apr 11 \u2014 gold covers (~130B-A16B)"
+    ],
+    "framing": [
+      "Sol is tighter/more concise and foregrounds the temporal distinction more cleanly; our gold's verbosity is its main weakness per the review, but that is a compression concern, not a content gap \u2014 no factual change needed. If trimming, keep the achieved-vs-target scorecard table which is gold's strongest asset and something Sol lacks entirely."
+    ]
+  },
+  "benchmarks": {
+    "id": "benchmarks",
+    "needs_changes": true,
+    "verdict": "Our gold is substantially more complete than Sol and has no verified factual error (the review agrees: \"None of the proposed golds has a load-bearing factual error\"). So no corrections. Sol is a generic/conceptual answer whose project-specific facts our gold already contains \u2014 with two genuine exceptions: two proxy-validity studies (#5247 and #6096) that our gold does not cite anywhere. Both verified in the frozen corpus with exact numbers matching Sol. These are load-bearing for the \"do our proxies actually predict downstream?\" half of the question, which our gold currently answers mostly via #5005 (low SNR) and #4389 (negative agentic result) but without the quantified metric-design lesson (#5247) or the pre/post-RL pass@K result (#6096). Recommend adding both as concise sentences in the proxy-validity discussion (near section 4). Framing: Sol's clean lead (targets = capabilities we want to move; proxies = cheap smooth signals read during training) and a compact upfront tier map are worth borrowing to counter the gold's encyclopedic opening \u2014 optional, low priority. needs_changes=true on the strength of the two medium additions. Issues I personally checked in mum-frozen: #5247 (comment-4339766407), #6096 (comment-4836443867, comment-4846414292/4845953480).",
+    "corrections": [],
+    "additions": [
+      {
+        "item": "Proxy-validity study #5247 (Calvin-Xu, 2026-04-28): on the 300M qsplit core rows (n=240), standard MMLU accuracy has essentially no monotonic relation to BPB (Spearman -0.069) and is near-zero vs choice_logprob_norm (-0.026), but MMLU accuracy vs choice_prob_norm correlates +0.866. Close-out reading: 'accuracy is itself noise; just use the smooth proxy w/ the highest SNR.' This is the empirical backbone for why Marin uses soft/normalized-probability + BPB metrics rather than raw accuracy as development proxies. Our gold mentions soft metrics and low SNR (#5005) but never states this quantified metric-design result.",
+        "verified": true,
+        "value": "medium",
+        "citation": "https://github.com/marin-community/marin/issues/5247#issuecomment-4339766407"
+      },
+      {
+        "item": "Proxy-validity result #6096 (Helw150): across the 10 SimpleRL-Zoo base models (scored on v5p-8 via Levanter against the published SimpleRL-Zoo accuracy table), base-model reasoning features help predict post-RL level, but predicting the RL gain (post - base) fails (R^2 = 0.33). Close-out interpretation: pre-RL pass@K is the main predictor of post-RL pass@K when other conditions are held fixed; the issue explicitly lists coding/SWE-bench as the untested next domain. Complements our gold's downstream-scaling coverage (#4550) and negative agentic-proxy result (#4389) with a specific post-RL prediction finding not currently cited.",
+        "verified": true,
+        "value": "medium",
+        "citation": "https://github.com/marin-community/marin/issues/6096#issuecomment-4836443867"
+      }
+    ],
+    "already_covered": [
+      "AA Intelligence Index v4.0.4 competencies as target framework, mostly aspirational/not executed, exact items (GPQA/HLE/AIME/MATH/MMLU-Pro/IFBench/LiveCodeBench/SciCode) excluded from PPL tracking (#5819) \u2014 gold section 4/5",
+      "Benchmark-maxxing / contamination guard: do not turn target items into optimized PPL slices; ppl_fidelity ratings (#5819) \u2014 gold section 4",
+      "Negative agentic soft-proxy result on MATH, closed and superseded by #4550 (#4389) \u2014 gold section 2",
+      "Checkpoint-confidence PPL portfolio and low-SNR early reads (#5005) \u2014 gold section 4",
+      "Table-9 51-component BPB macro objective + scoped supersession of Uncheatable-Eval (#6611/#6726/#6608) \u2014 gold section 3",
+      "Delphi Paloma forecasts 2.75/2.55/2.40 with achieved 2.7581 and 2.53, no frozen 1e23 final (#1337) \u2014 gold section 2",
+      "MoE isoflop 2.252 predicted / 2.234 achieved at 1e23 (#4447/#4697) \u2014 gold section 2",
+      "Evalchemy executed reasoning/generative subset: AIME, MATH500, GPQA Diamond, LiveCodeBench, HumanEval+/MBPP+ (#2779/#3690) \u2014 gold section 5",
+      "DCLM CORE 14/22 in default_eval (#574), lm-eval fork with soft metrics (#817) \u2014 gold section 1",
+      "Mega-Evals ~200 tasks never became default, auto-closed (#2663) \u2014 gold section 1",
+      "67B 2.269 stage-1 Paloma target as projection in #6044, distinguished from #6811 placeholder pass@256 text \u2014 gold section 5",
+      "beat-Qwen comparator with harness caveats: marin-32b 61.96 vs Qwen2.5-32B 64.66, Olmo-3-32B 63.20 \u2014 gold section 5",
+      "Target/proxy conceptual split and 'report the disagreement rather than promote the proxy' operational rule \u2014 gold framing throughout (opening + section 7)"
+    ],
+    "framing": [
+      "Consider borrowing Sol's clean one-line opening distinction (targets = capabilities we ultimately want to move: knowledge/reasoning/math/code/multilingual/instruction-following/long-context/agentic; proxies = cheap smooth signals read repeatedly during pretraining/mixture-selection/scaling) and a compact upfront tier map before the detailed sections \u2014 the review's main gold critique is that the encyclopedic opening buries the simple hierarchy (target capabilities -> executed held-out evals -> development proxies). Low priority; gold already has explicit sectioning.",
+      "The #5247 lesson could anchor a short 'what proxy-validation taught us' note: metric design matters more than the benchmark label (accuracy is noise; use the smooth, high-SNR normalized-probability/BPB proxy but keep a held-out split for confirmation)."
+    ]
+  },
+  "muon": {
+    "id": "muon",
+    "additions": [
+      {
+        "item": "Direct evidence the hyperball wrap (the 'H' in MuonH) earns its place: in the GatedNorm routing comparison (#5750), the no-hyperball variant `gn\u2192muon` (NS direction, Keller post-scale, no hyperball) scored 3.7557 Paloma macro vs `gn\u2192muonh` (with hyperball) 3.7471 at d512, i.e. no-hyperball is +0.0086 WORSE. Our gold defines MuonH = Muon + hyperball and asserts the hyperball is load-bearing but cites no head-to-head hyperball-vs-no-hyperball datapoint; this supplies one. Caveat: the test is within the GatedNorm-routing ablation, not a global all-matrix hyperball sweep, so cite it as the cleanest hyperball-value datapoint, not a recipe-wide ablation.",
+        "verified": true,
+        "value": "medium",
+        "citation": "https://github.com/marin-community/marin/issues/5750#issuecomment-4465767626"
+      },
+      {
+        "item": "The marginal plain-Muon number that motivated choosing MuonH over plain Muon: gate-1 final Muon Vizier r2 at d512 gave best plain-Muon 3.80732 vs the d512 AdamH baseline 3.81035 (only ~-0.003, essentially a wash), whereas MuonH later delivered d512 3.7542 vs 3.8104 (-0.056). Our gold names the 'Closing, we went with MuonH' verdict but omits this plain-Muon marginal figure that explains WHY plain Muon was rejected in favor of MuonH.",
+        "verified": true,
+        "value": "medium",
+        "citation": "https://github.com/marin-community/marin/issues/5167#issuecomment-4333247150"
+      },
+      {
+        "item": "The foundational expert-stack orthogonalization implementation: levanter PR #3902 (dlwh, 2026-03-20) 'Improve Grug Muon MoE orthogonalization' \u2014 batches Newton-Schulz over stacked MoE expert weights and restores update sharding exactly once at the optimizer boundary (part of #3469). Our gold describes split_moe_gate_up_for_ortho and the NS mechanism qualitatively and cites the #6044 hero-run sharded-NS bug, but never cites the actual PR that made batched NS over expert stacks work. Low-value provenance addition.",
+        "verified": true,
+        "value": "low",
+        "citation": "https://github.com/marin-community/marin/pull/3902"
+      }
+    ],
+    "corrections": [],
+    "framing": [
+      "Resolve the apparent internal contradiction the review flagged: line 5 lists lm-head, token embeddings, routers, router biases, and vector/scalar leaves as staying on Adam/AdamH, while line 16 says 'only lm_head / output_proj stays on AdamH'. Scope the 'only' claim: 'among matrix-shaped weight groups, only lm_head/output_proj stays on AdamH; the non-matrix/special leaves (embeddings, routers, router biases, vector/scalar) retain Adam-family routing and were never Muon-eligible.' This is wording/consistency, not a factual error, but it is the review's cleanest catch and worth a one-line fix.",
+      "The review's other gold-directed notes are trim/calibration preferences the gold already substantially handles and need NOT be adopted as-is: it already heavily caveats the #5951 LR constants (units-bug self-correction cascade) and already frames the GPU story as 'a platform split, not a we-fled-GPU-because-of-Muon story' rather than a timeless architectural ban. Dropping the W&B-head diary (step ~54,922, topology incident) is a length judgment call, not a correctness fix."
+    ],
+    "already_covered": [
+      "Selective/routed MuonH (not MuonH on every parameter) \u2014 gold's param-routing section covers this",
+      "Measured-vs-projected distinction, the #5596 mixed verdict and ~1.65e21 projected crossover \u2014 gold covers extensively and labels it a projection",
+      "#5619 no-warmup rerun weakening the crossover concern \u2014 covered",
+      "#6074 ~2.12x as a whole-May-Recipe scaling-law projection dependent on dropping the distrusted 1e18 point and pinning the exponent (not a measured Muon-only win) \u2014 covered in detail",
+      "8xH100 cost-isolation A/B: MuonH ~4.75% MFU / 21,962 tok/s vs SGD ~16.19% / 74,848 tok/s, with SGD explicitly a cost control not a candidate \u2014 covered verbatim (#6493)",
+      "Grouped/stacked NS path improved an isolated harness but did not establish an end-to-end production-training win \u2014 covered",
+      "TPU Muon overhead ~1-2% as the key reason it stayed viable there \u2014 covered",
+      "Live status: ~18.6% MFU, #6811 2T cooldown closed at 2.2772 Paloma vs preregistered 2.269 target, explicitly NOT apples-to-apples, and the open MuonH->Adam cooldown/midtraining swap question \u2014 all covered",
+      "Shipped May Recipe PR #6153 and hero-run use of MuonH (#6044), plus LR/isoFLOP work (#5951/#6074) \u2014 the review lists these as 'missing from Sol'; our gold already has all of them"
+    ],
+    "needs_changes": true,
+    "verdict": "Our gold is materially more complete than Sol; nearly all of Sol's substance and the review's 'add to Sol' list is already present. No factual corrections survived corpus verification. Three genuine additions Sol has that our gold lacks, all corpus-verified: (1) #5750 direct hyperball-value datapoint (no-hyperball +0.0086 worse at d512) justifying the 'H' our gold currently asserts without evidence \u2014 medium; (2) the plain-Muon Vizier d512 3.80732 vs AdamH 3.81035 marginal number explaining why MuonH beat plain Muon \u2014 medium; (3) PR #3902 as the foundational batched expert-stack NS implementation \u2014 low. Plus one framing fix (scope the 'only lm_head stays on AdamH' claim to matrix-shaped groups) the review correctly flags. needs_changes=true on the two medium additions. Issues personally checked in mum-frozen: #5750 (comment 4465767626), #5167 (comment 4333247150), PR #3902."
+  },
+  "ablations": {
+    "id": "ablations",
+    "additions": [
+      {
+        "item": "#6570 focus-vs-main crawl A/B \u2014 a clean data-source ablation the gold entirely omits. Helw150 agent MoE experiment (opened 2026-06-23): science-focused Common Crawl CC-SUPPLEMENTAL-2026-22 vs general CC-MAIN-2024-18, token-matched, 8-run v5p-8 ladder d512-d1280, scored on eval/paloma/macro_loss. At d512 the general 'main' crawl won: focus 4.712 vs main 4.402 (\u0394 \u22120.310); the science-vs-general contrast replicated at d768 (4/8 rungs done at freeze, in-flight). This is squarely in scope ('which data compared, at what sizes, on what test sets') and is the cleanest small-rung source A/B in the current epic, yet appears nowhere in gold.",
+        "verified": true,
+        "citation": "mum-frozen show 6570 \u2014 '[2026-06-23 06:41] Helw150: d512 rung complete ... focus 4.712 | main 4.402 | \u0394 \u22120.310'; '[2026-06-23 21:53] d768 pair complete (4/8) \u2014 science vs general-web contrast replicates at the 2nd scale' (group held/marin_moe crawl-compare-focus-vs-main)",
+        "value": "medium"
+      },
+      {
+        "item": "#164 vintage positive-mix classifier bpb study \u2014 gold has #163 (fastText vs BERT) but not #164's distinct result. fastText quality classifiers trained on different positive mixes, then Llama-1.4B trained 10k steps / ~42B tokens and scored on eval/bpb + C4-en bpb (bigram retrain): OpenHermes-2.5 200k + RefinedWeb 200k = 1.05635 / 0.98544; ELI5 100k + OH 100k + RW 200k = 1.04399 / 0.97559; ELI5 200k + RW 200k = 1.04307 / 0.96759 (best). Low value (2024 vintage, archived tag archive/20251114), but it is a genuine mix-vs-eval data point Sol surfaced and gold lacks.",
+        "verified": true,
+        "citation": "mum-frozen show 164 \u2014 '[2024-11-08 19:33] BabyChouSr: Retrained with bigrams on llama 1.4b, 10k steps (42b tokens). ... eli5 200k + refined web 200k | **1.04307** | **0.9675...'",
+        "value": "low"
+      },
+      {
+        "item": "#6713 five-source d1536/2e21 head-to-head (DCLM, Nemotron, FineWeb-CC, Resiliparse, FineWeb-Edu on Paloma bits-per-byte; Sol reports DCLM best ~0.988, FineWeb-Edu worst ~1.441). The run family is real \u2014 marin-dclm-core group has curation-{fineweb_edu,nemotron_10k,resiliparse}-expFM_natural-2e+20/9e+19-d1536 wandb runs. BUT the specific 0.988/1.441 Paloma numbers do NOT surface in the frozen TEXT corpus (only crashed/finished wandb run rows), and Sol cited the umbrella issue #6713 which contains no such table \u2014 the Sol review itself flagged this citation as unsupported. Do NOT add these numbers as primary-cited; if added at all, mark summary/wandb-sourced and unverifiable in frozen text.",
+        "verified": false,
+        "citation": "mum-frozen search 'curation ... d1536' returns only wandb run rows (marin-dclm-core, mostly state=crashed); show 6713 is an umbrella issue with no results table",
+        "value": "low"
+      }
+    ],
+    "corrections": [],
+    "already_covered": [
+      "#6757 curated/proportional/nemotron iso-FLOP MoE side-by-side (d512-d1280, 3.82e17-3.46e19 FLOPs), 137-task set, curated-vs-nemotron 1.78x but curated-vs-proportional 1.14x tie \u2014 Sol lacks this entirely; gold has it in full",
+      "OLMix/DSP on the Delphi ladder (3e18/2e19/3e20/1e21), 39 Dolma3 buckets, effexp-DSP OOF-Spearman 0.918 vs single_tied OLMix 0.380 (#6611), killed/superseded #6608 panels labeled",
+      "#6969 embedding-surrogate validation: dolma_starcoder 0.9410 vs 0.9554 sweep-best / 0.9495 olmix-reuse / 0.9759 proportional, ~8sigma, winner's-curse caveat \u2014 already marked summary-sourced",
+      "#6742 contamination: MATH-500 28.20%, AIME24 17/30 (56.67%), cleaning cut Delphi 1e22 math endpoint error +18.56% -> +2.83%",
+      "Source-only confound: source-of-origin predicts oracle at AUC 0.852, eta^2=0.41 (#6739/#6849); #6860 12 of 98 sources with within-source SD <0.1 \u2014 gold covers both",
+      "fastText v0 #5810 sonnet46-thr05, 7000 stratified -> 5,613 usable / 961 holdout seed 43, $32.73, AUC 0.846 / rho 0.641; fast-transformer 0.875 / 0.703 at 0.41M FLOPs/token (#6739)",
+      "#2351 high_quality vs dclm_random on held-fixed WARC pool, {100..3000} WARCs + 10k sample, COREv2, and the uncheatable-val-loss-is-a-poor-proxy reversal",
+      "#820 vintage: HQ data beat DCLM control on Paloma macro but did NOT transfer downstream; FLAN/MCQ-format lesson (gold has FLAN; Sol adds the explicit 70% DCLM/30% FLAN control ratio from #722, a minor detail)",
+      "The 'label-quality ceiling' wording the review objects to: gold already foregrounds the source confound (AUC 0.852, eta^2=0.41) in the same section, so the ceiling is framed as an oracle-label ceiling, not a modeling limit \u2014 the review's correction is largely already handled"
+    ],
+    "framing": [
+      "Lead each section (or the whole answer) with a compact 4-column comparison table (experiment / variants compared / training scale+data / evaluation + verdict) before the prose. Gold reads as an experiment registry; the review's core complaint is presentation, not substance. A verdict-first table would let a reader see 'which mixes/classifiers, at what sizes, on what tests' at a glance without cutting gold's verified detail.",
+      "Reword the provenance convention that says primary threads 'post-date the 2026-07-16 freeze'. For a 2026-07-16 snapshot this phrasing is confusing. Say instead: 'the frozen index contains the weekly-summary result but not the primary issue body, so this claim is summary-sourced.' (Same meaning, clearer; the review flagged this wording.)",
+      "Optional tightening only: the Iris-parent / teardown-SIGABRT / deprecated-dataset-script job telemetry could drop to a single methodological footnote. This is a concision nudge, not a correctness issue \u2014 do not cut the load-bearing significance-method (lack-of-fit CI) or the numeric verdicts."
+    ],
+    "needs_changes": true,
+    "verdict": "Gold is decisively more complete than Sol on the current 2026 program (the review agrees: gold covers #6757, OLMix/DSP #6607-6611, #6969, #6742, #6849/#6860 that Sol misses). No factual correction survived corpus verification \u2014 the review's 'corrections' to gold are framing/preference (drop #2404, soften 'ceiling'), and gold already foregrounds the source-confound the review worries about. One genuine, verified content gap: #6570, a clean focus-vs-main crawl A/B (d512 focus 4.712 vs main 4.402, \u0394 \u22120.310; in-flight d512-d1280 ladder), a data-source ablation entirely absent from gold \u2014 add it (medium). #164's vintage positive-mix bpb table is a low-value verified add. The Sol/#6713 five-source d1536 Paloma numbers (0.988/1.441) are NOT verifiable in the frozen text corpus and should not be added as primary-cited. Adopt the verdict-first comparison-table framing and reword the 'post-dates the freeze' provenance phrasing. needs_changes=true on the strength of #6570. Issues personally checked in mum-frozen: #6570, #72, #164, #102, #722, #6713 (+ marin-dclm-core wandb search)."
+  },
+  "classifier": {
+    "id": "classifier",
+    "additions": [
+      {
+        "item": "Spot-check sampling detail: per-source mean P(high) was computed from row group 0 of one random shard per source, n ranging ~500 to ~800K rows, sequential pass ~22 min. Our gold cites the spot-check comment and its findings but omits the sampling method/row-count range that qualifies it as a deployment sanity check rather than a held-out eval.",
+        "verified": true,
+        "citation": "#5810 spot check comment 4481294989 (mum-frozen show 5810): 'per-source mean P(high) across all 104 sources, sampled from row group 0 of one random shard each (n ranges 500 to ~800K rows per source). Sequential pass, ~22 min wall clock.'",
+        "value": "low"
+      },
+      {
+        "item": "The gen-2 NTP-pretraining negative was self-supervised next-token pretraining on 240k free Nemotron docs. Our gold describes the 'over-budget NTP outlier (0.877 at 14.7M FLOPs/tok)' and that NTP didn't break the plateau, but does not state the 240k-doc corpus size.",
+        "verified": true,
+        "citation": "#6739 comment 4833103402: 'Self-supervised next-token pretraining on 240k free Nemotron docs lifted the token-level model...'",
+        "value": "low"
+      },
+      {
+        "item": "Explicit one-line description of the fastText mechanics (bag-of-hashed word/ngram features feeding a linear binary P(high) head). Our gold lists the hyperparameters (dim=100, wordNgrams=2, bucket=200K) but never states the model class in plain terms. This is general ML knowledge rather than a corpus fact.",
+        "verified": false,
+        "citation": "Not a stated corpus fact; inferable from hyperparameters in #5810 run comment. General fastText architecture.",
+        "value": "low"
+      }
+    ],
+    "already_covered": [
+      "Deployed artifact is fastText v0 sonnet46-thr05 (gold names it in TL;DR and \u00a71)",
+      "Claude Sonnet 4.6 oracle, 1-5 pretraining-utility rubric, <document> tag wrapping (gold \u00a72)",
+      "5,613 usable labels / 961 holdout / AUC 0.846 / rho 0.641; fast-transformer 0.875 / 0.703 at 0.41M FLOPs/tok (gold \u00a73 table)",
+      "Source-identity confound: source alone predicts oracle at AUC 0.852, eta^2=0.41; fastText 0.846 sits below it; fast-transformer clears it by only ~0.023 (gold \u00a73, TL;DR)",
+      "Oracle is edu-leaning; oracle-fidelity is not downstream quality; no downstream ablation was run (gold \u00a73)",
+      "#6860 within-source collapse: 12 of 98 sources with score SD < 0.1 (gold \u00a71 gen-3)",
+      "#7040 / rav-quality-coherence RFC, Spearman 0.44->0.69 against a NEW coherent-quality target (not comparable to old oracle rho); PR body absent from corpus (gold \u00a71 gen-3, verification notes)",
+      "Fast-transformer (#6739/#6741) was a recommendation, never wired into inference (gold \u00a71 gen-2)",
+      "104 is the May-run count, not a current count; drift 99->104->98/114 (gold \u00a74)",
+      "No explicit release/license decision exists in corpus; labels are Claude-distilled; technical portability != permission (gold \u00a75)",
+      "v0 training cost $32.73 under $50 cap; 7,000 stratified samples; 1,387 API/parse failures (gold \u00a72)"
+    ],
+    "corrections": [],
+    "framing": [
+      "Sol's sharing conclusion is more conservative than our gold's 'default-open' bottom line. Our gold already states plainly that no release decision exists and labels 'default-open' as revealed preference/inference, but it then leads the sharing section's bottom line with 'default-open.' Consider foregrounding the corpus-truth ('no decision, no stated policy; technical portability is not permission to redistribute; the one unresolved question is Claude-output label provenance') as the headline and demoting the revealed-preference signals to supporting context. This is a calibration nudge, not a factual fix.",
+      "Concision: the review scores our gold 3/10 on concision vs Sol's 9. The gen-3 relabel section, the multi-paragraph rebuttal of the off-topic Percy/Colin distillation debate, and the source-count drift section could each be tightened. In particular the entire distillation-debate paragraph (gold \u00a75) is explicitly off-topic to the classifier by gold's own admission and could be cut to a single caveat sentence.",
+      "Consider a compact two-row 'successors' table (fast-transformer / calibrated relabel) with status = recommended-not-deployed / RFC-not-deployed, mirroring Sol/review's suggested structure, to make 'which generation is live' scannable without the current prose density."
+    ],
+    "needs_changes": false,
+    "verdict": "Our gold is a strict superset of Sol on substance and contains no verified factual error where Sol is right. I found no corrections and no high/medium additions, so needs_changes=false. Sol contributes only three low-value detail candidates (all corpus-verified except the fastText-mechanics description, which is general ML knowledge, not a corpus fact): the spot-check sampling method/row-count range (#5810 cmt 4481294989), the 240k-doc size of the gen-2 NTP-pretraining negative (#6739 cmt 4833103402), and a plain-language statement of the fastText model class. None is load-bearing. The only worthwhile takeaways from Sol/the review are framing, not content: (1) our gold already flags the release gap but could lead the sharing bottom-line with the conservative 'no decision' truth rather than 'default-open'; (2) our gold is markedly over-long (concision 3/10 per the review) and could cut the off-topic distillation-debate rebuttal and tighten the gen-3/source-drift sections; (3) a compact successors table would improve scannability. Issues personally verified in the frozen corpus: #5810 (body + run comment 4480271122 + spot-check comment 4481294989) and #6739 (comment 4833103402)."
+  }
+}

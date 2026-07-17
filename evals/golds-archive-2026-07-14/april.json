@@ -1,0 +1,120 @@
+{
+  "id": "april",
+  "question": "how did we do on our april 2026 milestone?",
+  "corpus": "2026-07-14",
+  "answerable": true,
+  "skill_hint": "research",
+  "source": "loop2/config.json:questions.april (facts X1-X7) + golds/april.md",
+  "dims": [
+    "what the April milestone was (scope/goals)",
+    "infra goals & their status",
+    "modeling goals & their status",
+    "the flagship pretrain (100B-A13B 1.2T) & its status",
+    "what was achieved / shipped",
+    "what was missed / slipped",
+    "overall how it went"
+  ],
+  "citations": {
+    "must_have": [
+      "#4266",
+      "#4256",
+      "#4281",
+      "#3800",
+      "#4297",
+      "#4269",
+      "#4270",
+      "#4271"
+    ],
+    "nice_to_have": [
+      "#4268",
+      "#4272",
+      "#4273",
+      "#4282",
+      "#4283",
+      "#5212",
+      "#5290",
+      "#5370"
+    ],
+    "forbidden": [],
+    "recency_critical": [
+      "#4270",
+      "#4271"
+    ]
+  },
+  "facts": {
+    "must_have": [
+      {
+        "id": "1",
+        "match": "100B-A13B|100B",
+        "note": "the 100B-A13B 1.2T MoE milestone"
+      },
+      {
+        "id": "2",
+        "match": "1\\.2T",
+        "note": "1.2T tokens"
+      },
+      {
+        "id": "3",
+        "match": "2\\.432",
+        "note": "1e22 run paloma macro_loss"
+      },
+      {
+        "id": "4",
+        "match": "8\\.8%|6\\.04%",
+        "note": "Triton kernel end-to-end MFU gain (achieved)"
+      },
+      {
+        "id": "5",
+        "match": "[Oo]ff-?[Rr]ay|import ray",
+        "note": "off-Ray achieved"
+      },
+      {
+        "id": "6",
+        "match": "4270|canary",
+        "note": "canary-90% target unresolved (missed)"
+      },
+      {
+        "id": "7",
+        "match": "4271|as-a-library|library",
+        "note": "marin-as-a-library unresolved (missed)"
+      }
+    ],
+    "nice_to_have": [
+      {
+        "id": "8",
+        "match": "1e23",
+        "note": "1e23 launched + preregistered"
+      },
+      {
+        "id": "9",
+        "match": "log-service|log service",
+        "note": "observability shipped"
+      }
+    ]
+  },
+  "traps": {
+    "target_vs_achieved": "MFU #4283 v4 25-30% and 'match Megatron' were TARGETS; the +8.8% (5.55->6.04%) kernel gain is what was ACHIEVED",
+    "platform": "the 1e22 run #3800 is TPU v4-512; the kernel MFU gain is on GPU H100x8 - attribute each correctly",
+    "completeness": "must surface the MISSED items (#4270 canary, #4271 library), not only the wins"
+  },
+  "trap_checks": {
+    "target_vs_achieved": {
+      "require": [
+        "8\\.8%|6\\.04%"
+      ]
+    },
+    "platform": {
+      "require": [
+        "TPU|v4",
+        "H100"
+      ]
+    },
+    "completeness": {
+      "require": [
+        "canary",
+        "librar"
+      ]
+    }
+  },
+  "gold_prose": "## How we did on the April 2026 milestone (\"Kick-off pre-trained 100B-A13B 1.2T token MoE (pregistered)\")\n\nThe milestone was organized into two parent epics — Modeling [#4266](https://github.com/marin-community/marin/issues/4266) (split into MoE-scaling [#4281](https://github.com/marin-community/marin/issues/4281), Agentify [#4282](https://github.com/marin-community/marin/issues/4282), Increase-MFU [#4283](https://github.com/marin-community/marin/issues/4283)) and Infra [#4256](https://github.com/marin-community/marin/issues/4256) (split into [#4268](https://github.com/marin-community/marin/issues/4268)–[#4273](https://github.com/marin-community/marin/issues/4273)). Overall: most goals landed; a few were parked.\n\n**Modeling.** MoE scaling [#4281](https://github.com/marin-community/marin/issues/4281) hit its headline: clean \"best-recipe\" isoflop **up to 1e22 completed** and **1e23 launched + pre-registered** (achieved); the 1e21 \"Good/Great 10T\" ablation row stayed unchecked. The 1e22 run [#3800](https://github.com/marin-community/marin/issues/3800) (`moe-v7-1e22-d3200`, ~34.6B total/4.7B active, 326B tokens, **TPU** v4-512) achieved paloma macro_loss **2.432** / c4_en bpb **0.7423** (cf=4.0), within 0.003 of the L∞=1.0 scaling-law projection — though it cost a recurring checkpoint-resume XLA crash. MFU [#4283](https://github.com/marin-community/marin/issues/4283) targeted v4 25–30% and matching Megatron on **GPU** H100x8 (target/aspirational); the merged Triton `ragged_dot` kernel [#4297](https://github.com/marin-community/marin/pull/4297) gave **+8.8% achieved** end-to-end on H100x8 (5.55%→6.04% MFU). Agentify [#4282](https://github.com/marin-community/marin/issues/4282) closed as \"morally done.\"\n\n**Infra.** Off-Ray [#4269](https://github.com/marin-community/marin/issues/4269) achieved (zero `import ray` in lib/marin; only `marin-big-run` left for the 1e23 run). Reserved/on-demand capacity [#4268](https://github.com/marin-community/marin/issues/4268) and canonical pipelines [#4272](https://github.com/marin-community/marin/issues/4272) mostly landed; Usability/Observability [#4273](https://github.com/marin-community/marin/issues/4273) shipped (log-service split [#5212](https://github.com/marin-community/marin/issues/5212)/[#5290](https://github.com/marin-community/marin/issues/5290)/[#5370](https://github.com/marin-community/marin/issues/5370)). Genuinely unresolved: the canary-90% target [#4270](https://github.com/marin-community/marin/issues/4270) (tracking/alerting unchecked) and marin-as-a-library [#4271](https://github.com/marin-community/marin/issues/4271) (demo repo only). Iris controller instability persisted through April–May."
+}

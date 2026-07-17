@@ -1,0 +1,109 @@
+{
+  "id": "gpu",
+  "question": "explain how training on GPUs is going",
+  "corpus": "2026-07-14",
+  "answerable": true,
+  "skill_hint": "research",
+  "source": "loop2/config.json:questions.gpu (facts F1-F7)",
+  "dims": [
+    "cluster bringup / enablement",
+    "throughput & MFU (achieved vs target)",
+    "memory / OOM / sharding fragility",
+    "optimizer (Muon) cost",
+    "parallelism strategy (FSDP vs pipeline)",
+    "kernels / MoE software-stack readiness",
+    "which hardware the flagship 67B run actually uses"
+  ],
+  "citations": {
+    "must_have": [
+      "#6304",
+      "#6493",
+      "#6292",
+      "#6044"
+    ],
+    "nice_to_have": [
+      "#6293",
+      "#6321",
+      "#6367",
+      "#6296",
+      "#6532",
+      "#6534",
+      "#6431",
+      "#2828",
+      "#4297"
+    ],
+    "forbidden": [
+      "#5167"
+    ],
+    "recency_critical": [
+      "#6044"
+    ]
+  },
+  "facts": {
+    "must_have": [
+      {
+        "id": "1",
+        "match": "CoreWeave|256\\s*H100",
+        "note": "CoreWeave H100 bringup, MoE on 256 H100"
+      },
+      {
+        "id": "2",
+        "match": "9\\.37%|9\\.4%",
+        "note": "pure-FSDP MFU ceiling"
+      },
+      {
+        "id": "3",
+        "match": "25%",
+        "note": "the ~25% is a TARGET, not achieved"
+      },
+      {
+        "id": "4",
+        "match": "4\\.75%|MuonH",
+        "note": "Muon MFU tax vs ~16% SGD"
+      },
+      {
+        "id": "5",
+        "match": "TPU|v4",
+        "note": "67B flagship moved OFF GPU onto TPU"
+      }
+    ],
+    "nice_to_have": [
+      {
+        "id": "6",
+        "match": "OOM|HBM|shard",
+        "note": "memory/sharding fragility"
+      },
+      {
+        "id": "7",
+        "match": "Triton|ragged_dot",
+        "note": "GPU MoE kernel stack"
+      }
+    ]
+  },
+  "traps": {
+    "target_vs_achieved": "~25% MFU is a TARGET; 9.37% is the achieved pure-FSDP close-out",
+    "platform": "report the H100/GPU result, do not report a TPU MFU as the GPU number",
+    "superseded": [
+      "#5167 optimizer study is not the GPU-MFU answer"
+    ]
+  },
+  "trap_checks": {
+    "target_vs_achieved": {
+      "require": [
+        "9\\.37%|9\\.4%",
+        "25%"
+      ]
+    },
+    "platform": {
+      "require": [
+        "TPU|v4"
+      ]
+    },
+    "superseded": {
+      "forbid_cite": [
+        "5167"
+      ]
+    }
+  },
+  "gold_prose": "## How training on GPUs is going\n\nGPU enablement is live but throughput is the blocker. CoreWeave H100 (`cw-us-east-02a`) is\nup and running a ~90B-total/5.3B-active MoE on 256 H100s ([#6292](https://github.com/marin-community/marin/issues/6292)/[#6293](https://github.com/marin-community/marin/issues/6293)).\n\n**MFU is the headline problem.** [#6304](https://github.com/marin-community/marin/issues/6304)\ndrove pure-FSDP MFU from 2.8% to **9.37%**, but ~9.4% is a **pure-FSDP ceiling** — well short of\nthe ~**25% target**. Memory/sharding is fragile: HBM-capped (batch ≥ 1536 OOMs), ~74 GiB pre-step\nOOMs, and sharding crashes ([#6321](https://github.com/marin-community/marin/issues/6321)/[#6367](https://github.com/marin-community/marin/issues/6367)/[#6296](https://github.com/marin-community/marin/issues/6296)).\n\n**Muon is expensive on GPU.** MuonH runs ~**4.75% MFU vs ~16% for SGD** — a heavy FSDP all-gather\ntax ([#6493](https://github.com/marin-community/marin/issues/6493)/[#6534](https://github.com/marin-community/marin/issues/6534)) — which drove the pipeline-parallelism exploration.\nPP hides the Muon tax and wins at multi-host TPU scale, but single-node FSDP wins on NVLink, so PP\nwas **not adopted on GPU** ([#6532](https://github.com/marin-community/marin/issues/6532)/[#6431](https://github.com/marin-community/marin/issues/6431)).\nOn kernels, the GPU MoE stack isn't cleanly ready; a Triton `ragged_dot` kernel replaced the TPU-only\nPallas GMM ([#2828](https://github.com/marin-community/marin/issues/2828)/[#4297](https://github.com/marin-community/marin/issues/4297)).\n\n**Bottom line:** GPU throughput isn't competitive, so the flagship **67B-A2B 10T hero run was switched\nOFF GPUs onto TPUs (v4)** ([#6044](https://github.com/marin-community/marin/issues/6044)).\n"
+}

@@ -1,0 +1,468 @@
+{
+  "gpu": {
+    "gold_verdict": {
+      "rating": "solid",
+      "problems": [
+        "States the finished gqa4 run 'landed on 07-09', but 07-09 is the run's START timestamp; a 500B-token run at ~1.37M tok/s finishes ~4 days later (~07-13), which the truncated card cannot pin. Minor imprecision.",
+        "The top-line framing that the summary's 'completion ~July 13-14' is 'contradicted by W&B ground truth' is slightly overstated: the summary explicitly describes a GQA 4:1 architecture, which matches the FINISHED gqa4 run (plausibly completing ~07-13), so the completion timing is actually consistent for that run. Gold reconciles this correctly in sections 1c/1d (summary conflates finished-gqa4 with crashing-MLA), so it is internally resolved, but the headline overstates the contradiction."
+      ],
+      "overreach": [
+        "'landed on 07-09' for the gqa4 finished run \u2014 corpus only supports 07-09 as the start; finish date not in corpus"
+      ]
+    },
+    "harshness": {
+      "A_skill": {
+        "verdict": "fair",
+        "est_fair_Q": 12,
+        "rationale": "Every fact miss is genuine: A asserts the run is 'live and healthy\u2026 completion ~July 13-14' (opposite of fact-1 crashed), omits #6304/9.37% entirely, says 'v4-2048' (fact-8 wrong slice), and '120B-A8B on 2 NVL72' (fact-6 contested). Citation misses (6304, 6532, 6689, 6044) are all real; hits (6706, 6716) counted. Forbidden #6970 penalty is legitimate \u2014 it is 0-chunks out-of-corpus and A asserts a technical result from it (A actually cites several more out-of-corpus issues, so it is under-penalized, not over). Only lenience is the coincidental fact-9 'cute' match via 'CuTe'; correcting it would drop Q to ~9. Q=13.3 fairly reflects a fluent but materially corpus-contradicted answer."
+      },
+      "B_baseline": {
+        "verdict": "too_lenient",
+        "est_fair_Q": 24,
+        "rationale": "All of B's misses are fair (it engages none of the run states, MFU targets, hero runs, or #6304/#6532/#6689/#6044 \u2014 cites only #6292, the 3% bring-up, never the campaign to 9.37%). But 30 of its 33.9 points come solely from trap_pass \u2014 passively omitting the one forbidden issue #6970 \u2014 and the remaining 3.9 from a coincidental fact-9 'cute' match (its 'CuTe' is about FA4 attention, not the GB200 sonic-cute sweep). So an answer hitting 0/6 must-have citations and 0/9 substantive facts banks ~34 on omission-luck. Correcting the coincidental cute pass gives ~30; the trap windfall still overstates responsiveness. Ordering (B>A) is defensible because B is more accurate on what it does cover, but the magnitude is inflated by mechanics unrelated to the answer's merit."
+      }
+    },
+    "true_quality": {
+      "gold": 90,
+      "A_skill": 42,
+      "B_baseline": 47
+    },
+    "unfair_deductions": [
+      {
+        "answer": "B_baseline",
+        "kind": "other",
+        "detail": "fact-9 'cute' regex grants B a coincidental/lenient PASS: B's 'FA4 CuTe' mention (about #7013 attention fix) matches the regex intended for the GB200 sonic-cute kernel sweep, which B never discusses. This is an unfair CREDIT (+3.9 Q), not a deduction \u2014 inflates B.",
+        "points_est": 4
+      },
+      {
+        "answer": "A_skill",
+        "kind": "other",
+        "detail": "Same coincidental fact-9 'cute' credit for A via 'FlashAttention-4 / CuTe' \u2014 an unfair pass, not a deduction. Correcting it lowers A ~4 points. Noted for completeness; it helps A rather than hurting it.",
+        "points_est": 4
+      }
+    ],
+    "scorer_fixes": [
+      "Tighten fact-9 regex from 'cute' to 'sonic-cute' or 'gb200' (or require both 'cute' AND a GB200/multi-rack token): 'cute' currently matches the unrelated CUTLASS/CuTe FA4 attention discussion, giving both A and B undeserved passes on the GB200 sonic-cute-sweep fact.",
+      "Reconsider the 30% trap weight or add a minimum-coverage gate: an answer (B) that hits 0/6 must-have citations and 0 substantive facts still scores 33.9 purely for omitting one forbidden issue, which overstates a non-responsive answer.",
+      "Broaden the forbidden list to cover A's other out-of-corpus reliance (#6998, #6979, #7024, #7012), or credit provenance-flagging; penalizing only #6970 lets an answer that presents several 0-chunk issues as fact escape most of the cost.",
+      "Consider accepting #6292 as a partial-credit alternate for the '90B on 256 H100' context, but keep #6304 as the sole must-have for the 9.37% pure-FSDP-ceiling fact (B cites 6292 but never reaches the 9.37% result \u2014 the distinction is load-bearing and correctly required).",
+      "Optionally add a citation-equivalent note that 'GQA 4:1' can satisfy the fact-2 architecture-distinction intent, but only when paired with the finished-vs-crashing contrast; a bare 'GQA 4:1' (as in A) should still fail because it does not make the finished-gqa4-vs-attributed-MLA point."
+    ],
+    "summary": "GOLD is excellent and the best answer achievable from this corpus: every load-bearing claim I spot-checked verified exactly against W&B and the issues \u2014 #6304's 2.8%\u21929.37% pure-FSDP ceiling, the finished gqa4-500B (10.77B, loss 1.629) vs the five crashed + three running MLA-500B runs, #6689's literal '288 B200 (4xNVL72)' with blank size/data/loss, #6532's PP-parked-to-marin-experiments#11, #6044's 67B on v4-1024 at 21.54% MFU, and the 0-chunk out-of-corpus issues (#6970/#6998/#6979/#7024/#7012). Rating solid; the only nits are 'landed on 07-09' (a start date, not finish) and a slightly overstated 'contradiction' headline that gold itself reconciles. A (Q=13.3, fair): fluent but materially corpus-contradicted \u2014 asserts a healthy run 'completing ~July 13-14' that actually crash-looped, wrong TPU slice (v4-2048), contested hero size as fact, and a legitimate forbidden #6970 penalty; every deduction is fair. B (Q=33.9, too_lenient): an accurate-but-stale infra survey that misses all six must-have citations and every substantive run-state/MFU/hero fact, banking ~30 of its points on passively omitting one forbidden issue plus a coincidental 'cute' regex match. The Q ordering (B>A) is directionally defensible because B misleads less, but B's magnitude is inflated by scoring mechanics rather than merit. Main scorer fix: tighten the over-loose fact-9 'cute' regex, which hands both answers an undeserved pass."
+  },
+  "july": {
+    "gold_verdict": {
+      "rating": "solid",
+      "problems": [
+        "Extremely dense/long for a 'plan' question; reads more like a full weekly retro than a plan explanation, but every claim is accurate and caveated.",
+        "Minor: gold says the 2T cut 'switches to the phase-2 mix' while the summary text is itself internally inconsistent (also calls it 'phase-1 (mix-2)'); gold picks the defensible reading."
+      ],
+      "overreach": [
+        "Calls GQA 'The one genuinely decided architecture element for the September run' \u2014 the corpus (#6522, July 2) supports only a leaning/'working call is GQA' based on MLA FLOP overhead (+17.4% @4k) and impl-risk-before-Sept-15; no formal decision is recorded in the July 6-12 week. Gold does self-hedge with 'so the working call is GQA', so this is mild."
+      ]
+    },
+    "harshness": {
+      "A_skill": {
+        "verdict": "fair",
+        "est_fair_Q": 85,
+        "rationale": "All 9 FAILED facts (placeholder, 18.26, GQA, Nemotron, 4/14, Pareto, SuperBPE, 14,211, 0.9410) are genuinely absent from A \u2014 verified by grep; deductions are fair. A also lacks GQA and the xorl walk-back entirely. Counter-direction: fact #20 (rx '0.8') is FALSELY credited to A \u2014 the wildcard '.' matched '048' in 'v4-2048', not any xorl discussion, so A is over-credited ~1.5 Q. Net: Q=86.9 is slightly generous; fair Q ~85."
+      },
+      "B_baseline": {
+        "verdict": "fair",
+        "est_fair_Q": 70,
+        "rationale": "B's 3 passing facts are genuine (not wildcard artifacts). One unfair deduction: 'preparation month' \u2014 B expresses the identical concept as 'bridge month' + items 'openly expected to spill into August' (~+1.5 Q if credited). All other misses are real content gaps: B omits the September ~512B throughline, all MFU/loss progress numbers, and the placeholder caveat. Q=69.4 slightly overstates B's independent quality if anything, so the ~1.5-pt harsh item is offset; net fair. Note B answered a legitimate structural reading (milestone map, planning sub-issues #6700-6703) that the fact set barely rewards."
+      }
+    },
+    "true_quality": {
+      "gold": 90,
+      "A_skill": 85,
+      "B_baseline": 62
+    },
+    "unfair_deductions": [
+      {
+        "answer": "B_baseline",
+        "kind": "fact_regex_too_strict",
+        "detail": "Fact #1 rx 'preparation month' scored as missed, but B states the same readiness/not-a-finish-line concept: 'July is a bridge month' and 'Several complete items ... are openly expected to spill into August'. Concept-equivalent; ~1.5 Q.",
+        "points_est": 1
+      },
+      {
+        "answer": "A_skill",
+        "kind": "other",
+        "detail": "OVER-credit (leniency bug, not a deduction): fact #20 rx '0.8' (xorl walk-back) marked pass for A, but A never mentions xorl/Ashwinee/MATH500 walk-back. The regex '.' wildcard matched '048' inside 'v4-2048'. A is over-credited ~1.5 Q; fair fact_cov is 14/24 not 15/24.",
+        "points_est": 1
+      }
+    ],
+    "scorer_fixes": [
+      "Anchor the xorl-walkback fact regex: replace bare '0.8' with something like '\\+?0\\.8\\s*[\u2013-]\\s*1\\.4' or require co-occurrence of 'MATH500'/'xorl'/'walk'. As written it false-positives on any '0<any>8' substring (it credited A via 'v4-2048').",
+      "Loosen fact #1 'preparation month' to a concept alternation: '(preparation|bridge)\\s+month|not a finish line|spill(s|ed)? (past|into) August' so structurally-framed answers (like B) get credit for the readiness idea.",
+      "Escape literal dots in numeric fact regexes (2.277, 2.269, 0.25, 17.8, 18.26, 0.9410, 14,211 \u2192 14\\.211/14,211) so '.' cannot wildcard-match unrelated digit runs; this is the same wildcard class of bug that hit '0.8'.",
+      "The fact set is heavily weighted toward weekly-progress minutiae (0.9410 BPB, 14,211 diff lines, 18.26 MFU, 131k, Iris) that are tangential to 'explain the PLAN'. Consider tagging a subset as depth/bonus facts, or adding structural-plan targets (the four-workstream taxonomy; hero-run planning sub-issues #6700-#6703; commitment/hero/investment structure) so a valid milestone-structure answer is not over-penalized.",
+      "Consider whether 'August 30' should accept 'lands in August'/'spills into August' as partial; currently B conveys the August-slip idea but is fully denied because it lacks the exact date."
+    ],
+    "summary": "Gold is solid and corpus-accurate (verified #6689 placeholder title, #6706 '20%+?' question body, #6522 GQA/MLA FLOP accounting, 2.277 vs 2.269, 18.26 MFU, 0.9410 BPB, Nemotron/MOPD, non-Pareto curation, ~512B/Sept-15 prose). Its only mild overreach is calling GQA 'genuinely decided' when the corpus shows a July-2 'working call' (self-hedged). A (skill) Q=86.9 is essentially fair: all 9 failed facts are genuinely absent, and its passes are real \u2014 except fact #20 ('0.8' xorl walk-back) is a FALSE POSITIVE where the regex wildcard matched '048' in 'v4-2048', over-crediting A ~1.5 pts; A never discusses the xorl walk-back or GQA. B (baseline) Q=69.4 is fair: it is structurally strong (milestone map, planning sub-issues #6700-6703) but genuinely omits the September throughline, all progress numbers, and the placeholder caveat; its one arguably-unfair deduction is 'preparation month' (B says 'bridge month' + 'spill into August', same concept, ~1.5 pts). No forbidden citations by either. Both harshness verdicts: fair. Main scorer bug: unescaped '.' wildcards in numeric/short regexes (especially '0.8') cause spurious matches \u2014 escape them and anchor the xorl fact.\""
+  },
+  "april": {
+    "gold_verdict": {
+      "rating": "solid",
+      "problems": [
+        "Very long/dense \u2014 several load-bearing calls (open/closed state, close dates) are inferential because the frozen corpus lacks GitHub state/closed_at/milestone metadata, but the gold explicitly and repeatedly caveats this, so it is honest rather than misleading.",
+        "The 'asymptote-dependent' nuance (free-fit 2.224-2.226 vs registered 2.252) rests on a single #4447 comment I did not independently open; it is internally consistent and appropriately hedged, so not flagged as overreach, but it is the one claim I could not re-derive."
+      ],
+      "overreach": []
+    },
+    "true_quality": {
+      "gold": 92,
+      "A_skill": 72,
+      "B_baseline": 38
+    },
+    "harshness": {
+      "A_skill": {
+        "verdict": "fair",
+        "est_fair_Q": 75,
+        "rationale": "Every missed citation (#3100 data-sources, #3192/#4719/#4760/#4898 post-training, #4474) and every failed fact (Stretch framing, 'pollute the completion count' quote, SWE-bench 5.3%, 140B ~52%, post-training pillar, 19T) is a GENUINE omission: A covers modeling+infra accurately and well-hedged but drops the entire post-training/synthetic-data pillar and data-sources, which is a material third of 'how did we do'. No unfair deductions found; within scope A is accurate (2.234/2.252, canary 60%, 16.4% MFU, 'good enough', 319k crashes, AdamH-embed all verified). Q=75.3 is fair."
+      },
+      "B_baseline": {
+        "verdict": "too_lenient",
+        "est_fair_Q": 46,
+        "rationale": "B's headline \u2014 'We hit it, all 25 issues closed on time by Apr 30, clean success' \u2014 is the exact overclaim the question demands nuancing, and directly contradicts the corpus (no completion declaration; run slipped to May; post-training mixed-to-negative; canary/MFU missed). The scorer structurally cannot dock this: B earns 30 trap points (it does note config supersession) plus cite-recall on cheap list-mentions of #4256/#4266/#4269 etc. while missing the load-bearing #4697/#4447/#3192/#4300 and the whole post-training pillar. It also gets a SPURIOUS fact-8 match ('good enough' referring to #4281 sub-issues, not the intended #4300 MFU close-out). True quality ~38; Q=54.7 over-credits by ~9-17 pts."
+      }
+    },
+    "unfair_deductions": [
+      {
+        "answer": "B_baseline",
+        "kind": "fact_regex_too_strict",
+        "detail": "Fact 8 regex 'good enough' is too loose in the OTHER direction: it PASSES for B on a spurious match \u2014 B's 'closed as good enough for the April gate' refers to #4281's 70/84 sub-issues, not dlwh closing the #4300 MFU target 'good enough' on 2026-05-31 as the note intends. This is a ~2pt too-lenient credit to B, not a deduction against it.",
+        "points_est": 2
+      }
+    ],
+    "scorer_fixes": [
+      "Anchor fact-8 ('good enough') to its intended context: require it to co-occur with '4300' or 'MFU' (e.g. regex 'good enough' AND nearby 25-30%/MFU/#4300), so B's unrelated '#4281 good enough for the April gate' no longer spuriously passes.",
+      "Weight or gate the must-have citations: #4697 (the actual 1e23 run + 2.234 result) and #4447 (pre-registration) and the post-training trio (#3192/#4719/#4760/#4898) are load-bearing, while #4256/#4266/#4269/#4273 are cheap scaffolding mentions. Flat recall lets B score 0.588 by listing scaffolding issues while missing the run outcome entirely.",
+      "Add a trap/forbidden that FAILS when an answer asserts the milestone was cleanly/100% completed or 'all N issues closed on time by Apr 30' without noting the tail into May/June, the post-training misses, or that no completion declaration exists (fact 16). This is the central error the current rubric cannot penalize \u2014 B makes exactly this false claim and still scores 54.7.",
+      "Consider treating B's confident 'all 25 closed / 0 open, on time' as an overreach penalty, since it derives from live GitHub milestone metadata (issues close whenever) but is presented as on-time delivery, which the corpus contradicts."
+    ],
+    "summary": "GOLD is excellent and trustworthy (true ~92, solid): I verified every load-bearing number against the frozen corpus \u2014 2.234 vs registered 2.252 (#4697), the 'pollute our completion count' removal of #4256/#4266, the Stretch-vs-committed framing (#4266), the made-up 25-30% band + 'good enough' close (#4300), SWE-bench 0\u21925.3% and the stuck 500K SFT (#4898), Marin-32B 2/87 vs Qwen3 18/86 (#4760), canary TPU 9/9 vs GPU 60% (#4270), and '>19T' data-sources close (#3100). All correct; the gold is appropriately hedged about inferred open/closed states and the asymptote-dependence of the 'beat'. No factual errors or overreach found.\\n\\nA (skill, Q=75.3) is scored FAIRLY: it is accurate and well-hedged on modeling+infra but genuinely omits the entire post-training/synthetic-data pillar (#3192/#4719/#4760/#4898), data-sources (#3100), #4474, the Stretch framing, and the 'pollute' quote \u2014 all real gaps, no unfair deductions. Fair Q ~75.\\n\\nB (baseline, Q=54.7) is scored TOO LENIENTLY: its central claim \u2014 'we hit it, 25/25 issues closed on time by April 30, clean success' \u2014 is false against the corpus (no completion declaration, run slipped to May, post-training mixed-to-negative, canary/MFU missed) and is exactly the thing the question requires nuancing. The deterministic Q can't penalize this: B banks 30 trap points and cite-recall on cheap scaffolding mentions while missing the load-bearing #4697/#4447/#3192/#4300, plus a spurious 'good enough' fact match. True quality ~38; fair Q ~46. Fixes: anchor the 'good enough' regex to #4300/MFU, weight the load-bearing citations, and add a trap for the 'cleanly complete / all-closed-on-time' overclaim.\""
+  },
+  "muon": {
+    "gold_verdict": {
+      "rating": "solid",
+      "problems": [
+        "Minor internal tension: line 5 lists token embeddings under 'stay on Adam/AdamH' (they are on AdamH per the config), while line 16 says 'only lm_head / output_proj stays on AdamH' \u2014 the 'only' is slightly loose given embeddings are also AdamH.",
+        "Cross-gold inconsistency (not a defect of THIS gold): the gpu-question gold asserts the hero run is on v4-1024 and calls v4-2048 'the wrong slice', but the frozen corpus (W&B run name ..._v4_2048_muon_resume15k_v2_10T, state=running; weekly summary '67B-A2B Grug run on TPU v4-2048 ... MFU near 18.6%') confirms v4-2048 \u2014 so THIS muon gold is the correct one and the gpu gold needs reconciling."
+      ],
+      "overreach": []
+    },
+    "harshness": {
+      "A_skill": {
+        "verdict": "fair",
+        "est_fair_Q": 85,
+        "rationale": "All 10 failed facts (6074 origin, drop-1e18, mixed-verdict/crossover, shallow-alpha, XLA-free, 18.6% MFU, 2.2772/2.269 cooldown, apples, readiness framing) are genuinely absent from A's text, and the single cite miss (#6074) is the true origin that A wrongly credits to #6153. Deductions are fair. If anything Q is slightly TOO LENIENT: A's GatedNorm-routing claim ('gains routed to AdamH') is factually wrong (ships on MuonH per #5763) yet passes the lm_head regex, and A omits the hyperball constraint entirely."
+      },
+      "B_baseline": {
+        "verdict": "too_harsh",
+        "est_fair_Q": 77,
+        "rationale": "Two clear scorer-regex bugs cost B ~2.2 Q points: (1) B writes 'Newton\u2013Schulz' with an en-dash so the ASCII-hyphen regex fails a fact B unmistakably states; (2) B gives the Muon-tax as '1.49s/step (21.9k tok/s) vs SGD 0.44s/step (74.8k)' \u2014 the same datum as the 4.75%/21,962 regex, rounded, scored as missed. Plus a borderline v4-2048 miss (B says 'TPU' but not the slice). Notably B is MORE accurate than A on GatedNorm routing (MuonH, correct) and the hyperball wrap, and correctly captures the mixed-verdict crossover, yet scores 10 pts lower."
+      }
+    },
+    "true_quality": {
+      "gold": 94,
+      "A_skill": 77,
+      "B_baseline": 76
+    },
+    "unfair_deductions": [
+      {
+        "answer": "B_baseline",
+        "kind": "fact_regex_too_strict",
+        "detail": "Fact 'Newton-Schulz' scored FAIL because B writes 'Newton\u2013Schulz' (U+2013 en-dash) in every occurrence (lines 3, 26), while the regex uses an ASCII hyphen. B unmistakably names the core mechanism. Pure typography.",
+        "points_est": 1
+      },
+      {
+        "answer": "B_baseline",
+        "kind": "fact_regex_too_strict",
+        "detail": "Fact '4\\.7|21,962' scored FAIL, but B states the same Muon-tax datum as 'MuonH at ~1.49s/step (21.9k tok/s) vs SGD ~0.44s/step (74.8k tok/s)' (#6493). 21.9k \u2248 21,962 and 1.49s matches; the fact is present, just rounded/differently-formatted.",
+        "points_est": 1
+      },
+      {
+        "answer": "B_baseline",
+        "kind": "fact_regex_too_strict",
+        "detail": "Fact 'v4-2048' scored FAIL; B correctly places the hero run on TPU (#6044) but does not name the specific v4-2048 slice. The essential fact (TPU) is present; other questions' analogous regex accept 'TPU|v4-2048'. Borderline.",
+        "points_est": 1
+      }
+    ],
+    "scorer_fixes": [
+      "Loosen the 'Newton-Schulz' fact regex to accept Unicode dashes: 'Newton[-\u2010-\u2015]Schulz' (or 'Newton.?Schulz'). B's en-dash usage is a false negative.",
+      "Loosen fact 19 ('4\\.7|21,962') to also match the rounded form: add '21\\.9k|1\\.49\\s*s' so an answer that reports '21.9k tok/s / 1.49 s/step' gets credit for the Muon-tax datum.",
+      "For fact 9 ('v4-2048'), consider accepting a bare 'TPU' mention (as the gpu/h100 questions' regexes do) or keep strict but recognize it as a minor slice-precision miss, not a whole-fact miss.",
+      "Reconcile the cross-question golds: the gpu-question gold flags v4-2048 as 'the wrong slice' (claims v4-1024), but the frozen W&B run and weekly summary confirm the live hero run is on v4-2048 \u2014 fix the gpu gold, not this one.",
+      "Optional leniency check for A: A's Q benefits from the lm_head regex passing while A actually states GatedNorms route to AdamH (wrong per #5763). If a routing-accuracy trap were added it would correctly penalize A here."
+    ],
+    "summary": "Gold is high-quality and corpus-accurate: I verified #6074 as the true 2.12\u00d7 origin, the #5596 'mixed verdict' crossover at C\u22481.65e21, GatedNorms shipping on MuonH (#5763), the hyperball wrap, the #5951 LR-law constants (0.097/-0.395, R\u00b2=0.996 with units-bug caveat), and the live v4-2048 / 18.6% MFU / 2.2772-vs-2.269 cooldown facts \u2014 all correct and well-labeled (projected vs measured vs target). Only a trivial internal inconsistency (embeddings AdamH wording). A (Q=84.8) is scored fairly \u2014 its 10 failed facts are genuinely absent and its #6074 cite miss is the real origin \u2014 though Q is slightly lenient given A's actual GatedNorm-routing error (says AdamH; truth is MuonH) and omission of the hyperball. B (Q=74.2) is too harsh: two scorer-regex bugs (en-dash 'Newton\u2013Schulz' and rounded '21.9k tok/s/1.49s' Muon-tax) plus a borderline v4-2048 slice miss cost ~2-3 points, and B is actually more accurate than A on GatedNorm routing and the hyperball. Fair Qs: A\u224885, B\u224877. Independent quality: gold 94, A 77, B 76 \u2014 the deterministic 10-point A-over-B gap overstates the true ~1-2 point gap."
+  },
+  "ablations": {
+    "gold_verdict": {
+      "rating": "solid",
+      "problems": [
+        "Very long and dense (416 lines) for the ask, though 'share more details' justifies depth",
+        "A handful of headline numbers are summary-sourced (embedding-surrogate 0.9410/~8sigma, #6972 KL, #6716 feature-chain, 935-doc set) rather than primary-thread-verifiable, but the gold explicitly and consistently flags each as summary-sourced"
+      ],
+      "overreach": []
+    },
+    "harshness": {
+      "A_skill": {
+        "verdict": "fair",
+        "est_fair_Q": 69,
+        "rationale": "Q=66.3 is close to fair. A genuinely omits #6757 (the single cleanest head-to-head mix comparison; A does not even cite it) and the whole test-integrity/#6742 track, so f1(1.78)/f2(1.14)/f3(indistinguishable)/f9(28.2)/f10(2.83) and the #6757/#6742 citation misses are all FAIR. Small unfairness: A cites #6602/#6603 (Scaling a Mixture Optimized for Uncheatable/OLMoBaseEval) which are legitimate equivalents of gold's #6607/#6609 DSP-on-Delphi slot (~1 citation slot, ~2 pts), and A states 'target-specific' KL qualitatively while f12 demands the digits (~0.5 fact, ~1.7 pts). Net fair Q ~69."
+      },
+      "B_baseline": {
+        "verdict": "fair",
+        "est_fair_Q": 56,
+        "rationale": "Q=54.9 is fair. B is a broad catalog: strong #6757 coverage (passes indistinguishable/0.846/5613) and a useful methodology frame (#722 anneal recipe) + quick-ref table, but genuinely light on hard numbers and missing the Delphi DSP/OLMix ladder program (#6607/6608/6609/6611), contamination (#6742), cooldown #934/#820, curation reality-check #2351, and embedding surrogate #6969 \u2014 all FAIR misses. B contributes valid alternative mixture threads (#2345/#5359/#6326) that earn zero credit, and f17 (100k) is mildly strict: B says '~100k-document' label sets + top-{1,5,10,20}% but regex demands '100k MMLU'/'100,000' (~1.5 pts). Net fair Q ~56."
+      }
+    },
+    "true_quality": {
+      "gold": 93,
+      "A_skill": 72,
+      "B_baseline": 60
+    },
+    "unfair_deductions": [
+      {
+        "answer": "A_skill",
+        "kind": "citation_equivalent",
+        "detail": "Gold must-have #6607 (Scaling baseline mixtures) and #6609 (Ablations: curriculum: uncheatable) are scored as missed, but A covers the same DSP/OLMix Delphi-ladder mixture-scaling program with #6602 (Scaling a Mixture Optimized for Uncheatable Eval), #6603 (Scaling a Mixture Optimized for OLMoBaseEval Easy), plus #6608/#6611. #6602/#6603 are equally-central 'optimized-mixture scaling' threads; #6607 is just the baseline-anchor variant. Credit ~1 citation slot.",
+        "points_est": 2
+      },
+      {
+        "answer": "A_skill",
+        "kind": "fact_regex_too_strict",
+        "detail": "f12 requires 'KL=0.1' or 'KL=0.005' digits. A states the load-bearing insight ('best KL is target-specific') verbatim ('target-specific' is present in A) but not the specific values, which are summary-sourced from #6972. The conceptual fact is captured.",
+        "points_est": 2
+      },
+      {
+        "answer": "A_skill",
+        "kind": "forbidden_unfair",
+        "detail": "Gold makes the two umbrella epics #6712/#6713 must-have citations. A comprehensively covers the curation-and-mix and data-selection-diagnostics work but doesn't cite the organizational tracking epics \u2014 a pedantic ding for umbrella issues.",
+        "points_est": 1
+      },
+      {
+        "answer": "B_baseline",
+        "kind": "fact_regex_too_strict",
+        "detail": "f17 regex '100k MMLU|100,000' scores B as missed, but B states '~100k-document positive/negative label sets and filtered at top-{1,5,10,20}%' for #163 \u2014 conveys the ~100k label-set size and top-k filtering (the load-bearing quantities); only the 'MMLU' adjacency / comma format is absent.",
+        "points_est": 2
+      }
+    ],
+    "scorer_fixes": [
+      "Accept #6602 and/or #6603 as valid substitutes for the #6607/#6609 DSP-on-Delphi mixture-scaling citation slot \u2014 they are the 'Scaling a Mixture Optimized for {Uncheatable Eval, OLMoBaseEval Easy}' threads and directly answer 'which mixes were compared on the ladder'.",
+      "Loosen f12: pass on 'target-specific' KL phrasing (the conceptual claim) and treat the specific KL=0.1/0.005 digits as a bonus, since they are summary-sourced from a post-freeze thread (#6972).",
+      "Loosen f17 regex from '100k MMLU|100,000' to '100k|100,000' (or '100k .{0,20}(MMLU|positive)') so the ~100k label-set size counts regardless of the 'MMLU' adjacency wording.",
+      "Make the umbrella epics #6712/#6713 optional (nice-to-have) rather than must-have citations, since an answer can fully cover the underlying work without citing the tracking issues.",
+      "Consider adding #2345 (foundational many-domains mixture swarm) and/or #5359 (June production-mix epic) as accepted alternatives for the swarm-mixture-optimization concept, to reward B-style breadth that currently earns zero citation credit."
+    ],
+    "summary": "GOLD is exceptionally accurate: I independently verified #6757 (curated-vs-nemotron 1.78x [1.45,2.24], curated-vs-proportional 1.14x [0.93,1.41] tie 'statistically indistinguishable', d512-d1280 scales, 102/111/137 task counts), #6742 (MATH-500 28.20%, AIME24 56.67%, +18.56%->+2.83%, 45,096,087 docs, 13-word ngram), #6739 (AUC 0.875/rho 0.703/0.41M FLOPs, fastText 0.846, 5,613 train/961 holdout), and #6608 (mean BPB 0.990787, 280=241+39 rows, olmix_d001_kl005_cap4) \u2014 all match the frozen corpus exactly, with careful summary-sourced flagging and no material overreach (true quality ~93; gold_verdict solid). The A/B deterministic fact scoring is ACCURATE (my initial read misattributed rich gold content to A; grep confirms the regex hits/misses are correct). A (skill, 177 lines) is a solid accurate answer but genuinely omits #6757 entirely (doesn't cite it) and the whole contamination/test-integrity track, so most of its fact misses are FAIR; Q=66.3 is fair-to-slightly-harsh (fair ~69), with minor unfairness from #6602/#6603 being valid equivalents of #6607/#6609 and 'target-specific' KL captured qualitatively. B (baseline, 222 lines) is a broad catalog with strong #6757 coverage and a good methodology frame but light on hard numbers and missing the Delphi ladder / contamination / cooldown / curation-reality-check; Q=54.9 is FAIR (fair ~56), with a mildly strict f17 (100k) regex. Neither answer is materially mis-scored; both deductions run slightly harsh but within a few points.\""
+  },
+  "classifier": {
+    "gold_verdict": {
+      "rating": "solid",
+      "problems": [
+        "Very long/dense (24KB) \u2014 arguably over-engineered for the question, though content is accurate.",
+        "A few specific enrichment figures (fast-transformer '32M params', 'meanmaxmin\u00b7w64\u00b7d512\u00b7L4', the '200 tokenized buckets / 40 clusters' framing) were not independently re-verified here; they are plausibly in-corpus and non-load-bearing, but are the only unchecked specifics."
+      ],
+      "overreach": []
+    },
+    "harshness": {
+      "A_skill": {
+        "verdict": "fair",
+        "est_fair_Q": 79,
+        "rationale": "All 9 failed facts (0.852, 'raising oracle-AUC does not fix', 7040, rav/quality-coherence, 0.44/0.69, 'both...v0', not-deploy/recommendation, marin-public, v6e) are genuinely ABSENT from A (grep-confirmed 0 matches). A never covers the gen-3 coherence story or the confound, and it mildly misframes the fast-transformer as part of the deployed classifier ('spans two generations'). The missed #7040 citation is real. No unfair deductions; Q=79.3 is fair."
+      },
+      "B_baseline": {
+        "verdict": "fair",
+        "est_fair_Q": 59,
+        "rationale": "Deductions are almost all fair (B genuinely lacks gen-2 numbers 0.875/0.41M, all of gen-3, the confound, and marin-public). One deduction is unfair: fact-22 rx 'distill' fails on B even though B states the provenance constraint fully ('labels were generated by Claude (Sonnet)... terms attached to using model-generated labels/outputs'). Crediting that raises fact_cov 9\u219210/23 and Q ~57.7\u2192~59.2. Marginally too harsh but essentially fair."
+      }
+    },
+    "scorer_fixes": [
+      "Broaden fact-22 regex from 'distill' to 'distill|generated by Claude|model[- ]generated|Claude[- ]derived' so answers that state the Claude-label-provenance constraint in plain words (as B does) get credit \u2014 B is docked ~1.5 Q purely for word choice.",
+      "Keep the must-have citation set {#5810,#6739,#6849,#6860,#7040} \u2014 all five verified as central; #7040's body is not in-corpus but it is the canonical handle for the gen-3 RFC and is referenced via Discord/digest, so citing it is legitimate.",
+      "Optional (adds rigor, not a fairness fix): add a soft trap penalizing use of the Percy Liang/Colin Raffel distillation thread (msg 1527019392821366794) as a classifier-weight-release governance constraint \u2014 corpus-confirmed it never mentions the classifier; A leans on it as 'governance tension', which the scoring currently neither rewards nor penalizes.",
+      "Optional: add a differentiator fact for 'fast-transformer was recommended, not deployed' being missed-or-contradicted \u2014 A's 'the classifier now spans two generations' framing is a subtle misattribution that current facts don't penalize."
+    ],
+    "true_quality": {
+      "gold": 94,
+      "A_skill": 73,
+      "B_baseline": 60
+    },
+    "unfair_deductions": [
+      {
+        "answer": "B_baseline",
+        "kind": "fact_regex_too_strict",
+        "detail": "Fact-22 rx 'distill' marked FAILED for B, but B fully conveys the same fact: 'the labels were generated by Claude (Sonnet) against a rubric, so any redistribution should be checked against ... terms attached to using model-generated labels/outputs.' Same provenance constraint, different words. ~1.5 Q pts.",
+        "points_est": 2
+      }
+    ],
+    "summary": "GOLD is excellent and trustworthy: every load-bearing and sophisticated claim I spot-checked verifies VERBATIM against the frozen corpus \u2014 the deployed fastText v0 sonnet46-thr05 (AUC 0.846/\u03c1 0.641, $32.73, 5,613 labels, #5810); the confound (\u03b7\u00b2=0.41, source-only AUC 0.852 'already beating fasttext (0.846), just under the 0.875 text-reading plateau', #6739 comment 4833103402); the gen-3 critique ('raising oracle-AUC does not fix it', Spearman 0.44\u21920.69, branch rav/quality-coherence, #6849); the sharing signals (marin-public report + RFC PR #7040 whose body is genuinely absent from the corpus, dolma3 open classifier #5812); and, notably, GOLD's correct call that the Percy Liang/Colin Raffel distillation thread is off-topic to the classifier \u2014 a thread that A over-reads as a release 'governance tension.' No gold overreach found; the 'default-open' conclusion is properly hedged as revealed-preference. Scoring for A is FAIR (Q=79.3): all 9 failed facts are genuinely absent from A (grep-confirmed), and A misses the whole gen-3 story and the confound. Scoring for B is essentially FAIR (Q=57.7) with one small unfair deduction: rx 'distill' fails on B even though B states the Claude-label-provenance constraint in plain words \u2014 worth ~1.5 Q (fair Q\u224859). Recommended fix: broaden the 'distill' regex to accept 'generated by Claude / model-generated'. True quality: gold 94, A 73, B 60.\""
+  },
+  "benchmarks": {
+    "summary": "This is a deliberately broad question (\"target benchmarks AND development proxies\") and the GOLD answers it as a full-evolution survey across 2024-2026: during-training MCQ/lm-eval-harness tier (#574/#817), Delphi scaling-law pre-registration proxy (#1337, verified 2.75/2.55/2.40 \u2192 2.758/2.53), the live Table-9 DSP mixture-selection objective (#6608/#6611/#6726), AA Intelligence Index v4.0.4 target framework (#5819), executed Evalchemy generative subset (#2779), downstream-scaling proxies (#4550), Qwen comparator (61.96 vs 64.66, verified) and the 67B loss target (2.269 in #6044, not #6811 \u2014 verified). The gold is accurate, well-verified, and carefully stratified (target vs executed, achieved vs projected); it is very long but I found no material overreach. A (skill) gives a coherent, correct MODERN-strategic framing (AA index target + perplexity-gap proxy + #4550 + Qwen + 67B loss) but genuinely omits three real tiers: the during-training MCQ/harness tier, the Delphi pre-registration mechanism, and the Table-9 DSP objective; it also miscites evalchemy to #5819 (which does not name evalchemy). B (repo baseline) correctly describes the static task_configs.py menu (CORE_TASKS, key_evals OLMo2-comparable, leaderboard, Harbor agentic) and the in-loop bpb/logprob/choice metrics + proxy-research threads \u2014 real content the gold under-covers \u2014 but is disconnected from the 2026 live state (no AA index, no Table-9, no Delphi numbers, no evalchemy, no Qwen numbers, no 67B target). CRITICAL SCORING BUG: fact-6 regex `Table.9|table9|51` \u2014 the bare `51` matched issue #4551 (B) and #5519 (A), giving BOTH a false-positive pass on the Table-9 objective they never discuss. This over-credited both. Correcting it: A fact_cov 5/13\u21924/13 (~Q51), B fact_cov 2/13\u21921/13 (~Q36), the latter roughly offset by a citation-equivalence under-credit where B sources the CORE tier to task_configs.py rather than #574. Net: both Q values land close to fair after the two errors cancel. A ~fair (slightly lenient), B ~fair.",
+    "true_quality": {
+      "gold": 90,
+      "A_skill": 64,
+      "B_baseline": 50
+    },
+    "gold_verdict": {
+      "rating": "solid",
+      "problems": [
+        "Very long (300+ lines) for the question; comprehensive but exceeds what a reader likely needs.",
+        "A few Discord-sourced counts (willheld '71 evals'/'181 evals', Table-9 '104 scored tasks / 88,592 instances') were not fully re-verified in my checks, though they are labeled and plausible.",
+        "Minor internal tension it self-flags: #574 body says 14/22 CORE tasks while the W&B run-name enumeration shows ~12."
+      ],
+      "overreach": []
+    },
+    "harshness": {
+      "A_skill": {
+        "verdict": "fair",
+        "est_fair_Q": 51,
+        "rationale": "Reported Q 54.0. All missed citations (574,817,1337,2779,6608,6611,6726) are FAIR: A genuinely omits the during-training MCQ/harness tier, the Delphi pre-registration proxy, and the Table-9 DSP objective, and miscites evalchemy to #5819 (which does not name evalchemy). The one scoring error is too-LENIENT, not too-harsh: the fact-6 `51` regex false-positived on issue #5519, crediting A with Table-9 content it lacks (fact_cov should be 4/13=0.308, not 0.385), lowering fair Q to ~51."
+      },
+      "B_baseline": {
+        "verdict": "fair",
+        "est_fair_Q": 38,
+        "rationale": "Reported Q 38.9. Most misses are FAIR (no AA index, no Table-9, no Delphi numbers, no evalchemy, no 67B target). Two roughly-cancelling errors: (1) too-lenient \u2014 fact-6 `51` false-positived on issue #4551, crediting Table-9 content B lacks (corrected fact_cov 1/13=0.077 \u2192 ~Q36); (2) too-harsh \u2014 B correctly identifies the CORE_TASKS/MMLU default suite but sources it to the canonical task_configs.py file instead of issue #574, earning zero under issue-number membership (worth ~1 citation, ~+3 Q). Net ~38."
+      }
+    },
+    "unfair_deductions": [
+      {
+        "answer": "B_baseline",
+        "kind": "citation_equivalent",
+        "detail": "B correctly identifies CORE_TASKS/MMLU as the default in-loop MCQ suite and sources it to the canonical repo file experiments/evals/task_configs.py (arguably a better primary source than the issue), but scoring credits only issue-number membership so the must-have #574 counts as missed. Partial unfairness (B lacks the specific '14/22' and the load-bearing-tier narrative).",
+        "points_est": 3
+      }
+    ],
+    "scorer_fixes": [
+      "Fix fact-6 regex `Table.9|table9|51`: the bare `51` alternative matches any issue number containing '51' (#4551 in B, #5519 in A), producing false-positive passes for answers with ZERO Table-9 content. Replace with something context-bound, e.g. `OLMoBaseEval|Table.?9|51[- ]?(component|BPB|task)`. After the fix BOTH A and B correctly FAIL fact 6.",
+      "For must-have #574 (CORE/default_eval tier), accept the canonical source `experiments/evals/task_configs.py` or issue #553 as an equivalent citation, so a repo-grounded answer that correctly names CORE_TASKS is not zeroed on sourcing alone.",
+      "Accept PR #3690 as an equivalent citation for the executed generative-eval must-have #2779 (the gold itself pairs them as the Evalchemy AIME26/LiveCodeBench-v6 extension).",
+      "Optional: the 10-issue must-have set spans the full 2024-2026 evolution; consider tiering it (current-state core: 5819, 6611/6726, 1337, 6044, 4550 vs historical: 574, 817, 2663) so a well-scoped current-state answer (like A) is not penalized as if it had to recite 2024 history to score."
+    ]
+  },
+  "h100-67b": {
+    "gold_verdict": {
+      "rating": "solid",
+      "problems": [
+        "Very dense; the only real H100 'best delivered' number it reports is 26.7%/26.5% (from the July summary). It never surfaces #6979's actual closed-issue peak of 28.16% GQA / te_grouped-stacked 26.7% true \u2014 a corpus limitation (issue post-dates freeze), not an error, but it makes the gold's H100 ceiling slightly understated vs what live GitHub shows.",
+        "Calls ~18.6% the run's 'final sustained MFU'; the v4-2048 run is still state=running (completion ~Aug 30), so 18.6% is the latest/holding sustained figure, not a true final. Minor overstatement, adequately hedged.",
+        "A few very specific figures (121.9 GiB Muon re-shard, 2.62x FSDP on 2-node GPU PP, 21.54% crashed step 4367) are plausible and sourced to the right threads but I only partially re-verified the exact digits."
+      ],
+      "overreach": [
+        "'final sustained MFU figure' for 18.6% while the run is still training (state=running)"
+      ]
+    },
+    "harshness": {
+      "A_skill": {
+        "verdict": "fair",
+        "est_fair_Q": 89,
+        "rationale": "Q=87.7. Of the 6 failed facts, only #2 is unfair: A writes 'four nodes' (spelled out) but the regex '4 nodes|32 (H100|GPU)' requires the digit, so an equivalent statement scores as missed (~1.5 pts). The other five failures (#9 18.6% final TPU, #13 50.3/56.2 ceilings, #14 3.7pt give-back, #15 JaxPP/7024, #16 'back on the menu') are GENUINE content gaps \u2014 A stops the TPU story at ~21.5% and omits the entire July JaxPP revival. The #7024 citation miss is borderline (the issue is unfetchable in the frozen corpus via show, but the JaxPP content was narrated in the in-corpus July summary and A omitted it). Net slightly too harsh, close to fair."
+      },
+      "B_baseline": {
+        "verdict": "fair",
+        "est_fair_Q": 70,
+        "rationale": "Q=70.4. All nine failed-fact deductions against B are FAIR \u2014 B genuinely omits the 19.9% four-node SGD/Adam June headline (#1/#2/#3), the single-node Muon tax numbers, the 18.6% TPU final (#9), JaxPP (#15/#16), the fused-EP kernel (#17), June PP #6532/6534 (#19), and the 23.8% d2048 POC (#22). BUT two of B's PASSING facts are false-positive regex matches: fact #5 (4\\.75) matched '74.75 GiB' in an OOM list \u2014 B never states the 4.75%/1.49s Muon tax; fact #6 (all-gather) matched a weak-scaling line, not the Muon 122 GiB re-shard point. Those inflate Q by ~3 pts (too lenient). That over-credit is roughly offset by the scorer's inability to reward B's accurate live-#6979 content (28.16% GQA, NVIDIA fast-EP landscape, 'closed, moving to B200') that the summary-only gold lacks. Net ~fair."
+      }
+    },
+    "true_quality": {
+      "gold": 94,
+      "A_skill": 85,
+      "B_baseline": 73
+    },
+    "unfair_deductions": [
+      {
+        "answer": "A_skill",
+        "kind": "fact_regex_too_strict",
+        "detail": "Fact #2 regex '4 nodes|32 (H100|GPU)' fails on A's spelled-out 'four nodes (SGD/Adam)'. Semantically identical to '4 nodes' which would have passed. ~1.5 pts. (A does not additionally make the 32-vs-128 4x-scale conversion the note intends, so only partially unfair.)",
+        "points_est": 1
+      },
+      {
+        "answer": "A_skill",
+        "kind": "citation_equivalent",
+        "detail": "Must-have #7024 is not fetchable in the frozen corpus (mum-frozen show -> 'not found'); requiring its bare issue number under the frozen condition is somewhat harsh. Offset by A genuinely omitting the JaxPP content that WAS available via the in-corpus July summary, so kept low.",
+        "points_est": 1
+      },
+      {
+        "answer": "B_baseline",
+        "kind": "other",
+        "detail": "OPPOSITE direction (too lenient, not a deduction): B is wrongly CREDITED fact #5 (regex 4\\.75 matched '74.75 GiB') and fact #6 (regex 'all-gather' matched an unrelated weak-scaling line). B does not actually state the 4.75%/1.49s Muon tax nor the ~122 GiB Muon re-shard. Over-credit ~3 pts.",
+        "points_est": -3
+      }
+    ],
+    "scorer_fixes": [
+      "Fact #2: add spelled-out equivalents to the regex \u2014 '4 nodes|four nodes|four-node|32 ?(H100|GPU)' \u2014 or, if the intent is really the 32-vs-128 4x-scale flag, require BOTH a node/GPU count AND a '128|4x|quarter' token so a bare mention doesn't pass while a spelled-out one fails.",
+      "Fact #5: anchor the regex so it stops matching GiB memory numbers \u2014 e.g. '4\\.75 ?%|4\\.75 MFU|1\\.49 ?s'. As written, '4\\.75' false-positives on '74.75 GiB' (B credited spuriously).",
+      "Fact #6: drop the bare 'all-gather' alternative (it matches unrelated weak-scaling/FSDP all-gather text) and require the Muon re-shard point: '121\\.9|122 ?GiB|expert-weight.*re-?shard|Muon.*re-?shard'.",
+      "Add #6979's real closed-issue peak (28.16% GQA / ~26.7% true te_grouped-stacked) as an accepted alternative for the 'best delivered H100 MFU' fact, so live-GitHub answers that read the closed issue (B) aren't implicitly measured only against the summary's 26.5%.",
+      "Must-have #7024: it is unfetchable in the frozen corpus (show -> not found). For the frozen condition, accept the July weekly-summary narration (a 'JaxPP' / '18.26' / 'back on the menu' mention) as satisfying it instead of requiring the raw issue number."
+    ],
+    "summary": "GOLD is solid and accurate \u2014 I verified its load-bearing numbers against the frozen corpus: 19.9% MFU on 4 nodes SGD/Adam with 'Muon needs to go' (#6693/#gpu June 26), MuonH5 4.7499 vs SGD 16.1876 MFU (#6493), the 63-74 GiB first-step OOM (#6367), the TPU pivot with 18.6% sustained on resume15k_v2 (July summary/#6044/#6811), the 26.7->26.5% flat weak-scale + 3.7pt Muon give-back + 50.3/56.2 ceilings, JaxPP 18.26% / 'Hopper is back on the menu' (#7024), fused-EP #6597, 23.8% d2048 POC (#6716), B200 17.8%, and #4302 superseded. Gold correctly distinguishes the 18.6% final TPU number from the 21.54% v4-1024 per-chip best \u2014 a distinction BOTH A and B get wrong (they stop at ~21.5%). A (skill+frozen, Q=87.7) is a strong, correct, well-hedged answer whose fact failures are almost all genuine gaps (it omits the July JaxPP revival, the roofline ceilings, and the 18.6% TPU final); only fact #2 ('four nodes' vs regex '4 nodes') is unfairly scored, ~1.5 pts \u2014 verdict fair, fair Q ~89. B (no-skill live, Q=70.4) genuinely misses the June 19.9% production headline, the Muon tax numbers, the TPU final, and the July PP work; all nine failed-fact deductions are fair, but two of its PASSING facts (#5 '4.75' matched '74.75 GiB', #6 'all-gather' matched a weak-scaling line) are false-positive regex credits inflating Q ~3 pts \u2014 offset by the scorer's inability to reward B's accurate live-#6979 depth (28.16% GQA, fast-EP landscape, 'moving to B200'). Net B verdict fair, fair Q ~70. Main scorer fixes: anchor the '4.75' and 'all-gather' regexes (currently too lenient to B), accept spelled-out 'four nodes' (too harsh to A), and relax the unfetchable #7024 must-have under the frozen condition."
+  },
+  "inference": {
+    "gold_verdict": {
+      "rating": "solid",
+      "problems": [
+        "Omits #6136 entirely (TPU multi-host decode corruption: high-throughput config produces garbage output) \u2014 a genuine, corpus-grounded open correctness issue that a complete 'any open issues?' answer should surface; the no-skill baseline B actually caught this and the gold did not.",
+        "Very long/dense; leans on several summary-only or out-of-corpus issues (#6983, #7052, #7113, #7085, #7117, #7097, #7106/7107) \u2014 transparently flagged, but a large fraction of the 'open issues' section is not primary-verifiable in the frozen corpus.",
+        "Minor wording: line 48/50 attributes #5887 'built and reviewed (rjpower)' \u2014 yonromai is the author, rjpower the reviewer; not wrong but slightly ambiguous."
+      ],
+      "overreach": []
+    },
+    "harshness": {
+      "A_skill": {
+        "verdict": "fair",
+        "est_fair_Q": 67,
+        "rationale": "A's Q=64 is largely deserved. Its missed citations (5285/5400/5887 Iris serving substrate, 6500/6626/6627 role epic, 4401 RFC) are GENUINE content gaps for a 'who is doing inference and where is it at' question \u2014 the serving substrate is central and A simply omits it. Failed facts 'GH200'/'Jupiter' are also fair: A conflates MarinSkyRL as CoreWeave H100 and drops the Jupiter/GH200 bring-up history (verified in #6335). Slight harshness only from marginal must-haves (#2237 trainer baseline, #4401 historical auto-closed RFC) and the strict exact-phrase 'Iris inference service' regex; a well-scoped answer can reasonably omit the prior-baseline facts (#2237/#4719). Net: fair, maybe ~3 pts light."
+      },
+      "B_baseline": {
+        "verdict": "too_harsh",
+        "est_fair_Q": 53,
+        "rationale": "B's Q=47 is a touch too harsh. B validly chose a DIFFERENT-but-real citation set the gold never credits: #6136 (decode-corruption / 1815-vs-135 tok/s throughput-quality bug) is a legitimate, corpus-verified open issue arguably MORE relevant to 'open issues' than some must-haves; #1898 is the real (if stale) Levanter inference epic superseded by #6227. Neither is credited. That said, B earns much of its low score fairly: it commits a factual error (attributes #6709 to @yonromai; it is ihodes, verified), omits the headline current-performance number entirely (no 2.5hr/step, no 64\u00d7H100), and misses the GrugMoE TPU/GPU close-outs and EP8. So ~5-6 pts of unfairness from uncredited valid citations, but the core omissions are real."
+      }
+    },
+    "true_quality": {
+      "gold": 89,
+      "A_skill": 78,
+      "B_baseline": 60
+    },
+    "unfair_deductions": [
+      {
+        "answer": "B_baseline",
+        "kind": "gold_defect",
+        "detail": "#6136 (TPU multi-host decode corruption; high-throughput config yields garbage output) is a real corpus-grounded open issue that B surfaced and the gold omitted. It is a valid 'open issues' citation not in the must-have set, so B gets no credit for genuinely-better coverage on this axis.",
+        "points_est": 4
+      },
+      {
+        "answer": "B_baseline",
+        "kind": "citation_equivalent",
+        "detail": "#1898 '[Epic] Inference To Dos' (dlwh, Levanter inference stack) is the real long-running Levanter inference epic (later narrowed into #6227). Valid sourcing for the Levanter track, uncredited because it is not the gold's chosen issue.",
+        "points_est": 2
+      },
+      {
+        "answer": "A_skill",
+        "kind": "gold_defect",
+        "detail": "#2237 (async-RL speedup) and #4401 (auto-closed-stale centralized-inference RFC) are marginal must-haves; #2237 is a trainer-side number the gold itself flags as NOT a rollout baseline, and #4401 is historical. Penalizing a well-scoped answer for omitting them is borderline; they belong in a bonus tier, not core cite_recall.",
+        "points_est": 3
+      },
+      {
+        "answer": "A_skill",
+        "kind": "fact_regex_too_strict",
+        "detail": "The '2237' and '4719' fact regexes reward citing specific prior TPU/A100 baseline issues that go beyond a reasonable answer's scope for this question; these read as encyclopedic completeness rather than load-bearing facts.",
+        "points_est": 2
+      }
+    ],
+    "scorer_fixes": [
+      "Demote #2237 and #4401 from must-have to a bonus/optional tier: #2237 is a trainer-side number the gold itself labels 'not a rollout baseline', and #4401 is an auto-closed-stale historical RFC \u2014 both over-penalize well-scoped answers.",
+      "Add #6136 (decode-corruption / throughput-vs-quality) to an accepted 'open issues' citation set (or bonus), since it is a real corpus-grounded open correctness issue the gold omitted but B correctly surfaced.",
+      "Accept #1898 and/or #6227 as equivalents for the Levanter-inference epic so answers that cite the real (stale) epic get credit.",
+      "Loosen fact-regex 'Iris inference service' to something like 'Iris[- ].{0,20}inference|inference service.{0,20}Iris' so paraphrases (e.g. 'Iris serving layer / inference service on Iris') count.",
+      "Reclassify the '2237' and '4719' prior-baseline fact regexes as bonus rather than core fact_coverage \u2014 they reward encyclopedic breadth, not the load-bearing facts of the question.",
+      "Consider adding a correctness check that penalizes B-style owner misattribution (#6709 -> yonromai vs the true owner ihodes); currently owner errors are invisible to the citation/fact scoring."
+    ],
+    "summary": "GOLD is solid (~89): comprehensive, accurate on every spot-check (6709=ihodes, 6500=penfever, 6335 GH200/Jupiter job 849580, 5285/5400/5887 Iris substrate, 6042 DoD, 2.5hr/step), handles the subtle 'RL step wall-clock != serving throughput' and 'GH200 Jupiter != CoreWeave H100' distinctions correctly, and is transparent about provenance. Its one real gap is omitting #6136 (throughput-vs-quality decode corruption), which the baseline B actually caught. A (skill, Q=64) is a strong, accurate but narrower answer whose deductions are mostly FAIR \u2014 it genuinely omits the Iris serving substrate, the role epic (6500/6626/6627), and conflates MarinSkyRL as CoreWeave H100 while dropping the GH200/Jupiter history; scoring is fair with only ~5 pts of softness (marginal must-haves 2237/4401, strict 'Iris inference service' regex); fair Q ~67. B (baseline, Q=47) is scored slightly too harsh: it validly cited real content the gold ignored (#6136 corruption bug, #1898 Levanter epic) for no credit (~6 pts unfair), but genuinely earns a low score via a factual error (#6709 attributed to yonromai, actually ihodes), omitting the headline current-perf number, and missing the GrugMoE close-outs/EP8; fair Q ~53. True quality: gold 89, A 78, B 60."
+  }
+}
