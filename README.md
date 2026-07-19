@@ -34,7 +34,8 @@ mum publish [file] --title "…"     render Markdown → LaTeX-styled HTML in a 
 mum skills [list|print|install [dest]]
 ```
 
-`mum search` / `search-multi` flags: `-k N`, `--source`, `--kind`, `--since`, `--until`,
+`mum search` / `search-multi` flags: `-k N` (default 50; `search-multi` also takes
+`--total`, default 60, capping the merged set), `--source`, `--kind`, `--since`, `--until`,
 `--fts-only` (skip the model load), `--json`.
 
 Sources: `github`, `discord`, `wandb`, `narrative`, and `code` — the marin repo's Python

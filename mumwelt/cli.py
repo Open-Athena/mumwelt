@@ -300,8 +300,13 @@ def main(argv=None):
     p = sub.add_parser("refresh"); p.add_argument("--force", action="store_true")
     p.set_defaults(fn=cmd_refresh)
 
+    # k=50: gold-citation recall on the eval harness runs 32% @10 -> 45% @20 -> 58% @50,
+    # and raising k is close to free because the vector leg already scores every chunk
+    # regardless — a larger k only lengthens the ranked list it returns.
+    K_DEFAULT = 50
+
     def add_search_flags(p):
-        p.add_argument("-k", type=int, default=10)
+        p.add_argument("-k", type=int, default=K_DEFAULT)
         p.add_argument("--source"); p.add_argument("--kind")
         p.add_argument("--since"); p.add_argument("--until")
         p.add_argument("--fts-only", action="store_true")
@@ -314,7 +319,10 @@ def main(argv=None):
     p.set_defaults(fn=cmd_search)
 
     p = sub.add_parser("search-multi"); p.add_argument("queries", nargs="+")
-    p.add_argument("-k", type=int, default=8); p.add_argument("--total", type=int, default=20)
+    # --total is the cap on the MERGED set, so it has to scale with k or the fan-out
+    # retrieves 50 per query and then throws away all but 20 of the union.
+    p.add_argument("-k", type=int, default=K_DEFAULT, help="candidates per query")
+    p.add_argument("--total", type=int, default=60, help="cap on the merged, deduped set")
     p.add_argument("--source"); p.add_argument("--kind")
     p.add_argument("--fts-only", action="store_true"); p.add_argument("--json", action="store_true")
     p.add_argument("--since"); p.add_argument("--until")

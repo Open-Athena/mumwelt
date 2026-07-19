@@ -93,14 +93,14 @@ sub-query**, in parallel. Give each subagent its sub-query and tell it to:
    to its sub-query, as if excerpted from a Marin issue / Discord thread / weekly summary.
    Invent concrete-sounding specifics; this is **HyDE**, so the text only needs to sit in the
    right *semantic neighborhood*, not be true.
-2. Run `mum search "<sub-query>" -k 50 --json --vec-text "<doc1>" --vec-text "<doc2>" --vec-text "<doc3>"`
+2. Run `mum search "<sub-query>" --json --vec-text "<doc1>" --vec-text "<doc2>" --vec-text "<doc3>"`
    — the three docs are mean-pooled to drive the **semantic (vector)** leg, while the literal
    sub-query still drives the **keyword (FTS)** leg, so exact identifiers (`#1234`, run names)
    aren't diluted.
-   **Pass `-k 50` explicitly** — `mum search` defaults to 10, and gold-citation recall on the
-   eval harness runs 32% @10 → 45% @20 → 58% @50. Raising `k` costs almost nothing: the vector
-   leg scores the whole corpus regardless of `k`, so this only lengthens the ranked list.
-   Add `--source` when the facet has an obvious home (see §1.5).
+   `-k` now defaults to **50** (gold-citation recall runs 32% @10 → 45% @20 → 58% @50 on the
+   eval harness, and raising it is close to free because the vector leg scores every chunk
+   regardless), so you only pass `-k` to go *narrower*. Add `--source` when the facet has an
+   obvious home (see §1.5).
 3. `mum show <url>` on its **top ~20 best hits** to read full context. Keep this bound at ~20
    even though you searched 50 — `show` expands a whole thread and is what actually consumes
    context. The other 30 are not wasted: a search hit already carries `url`, `title`, `date`
@@ -115,15 +115,14 @@ nails the identifier, so it's harmless — hence n=3 by default.
 
 **If single-process (no subagent framework):** use the built-in parallel primitive —
 ```
-mum search-multi "<sub-query 1>" "<sub-query 2>" "<sub-query 3>" … -k 50 --total 60 --json
+mum search-multi "<sub-query 1>" "<sub-query 2>" "<sub-query 3>" … --json
 ```
 It runs all queries concurrently and returns a merged, de-duplicated candidate set
 (each hit annotated with which sub-queries surfaced it). `-k` is candidates **per query**
-(default 20) and `--total` caps the merged set (default 20) — raise both, or the merge
-throws away most of what you just paid to retrieve. Then `mum show` the most
+(default 50) and `--total` caps the merged set (default 60). Then `mum show` the most
 promising URLs. Note: `search-multi` doesn't take `--vec-text`, so this path is
 keyword+vector on the **literal** queries (no HyDE). To get HyDE without subagents, run
-individual `mum search "<sub-query>" -k 50 --vec-text "<doc1>" --vec-text "<doc2>" --vec-text "<doc3>"`
+individual `mum search "<sub-query>" --vec-text "<doc1>" --vec-text "<doc2>" --vec-text "<doc3>"`
 calls instead.
 
 ## 3. Verify (for load-bearing claims)
