@@ -51,8 +51,32 @@ def cmd_status(a):
         sm = client.manifest()
         print(f"server:    built {_age_h(sm['built_at_epoch']):.0f}h ago, "
               f"{sm['corpus_index']['bytes'] // 1048576} MB")
+        _print_source_health(sm.get("sources") or {})
     except (client.AuthError, client.ClientError) as e:
         print(f"server:    {e}", file=sys.stderr)
+
+
+def _print_source_health(sources: dict) -> None:
+    """Surface any source whose last sync failed, and how long it has been failing.
+
+    Nothing on the client ever read per-source state, so a dead source was invisible
+    here: the GitHub pull broke on 2026-07-05 when marin-explorer switched to OAuth, and
+    for two weeks `mum status` reported a healthy corpus while every issue/PR answer came
+    from a frozen snapshot. The corpus can be fresh and a source can still be dead — those
+    are different facts and status has to show both.
+    """
+    import time as _time
+
+    broken = [(name, s) for name, s in sorted(sources.items()) if (s or {}).get("error")]
+    if not broken:
+        return
+    print(f"  ⚠ {len(broken)} source(s) FAILING — corpus is serving stale data for these:",
+          file=sys.stderr)
+    for name, s in broken:
+        last_ok = s.get("last_ok_at")
+        age = (f", last OK {(_time.time() - last_ok) / 86400:.1f}d ago"
+               if last_ok else ", no successful sync on record")
+        print(f"      {name}: {str(s.get('error'))[:80]}{age}", file=sys.stderr)
 
 
 def cmd_refresh(a):
