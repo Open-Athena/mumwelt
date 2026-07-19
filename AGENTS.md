@@ -30,14 +30,26 @@ URL. The capability is the `mum` CLI; shell out to it.
 
 ## Research a broad question (decompose → fan out → synthesize)
 1. `mum summaries show latest` to orient.
-2. Split the question into 3–8 facet sub-queries (decisions · PRs/code · runs/results · people · timeline).
+2. Split the question into **8–12 facet sub-queries, more for a complex question — don't stop
+   at 5**. Facet breadth is the biggest measured lever: on a live A/B, the 10-facet arm found
+   18 genuinely useful documents the 8-facet arms missed, simply because they had no facet for
+   those subsystems. An unasked facet cannot be retrieved. Name facets after *subsystems*, not
+   themes.
 3. Fan out: spawn one subagent per sub-query (each runs `mum search … --json` + `mum show`),
    **or** if you have no subagents, `mum search-multi "q1" "q2" … --json` (parallel, merged).
    `-k` defaults to **50** (gold-citation recall runs 32% @10 → 45% @20 → 58% @50, and the
-   vector leg scores every chunk regardless of `k`), so pass `-k` only to go narrower. Route
-   the facet with `--source` — `github,discord` for *why*, `code` for *what the code does
-   now*, `wandb` for run numbers, `narrative` to orient.
-4. Verify load-bearing claims against their cited source; drop anything ungrounded.
+   vector leg scores every chunk regardless of `k`), so pass `-k` only to go narrower.
+   **A facet is a subject, not a source: route it to `github,discord` even when its subject is
+   code** — the *story* of code work lives in threads, and routing a facet to `code` instead
+   cost one arm an entire subsystem's narrative. Use `wandb` for run numbers, `narrative` to
+   orient. Then run a **separate 3–5 search `--source code` lane** alongside (never instead),
+   including `--kind branch-symbol` to see in-flight work: branch names carry the committer and
+   often an issue number (`codex/6597-moe-mgpu` → #6597). Cite what it finds when relevant;
+   let it come back empty when not. Branch work is always "on branch `x`, <person> is doing Y",
+   never what `main` does.
+4. Verify load-bearing claims against their cited source; drop anything ungrounded. Read to the
+   END of a thread before reporting a failure or null result — a sealed negative may already
+   have been superseded by a pivot that works.
 5. Synthesize a structured answer where **every claim cites a URL**; prefer primary
    sources over the weekly-summary narrative.
 

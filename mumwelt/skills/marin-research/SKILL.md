@@ -47,9 +47,23 @@ browse is the better and sometimes *only* entry, because the thing may be **newe
 latest summary**. Either way the goal is identical: **discover the real structure + vocabulary
 before decomposing** — never decompose from generic words.
 
-Then break the question into **3–8 focused sub-queries built from the harvested vocabulary,
+Then break the question into **focused sub-queries built from the harvested vocabulary,
 not generic words** — a facet named "Muon optimizer cost / pipeline parallelism" surfaces the
-right thread; "performance and blockers" does not. Useful facets:
+right thread; "performance and blockers" does not.
+
+**Use 8–12 facets, and MORE for a genuinely complex question — do not stop at 5.** This is
+the single biggest lever measured on a live A/B, and it is bigger than any routing choice.
+Three arms answered "what happened in June and July so far?"; the one that used **10** facets
+found material the two that used **8** never saw — 18 documents an independent review graded
+genuinely useful, including a whole subsystem's story. The 8-facet arms did not lose them by
+routing badly; they had **no facet at all** for MarinFold, long-context work, the month's
+milestones, or storage. An unasked facet cannot be retrieved by any amount of clever
+filtering, and each facet is cheap: one parallel subagent.
+
+A two-month or multi-subsystem question needs a facet per *subsystem*, not per *theme*. If
+your facet list has fewer entries than the project has active workstreams, it is too short.
+
+Useful facets:
 - **decisions / discussion** (*why* was X chosen?), **code / PRs** (*what landed, by whom?*),
   **runs / results** (*the numbers?*), **people** (*who owns it?*), **timeline** (*what changed
   when?*).
@@ -88,6 +102,18 @@ the facet agents — in parallel, fanning in to synthesis like any other digest.
 the other agents wait on it; that would serialize the fan-out. Give it the question's main
 subjects and have it run keyword+vector+HyDE against `--source code`, then return a SHORT
 digest of the few symbols that actually establish something.
+
+**Budget the lane at 3–5 searches, not more.** An arm that spent 10 of its 18 searches on
+the code lane starved its facet coverage and still cited nothing from code — the lane was
+doing lead generation at the price of an entire subsystem's thread coverage.
+
+**Cite what the lane finds when it is relevant — and only then.** The lane is not merely a
+lead generator: a symbol, a module docstring or a branch is a legitimate primary source for
+a claim about how something is built or who is building it. If you assert that work is
+happening on a branch, **cite the branch chunk itself**, not a general issue that merely
+mentions the topic (a review caught exactly that substitution). Equally, do not cite code to
+look thorough — if the lane's findings do not support a claim you are actually making,
+report them as nothing and move on.
 
 **It must be allowed to come back empty.** Plenty of questions have no code dimension —
 on the eval harness's `april` and `classifier` questions, code takes 0% of top-10 slots.
@@ -192,6 +218,13 @@ modes that bite hardest:**
   state. A status true a week or two ago may be superseded (a run "still blocked on GPU" last
   week may have **moved to TPU** since) — chase the close-out / most-recent comment before
   reporting a state as current. Don't narrate an old snapshot as the present.
+- **A sealed failure may already have been superseded.** Reporting negative results honestly
+  is right, but a *stale* negative is worse than none: it tells the reader something was tried
+  and failed when the team has since made it work. An arm reported an Over-Encoding ladder as
+  "came back null" from a gate sealed as a failure one day earlier — while the same thread
+  showed a reformulated version **winning** at every matched checkpoint. Before reporting any
+  failure, dead end, or null result, **read to the END of the thread** and check for a pivot,
+  a reformulation, or a retry. Report the failure *and* what happened next.
 
 ## 4. Synthesize
 
