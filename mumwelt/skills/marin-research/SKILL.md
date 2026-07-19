@@ -54,34 +54,79 @@ right thread; "performance and blockers" does not. Useful facets:
   **runs / results** (*the numbers?*), **people** (*who owns it?*), **timeline** (*what changed
   when?*).
 
-## 1.5 Route each facet to a source
+## 1.5 Route facets to threads; give code its own lane
 
-The corpus holds five sources, and a facet usually has an obvious home. `--source` is a
-filter on the candidate pool, so using it buys **depth in the right place** rather than 50
-mixed hits of which a third are the wrong kind of document.
+**A facet is a SUBJECT, not a source.** Name the facet after the thing you want to know
+about — "Iris cross-cluster federation", "vLLM GrugMoE serving" — and send it where the
+*discussion* lives: `--source github,discord`. Do this **even when the subject is code.**
 
-| facet shape | `--source` | why |
-|---|---|---|
-| *why* was X decided, who objected | `github,discord` | the argument lives in threads |
-| *what* does the code actually do now | `code` | current state, not the change that made it |
-| *what did the run produce* | `wandb` | config + final numbers |
-| *what happened this week / orient* | `narrative` | recency-structured, vocabulary-rich |
+| facet shape                            | `--source`       | why                                     |
+|----------------------------------------|------------------|-----------------------------------------|
+| *why* / *what happened* — any subject   | `github,discord` | decisions and events live in threads     |
+| *what did the run produce* (numbers)    | `wandb`          | config + final numbers                   |
+| *what happened this week* / orient      | `narrative`      | recency-structured, vocabulary-rich      |
+| *how is X implemented* (only)           | `code`           | see the carve-out below                  |
 
-**`code` is the newest and the easiest to misuse.** It indexes the marin repo's Python: one
-chunk per function/class/method, one per module, on `main` **plus every branch touched in
-the last 30 days**. Three rules:
+**Never spend a facet slot on `--source code` for a "what happened" question.** Measured
+on a live A/B of "what happened in June and July": routing two of eight facets to `code`
+cost **18 genuinely useful documents** — the entire Iris/CoreWeave infrastructure
+narrative (the federation refactor landing, a datakit OOM root-caused to a gcsfs
+regression, an NFS-lock fix) — because the *story* of that work is in issue threads while
+`--source code` returns source files. The code citations it bought were fine; they just
+answered a different question than the one asked.
 
-- **`kind=branch-symbol` is in-flight work, not main.** Each carries its branch and last
-  committer in `title`/`author`. Never report a branch symbol as what the code does — say
-  "on branch `x`, <person> is doing Y". This is the §3 temporal guard applied to code.
-- **A `module` chunk resolves imports.** It lists where each imported name is defined, so
-  "where does `ExecutorStep` come from" is answerable with a path rather than a guess.
-- **Code answers "what", GitHub answers "why".** A PR thread says what changed and the
-  argument for it; the code says what is true now. When they disagree, the code is the
-  current state and the thread is the intent — report both rather than silently picking.
+### The standing code lane
 
-Identifier search splits camelCase both ways, so `ExecutorStep`, `executor_step`, and
-"executor step" all reach each other; you do not need to guess the casing.
+**Always search code — but deliberately, in its own lane, never incidentally.** In the same
+test, the unrouted arm retrieved **53 code documents and cited zero**; the ones it uniquely
+saw graded 6 noise / 1 marginal / 0 valuable (auth tests, a controller `main.py`). Code that
+turns up as a by-product of a mixed search is buried at ranks nobody reads. The routed arm
+retrieved 46 and cited 5, four of them judged solid.
+
+So run **one** extra subagent (two only if the question genuinely spans systems) alongside
+the facet agents — in parallel, fanning in to synthesis like any other digest. Do NOT make
+the other agents wait on it; that would serialize the fan-out. Give it the question's main
+subjects and have it run keyword+vector+HyDE against `--source code`, then return a SHORT
+digest of the few symbols that actually establish something.
+
+**It must be allowed to come back empty.** Plenty of questions have no code dimension —
+on the eval harness's `april` and `classifier` questions, code takes 0% of top-10 slots.
+"Nothing relevant in code" is a valid, useful answer; a lane that manufactures relevance
+just gets its findings cited to look thorough.
+
+### Read the active branches
+
+Branches are the best available signal for *what is being worked on right now*, and they
+are usually ahead of both the threads and the weekly summaries. The code lane should
+explicitly mine them:
+
+```
+mum search "<subject>" --source code --kind branch-symbol
+```
+
+Each hit carries the **branch name** and its **last committer**, and the set of files a
+branch touches sketches what it is trying to do. Three things to exploit:
+
+- **Branch names encode intent and often an issue number** — `codex/6597-moe-mgpu`,
+  `agent/20260624-fix-6614`, `rav/iris-gpu-image`. Pull the `#number` out and `mum show`
+  that issue: it links in-flight code to the thread that motivated it.
+- **Who is committing** tells you who owns the work right now, which the thread may not.
+- **Which files changed** tells you the shape of the change before any of it is written up.
+
+**Always attribute it as in-flight.** `kind=branch-symbol` is work on someone's branch, not
+what `main` does — say "on branch `x`, <person> is doing Y". Reporting a branch symbol as
+current behaviour is the §3 temporal trap in a new costume.
+
+### The carve-out
+
+`--source code` may own a facet when the question is genuinely about *implementation*
+("how does Iris federation actually work", "where is the LR clamped"). There, code is the
+primary source and threads are the supplement — the reverse of the default above. Decide by
+question type: **"what happened" → threads; "how does it work" → code.**
+
+Two more code notes: a `module` chunk lists its resolved imports, so "where does
+`ExecutorStep` come from" is answerable with a path. And identifier search splits camelCase
+both ways, so `ExecutorStep`, `executor_step`, and "executor step" all reach each other.
 
 Leave `--source` off when a facet genuinely spans sources, or when you are still orienting.
 
@@ -125,13 +170,13 @@ keyword+vector on the **literal** queries (no HyDE). To get HyDE without subagen
 individual `mum search "<sub-query>" --vec-text "<doc1>" --vec-text "<doc2>" --vec-text "<doc3>"`
 calls instead.
 
-## 3. Verify (for load-bearing claims)
+## 3. Verify
 
 Before asserting something important, confirm it against its source: re-`mum show` the
 cited chunk, or (with subagents) spawn a skeptic that tries to refute the claim from the
 corpus. Drop anything you can't ground in a URL.
 
-**Run these adversarial checks on every load-bearing number/claim — they are the failure
+**Run these adversarial checks on every number/claim — they are the failure
 modes that bite hardest:**
 - **Target vs achieved.** Is this number a *measured result* or a stated *goal / target /
   plan / "aim for X"*? **Never report a target as an achievement.** Prefer a thread's
