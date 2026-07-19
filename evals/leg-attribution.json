@@ -1,0 +1,172 @@
+{
+  "2026-07-16": {
+    "totals": {
+      "fts": 61,
+      "vec": 52,
+      "both": 42,
+      "hybrid": 61,
+      "need": 103,
+      "fts_only": 19,
+      "vec_only": 10
+    },
+    "per_question": {
+      "ablations": {
+        "must": 16,
+        "fts": 11,
+        "vec": 10,
+        "fts_only": 4,
+        "vec_only": 3,
+        "hybrid": 10
+      },
+      "april": {
+        "must": 17,
+        "fts": 10,
+        "vec": 8,
+        "fts_only": 3,
+        "vec_only": 1,
+        "hybrid": 11
+      },
+      "benchmarks": {
+        "must": 12,
+        "fts": 5,
+        "vec": 3,
+        "fts_only": 2,
+        "vec_only": 0,
+        "hybrid": 6
+      },
+      "classifier": {
+        "must": 5,
+        "fts": 4,
+        "vec": 3,
+        "fts_only": 1,
+        "vec_only": 0,
+        "hybrid": 3
+      },
+      "gpu": {
+        "must": 8,
+        "fts": 3,
+        "vec": 5,
+        "fts_only": 0,
+        "vec_only": 2,
+        "hybrid": 4
+      },
+      "h100-67b": {
+        "must": 11,
+        "fts": 4,
+        "vec": 5,
+        "fts_only": 1,
+        "vec_only": 2,
+        "hybrid": 4
+      },
+      "inference": {
+        "must": 15,
+        "fts": 9,
+        "vec": 6,
+        "fts_only": 5,
+        "vec_only": 2,
+        "hybrid": 9
+      },
+      "july": {
+        "must": 9,
+        "fts": 7,
+        "vec": 6,
+        "fts_only": 1,
+        "vec_only": 0,
+        "hybrid": 7
+      },
+      "muon": {
+        "must": 10,
+        "fts": 8,
+        "vec": 6,
+        "fts_only": 2,
+        "vec_only": 0,
+        "hybrid": 7
+      }
+    }
+  },
+  "2026-07-18-chunked": {
+    "totals": {
+      "fts": 61,
+      "vec": 57,
+      "both": 48,
+      "hybrid": 63,
+      "need": 103,
+      "fts_only": 13,
+      "vec_only": 9
+    },
+    "per_question": {
+      "ablations": {
+        "must": 16,
+        "fts": 10,
+        "vec": 10,
+        "fts_only": 2,
+        "vec_only": 2,
+        "hybrid": 11
+      },
+      "april": {
+        "must": 17,
+        "fts": 9,
+        "vec": 8,
+        "fts_only": 2,
+        "vec_only": 1,
+        "hybrid": 10
+      },
+      "benchmarks": {
+        "must": 12,
+        "fts": 5,
+        "vec": 3,
+        "fts_only": 3,
+        "vec_only": 1,
+        "hybrid": 5
+      },
+      "classifier": {
+        "must": 5,
+        "fts": 4,
+        "vec": 3,
+        "fts_only": 1,
+        "vec_only": 0,
+        "hybrid": 4
+      },
+      "gpu": {
+        "must": 8,
+        "fts": 3,
+        "vec": 5,
+        "fts_only": 0,
+        "vec_only": 2,
+        "hybrid": 4
+      },
+      "h100-67b": {
+        "must": 11,
+        "fts": 5,
+        "vec": 6,
+        "fts_only": 0,
+        "vec_only": 1,
+        "hybrid": 6
+      },
+      "inference": {
+        "must": 15,
+        "fts": 8,
+        "vec": 8,
+        "fts_only": 2,
+        "vec_only": 2,
+        "hybrid": 8
+      },
+      "july": {
+        "must": 9,
+        "fts": 7,
+        "vec": 6,
+        "fts_only": 1,
+        "vec_only": 0,
+        "hybrid": 7
+      },
+      "muon": {
+        "must": 10,
+        "fts": 10,
+        "vec": 8,
+        "fts_only": 2,
+        "vec_only": 0,
+        "hybrid": 8
+      }
+    }
+  }
+}

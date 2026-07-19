@@ -20,8 +20,7 @@ OUT = pathlib.Path("/tmp/marin-evals.html")
 GH = "https://github.com/marin-community/marin/issues/"
 ORDER = ["gpu", "h100-67b", "muon", "july", "april",
          "ablations", "classifier", "benchmarks", "inference"]
-FREEZE = scorer.freeze_issue_set(ROOT / "evals/corpus/2026-07-16/corpus-index.db",
-                                 ROOT / "evals/corpus/2026-07-16/summaries")
+FREEZE = scorer.freeze_issue_set(*scorer.freeze_paths(ROOT / 'evals'))
 
 # candidate sources: (key, label, mode, dir-or-None-for-gold, meta-line)
 CANDIDATE_SOURCES = [

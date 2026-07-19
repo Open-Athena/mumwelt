@@ -16,7 +16,14 @@ URL. The capability is the `mum` CLI; shell out to it.
 
 ## Look things up (single-shot)
 - `mum search "<natural language or identifier>"` — fused keyword+semantic hits with URLs.
-  Flags: `--source github,discord,wandb,narrative`, `--kind …`, `--since YYYY-MM-DD`, `-k N`, `--json`.
+  Flags: `--source github,discord,wandb,narrative,code`, `--kind …`, `--since YYYY-MM-DD`, `-k N`, `--json`.
+- **`--source code`** — the marin repo's Python symbols (one chunk per function/class/method,
+  one per module), on `main` plus every branch touched in the last 30 days. Use it for *what
+  the code does now*; use `github` for *what was decided and why*. A `module` chunk lists a
+  file's resolved imports, so it answers "where does `ExecutorStep` come from" with a path.
+  Branch work is `kind=branch-symbol` and carries the branch name and its last committer —
+  never report it as what is on `main`. Search splits camelCase both ways, so `ExecutorStep`,
+  `executor_step`, and "executor step" all find each other.
 - `mum show <url|ref>` — expand a hit to context (Discord window / GitHub issue+comments).
 - `mum run <project>/<run>` — a W&B run's config + final summary numbers.
 - `mum summaries show latest` / `mum summaries links <period>` — the weekly overview and its link-leads.

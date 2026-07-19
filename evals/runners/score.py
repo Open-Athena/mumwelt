@@ -10,7 +10,7 @@ Reused by the harness (score.py stage) and by the /tmp viewer generator.
     result = score(question_dict, answer_text, valid, mode="frozen")
 """
 from __future__ import annotations
-import re, sqlite3, pathlib
+import os, re, sqlite3, pathlib
 
 # Q weights (DESIGN §4.2). Nice-to-haves are deliberately NOT in Q.
 W_CITE, W_FACT, W_TRAP = 0.35, 0.35, 0.30
@@ -30,6 +30,25 @@ def cited_issues(text: str) -> set[str]:
     return nums
 
 
+#: Which frozen corpus the harness scores against. Override to compare index builds:
+#:     MARIN_EVAL_FREEZE=2026-07-18-chunked python3 evals/runners/score.py
+#: `evals/runners/mum-frozen` reads the same variable, so retrieval and the
+#: hallucination gate can never drift onto different corpora.
+FREEZE_NAME = os.environ.get("MARIN_EVAL_FREEZE", "2026-07-16")
+
+
+def freeze_dir(root: pathlib.Path | None = None) -> pathlib.Path:
+    """Absolute path of the active freeze directory."""
+    root = root or pathlib.Path(__file__).resolve().parents[1]
+    return root / "corpus" / FREEZE_NAME
+
+
+def freeze_paths(root: pathlib.Path | None = None) -> tuple[pathlib.Path, pathlib.Path]:
+    """``(corpus-index.db, summaries/)`` for the active freeze."""
+    d = freeze_dir(root)
+    return d / "corpus-index.db", d / "summaries"
+
+
 def freeze_issue_set(db_path: str | pathlib.Path,
                      summaries_dir: str | pathlib.Path | None = None) -> set[str]:
     """Issue/PR numbers present anywhere in the frozen corpus.
@@ -43,6 +62,13 @@ def freeze_issue_set(db_path: str | pathlib.Path,
     try:
         urls = [r[0] for r in con.execute(
             "SELECT url FROM chunks WHERE source='github' AND url IS NOT NULL")]
+        # An issue can also be *referenced* from inside an indexed non-GitHub chunk —
+        # e.g. a Discord message reading "GH issue added! .../marin/issues/7164".
+        # A candidate that retrieved that message and cited the issue did real
+        # retrieval, so gating it as a hallucination is a false positive. Only full
+        # URLs are harvested here: a bare "#7164" in chat is too ambiguous to trust.
+        refs = [r[0] for r in con.execute(
+            "SELECT text FROM chunks WHERE source!='github' AND text IS NOT NULL")]
     finally:
         con.close()
     out: set[str] = set()
@@ -50,6 +76,8 @@ def freeze_issue_set(db_path: str | pathlib.Path,
         m = re.search(r"/(?:issues|pull)/(\d+)", u)
         if m:
             out.add(m.group(1))
+    for t in refs:
+        out |= set(re.findall(r"/(?:issues|pull)/(\d{2,6})", t))
     if summaries_dir:
         sdir = pathlib.Path(summaries_dir)
         if sdir.exists():
@@ -207,8 +235,7 @@ def score(question: dict, answer_text: str,
 if __name__ == "__main__":
     import json, sys
     ROOT = pathlib.Path(__file__).resolve().parents[1]
-    valid = freeze_issue_set(ROOT / "corpus/2026-07-16/corpus-index.db",
-                             ROOT / "corpus/2026-07-16/summaries")
+    valid = freeze_issue_set(*freeze_paths(ROOT))
     for qid in ["gpu", "july", "april", "muon"]:
         q = json.load(open(ROOT / f"questions/{qid}.json"))
         gold = score(q, q["gold_prose"], valid, mode="reference")

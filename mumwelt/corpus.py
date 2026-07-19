@@ -12,6 +12,7 @@ import re
 import sqlite3
 
 from . import config
+from .identifiers import expand_query
 
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
@@ -28,8 +29,28 @@ def meta() -> dict:
         con.close()
 
 
+def _literal_tokens(q: str) -> list[str]:
+    return re.findall(r"[A-Za-z0-9_]{2,}", q)
+
+
 def _fts_query(q: str) -> str:
-    toks = re.findall(r"[A-Za-z0-9_]{2,}", q)
+    """The precise MATCH expression: the query's literal tokens, as before."""
+    return " OR ".join(f'"{t}"' for t in _literal_tokens(q))
+
+
+def _fts_query_expanded(q: str) -> str:
+    """The high-recall MATCH expression: literal tokens plus split camelCase words.
+
+    FTS5's ``unicode61`` tokenizer treats ``_`` as a separator, so snake_case already
+    matches both whole and in parts. It does nothing with capitalization, so
+    ``ExecutorStep`` indexes as the single token ``executorstep`` — a query for "executor
+    step" could never reach it, and a query for ``ExecutorStep`` could never reach a
+    snake_case ``executor_step``. The corpus side puts the same expansion in the ``syms``
+    column; the two halves only work together.
+
+    This expression is deliberately NOT used on its own — see ``_fts``.
+    """
+    toks = expand_query(q) or _literal_tokens(q)
     return " OR ".join(f'"{t}"' for t in toks)
 
 
@@ -50,16 +71,68 @@ def _filters(source, kind, since, until) -> tuple[str, list]:
     return " AND ".join(where), params
 
 
-def _fts(con, q, flt, params, limit) -> list[int]:
-    fq = _fts_query(q)
-    if not fq:
-        return []
+def _fts_cols(con) -> int:
+    """Number of columns in ``chunks_fts`` (2 pre-``syms``, 3 after).
+
+    mumwelt downloads corpus-index.db rather than shipping it, so a new client routinely
+    queries an older index. bm25() rejects a weight list longer than the table's column
+    count, so the weights have to be sized to whatever index is actually on disk.
+    """
+    try:
+        row = con.execute("SELECT * FROM chunks_fts LIMIT 0")
+        return len([d[0] for d in row.description])
+    except sqlite3.OperationalError:
+        return 2
+
+
+def _fts_rank(con, fq, flt, params, limit) -> list[int]:
+    """Run one MATCH expression, ranked by bm25 with per-column weights.
+
+    ``text`` and ``title`` keep bm25's default weight of 1.0, so every pre-existing
+    source ranks exactly as it did before ``syms`` existed — this change is additive by
+    construction. Only the new column is weighted, and it is weighted *down*: a document
+    that matched only because identifier splitting reached it is a weaker hit than one
+    whose real text matched, and must never outrank one.
+
+    NB (measured, deliberately NOT applied): raising the *title* weight sharply improves
+    code lookups — for "ServeSpec" it moves the defining chunk from off the first page to
+    rank 1, and for "LoRAConfig" from rank 5 to rank 2 — because a code chunk's title is
+    its qualified symbol name. But it re-ranks github/discord/wandb too, which is exactly
+    what the evals/ harness exists to measure. Run it before touching these.
+    """
+    weights = {3: "chunks_fts, 1.0, 1.0, 0.2", 2: "chunks_fts, 1.0, 1.0"}[_fts_cols(con)]
     sql = ("SELECT c.id FROM chunks_fts f JOIN chunks c ON c.id=f.rowid "
-           f"WHERE chunks_fts MATCH ? AND {flt} ORDER BY bm25(chunks_fts) LIMIT ?")
+           f"WHERE chunks_fts MATCH ? AND {flt} ORDER BY bm25({weights}) LIMIT ?")
     try:
         return [r[0] for r in con.execute(sql, [fq, *params, limit])]
     except sqlite3.OperationalError:
         return []
+
+
+def _fts(con, q, flt, params, limit) -> list[int]:
+    """Keyword leg: exact hits first, identifier-expanded hits strictly below them.
+
+    Flat-OR-ing the literal token together with its split words destroys precision —
+    measured on the code corpus, a query for ``ExecutorStep`` ranked six unrelated
+    ``_override_tracker``/``StepSpec`` chunks above the actual ``ExecutorStep`` class,
+    because a document matching the common fragments "executor" and "step" many times
+    outscores one matching the exact identifier once.
+
+    So the two are run as separate tiers and concatenated rather than unioned. The caller
+    (``_rrf``) scores by *rank position*, so appending expansion-only hits after the exact
+    ones can add recall but can never demote an exact hit. Precision is therefore
+    identical to the pre-expansion behavior by construction, not by tuning.
+    """
+    exact = _fts_query(q)
+    if not exact:
+        return []
+    out = _fts_rank(con, exact, flt, params, limit)
+    expanded = _fts_query_expanded(q)
+    if expanded != exact and len(out) < limit:
+        seen = set(out)
+        out += [i for i in _fts_rank(con, expanded, flt, params, limit)
+                if i not in seen][:limit - len(out)]
+    return out
 
 
 _MODEL = None
@@ -137,10 +210,22 @@ def search(query: str, k: int = 10, source=None, kind=None, since=None, until=No
         order, score = _rrf(vec, fts)
         fset, vset = set(fts), set(vec)
         out = []
-        for cid in order[:k]:
+        # A long document is indexed as several parts that share one url. Collapse to
+        # one hit per url, keeping the best-scoring part — `order` is already sorted by
+        # score, so the first sighting wins. Max, not sum: summing would rank a document
+        # highly just for being long enough to split, which is exactly the flooding this
+        # is meant to prevent. Dedupe before truncating to k, or a single chatty issue
+        # can occupy most of the result slots.
+        seen: set[str] = set()
+        for cid in order:
+            if len(out) >= k:
+                break
             (s, kd, ref, parent, title, author, date, url, text) = con.execute(
                 "SELECT source,kind,ref,parent,title,author,date,url,text "
                 "FROM chunks WHERE id=?", (cid,)).fetchone()
+            if url in seen:
+                continue
+            seen.add(url)
             snippet = re.sub(r"\s+", " ", (text or "")).strip()[:240]
             via = "+".join(m for m, hit in (("vec", cid in vset), ("fts", cid in fset)) if hit)
             out.append(dict(

@@ -1,0 +1,28 @@
+{
+  "date": "2026-07-18-chunked",
+  "source": "rechunked from evals/corpus/2026-07-16",
+  "built_at_epoch": 1784250060,
+  "built_at_utc": "2026-07-18T21:53:33Z",
+  "frozen_at_utc": "2026-07-18T21:53:33Z",
+  "embed_model": "BAAI/bge-small-en-v1.5",
+  "embed_dim": 384,
+  "chunk_count": 86367,
+  "parent_threads": 4465,
+  "per_source": {
+    "discord": 27971,
+    "github": 38950,
+    "wandb": 19446
+  },
+  "sha256": {
+    "corpus-index.db": "b94e1bc3b3c2d765a82d7270a69f17eac1dcd070a53d65f254690e0cec2ff089",
+    "corpus-manifest.json": "87237b49747bc999e350b272b74e1bd2af22aff05c5dbe73a2f0c85ea1125df5"
+  },
+  "summaries": {
+    "weeks": 15,
+    "latest": "summary-2026-07-06_2026-07-12.html",
+    "issue_refs": 3003
+  },
+  "note": "sub-chunked GitHub bodies (chunking.py); document set held IDENTICAL to 2026-07-16 (same 20,609 github urls); non-github rows copied verbatim with their original vectors. Only variable vs the base freeze: GitHub chunking.",
+  "chunk_size": 1100,
+  "chunk_overlap": 200
+}

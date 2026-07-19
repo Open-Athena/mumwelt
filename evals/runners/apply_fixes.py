@@ -150,8 +150,7 @@ def main() -> None:
             print(f"    ⚠ skipped {s}")
 
     # gold-consistency check: every gold must still score 100 in reference mode
-    FREEZE = scorer.freeze_issue_set(ROOT / "corpus/2026-07-16/corpus-index.db",
-                                     ROOT / "corpus/2026-07-16/summaries")
+    FREEZE = scorer.freeze_issue_set(*scorer.freeze_paths(ROOT))
     print("\n=== gold self-consistency (must be 100.0) ===")
     for qid in ["gpu", "july", "april", "muon", "ablations", "classifier", "benchmarks", "h100-67b", "inference"]:
         q = json.load(open(QDIR / f"{qid}.json"))

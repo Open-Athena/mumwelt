@@ -1,0 +1,4 @@
+#!/bin/bash
+# `mum` pinned to the 2026-07-16 eval corpus. A named wrapper per arm (rather than an
+# env var the caller must remember) so an A/B run cannot silently query the wrong index.
+exec env MARIN_EVAL_FREEZE=2026-07-16 "$(dirname "${BASH_SOURCE[0]}")/mum-frozen" "$@"

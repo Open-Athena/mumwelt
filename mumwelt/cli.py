@@ -169,7 +169,8 @@ def cmd_context(a):
         if not res:
             return []
         foc = res["focal"]
-        key = (foc["source"], foc.get("parent") or foc.get("ref"))
+        # base_ref so parts of one split body collapse to a single thread block
+        key = (foc["source"], context.base_ref(foc.get("parent") or foc.get("ref")))
         if key in shown:
             return []
         shown.add(key)

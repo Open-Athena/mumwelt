@@ -1,0 +1,15 @@
+#!/bin/bash
+# `mum` on the 2026-07-16 freeze with the retrieval pool pinned to -k 20.
+# Only the candidate POOL is pinned; --expand (how many hits get expanded to full
+# threads, i.e. where the tokens actually go) is left at its default, so this isolates
+# pool depth from read budget.
+sub="$1"
+args=("$@")
+case "$sub" in
+  search|search-multi|context)
+    has_k=0
+    for a in "$@"; do [ "$a" = "-k" ] && has_k=1; done
+    [ $has_k -eq 0 ] && args+=(-k 20)
+    ;;
+esac
+exec env MARIN_EVAL_FREEZE=2026-07-16 "$(dirname "${BASH_SOURCE[0]}")/mum-frozen" "${args[@]}"

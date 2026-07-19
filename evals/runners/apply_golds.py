@@ -18,7 +18,7 @@ import json, pathlib, sys, re
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 QDIR = ROOT / "questions"
 GDIR = ROOT / "golds-proposed"
-CORPUS = "2026-07-16"
+CORPUS = os.environ.get("MARIN_EVAL_FREEZE", "2026-07-16")
 sys.path.insert(0, str(ROOT / "runners"))
 import score as scorer  # noqa: E402
 

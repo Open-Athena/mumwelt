@@ -37,6 +37,12 @@ mum skills [list|print|install [dest]]
 `mum search` / `search-multi` flags: `-k N`, `--source`, `--kind`, `--since`, `--until`,
 `--fts-only` (skip the model load), `--json`.
 
+Sources: `github`, `discord`, `wandb`, `narrative`, and `code` — the marin repo's Python
+symbols (`--source code`), one chunk per function/class/method plus one per module, covering
+`main` and every branch touched in the last 30 days (`--kind branch-symbol`, tagged with the
+branch and its last committer). Identifier search splits camelCase in both directions, so
+`ExecutorStep`, `executor_step`, and "executor step" all reach each other.
+
 `mum publish` flags: `--title`, `--author`, `--description`, `--filename`, `--public`
 (default: secret/unlisted), `--no-date`, `--open`, `--json`. Renders via `pandoc` if
 present, else a built-in converter — no extra Python deps. Requires the `gh` CLI.
