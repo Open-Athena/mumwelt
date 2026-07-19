@@ -32,7 +32,11 @@ URL. The capability is the `mum` CLI; shell out to it.
 1. `mum summaries show latest` to orient.
 2. Split the question into 3–8 facet sub-queries (decisions · PRs/code · runs/results · people · timeline).
 3. Fan out: spawn one subagent per sub-query (each runs `mum search … --json` + `mum show`),
-   **or** if you have no subagents, `mum search-multi "q1" "q2" … --json` (parallel, merged).
+   **or** if you have no subagents, `mum search-multi "q1" "q2" … -k 50 --total 60 --json`
+   (parallel, merged). Pass `-k 50` on searches: the default is 10 (20 for `search-multi`),
+   and gold-citation recall runs 32% @10 → 45% @20 → 58% @50 for almost no cost. Route the
+   facet with `--source` — `github,discord` for *why*, `code` for *what the code does now*,
+   `wandb` for run numbers, `narrative` to orient.
 4. Verify load-bearing claims against their cited source; drop anything ungrounded.
 5. Synthesize a structured answer where **every claim cites a URL**; prefer primary
    sources over the weekly-summary narrative.

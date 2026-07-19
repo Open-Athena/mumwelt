@@ -54,6 +54,37 @@ right thread; "performance and blockers" does not. Useful facets:
   **runs / results** (*the numbers?*), **people** (*who owns it?*), **timeline** (*what changed
   when?*).
 
+## 1.5 Route each facet to a source
+
+The corpus holds five sources, and a facet usually has an obvious home. `--source` is a
+filter on the candidate pool, so using it buys **depth in the right place** rather than 50
+mixed hits of which a third are the wrong kind of document.
+
+| facet shape | `--source` | why |
+|---|---|---|
+| *why* was X decided, who objected | `github,discord` | the argument lives in threads |
+| *what* does the code actually do now | `code` | current state, not the change that made it |
+| *what did the run produce* | `wandb` | config + final numbers |
+| *what happened this week / orient* | `narrative` | recency-structured, vocabulary-rich |
+
+**`code` is the newest and the easiest to misuse.** It indexes the marin repo's Python: one
+chunk per function/class/method, one per module, on `main` **plus every branch touched in
+the last 30 days**. Three rules:
+
+- **`kind=branch-symbol` is in-flight work, not main.** Each carries its branch and last
+  committer in `title`/`author`. Never report a branch symbol as what the code does — say
+  "on branch `x`, <person> is doing Y". This is the §3 temporal guard applied to code.
+- **A `module` chunk resolves imports.** It lists where each imported name is defined, so
+  "where does `ExecutorStep` come from" is answerable with a path rather than a guess.
+- **Code answers "what", GitHub answers "why".** A PR thread says what changed and the
+  argument for it; the code says what is true now. When they disagree, the code is the
+  current state and the thread is the intent — report both rather than silently picking.
+
+Identifier search splits camelCase both ways, so `ExecutorStep`, `executor_step`, and
+"executor step" all reach each other; you do not need to guess the casing.
+
+Leave `--source` off when a facet genuinely spans sources, or when you are still orienting.
+
 ## 2. Fan out — two modes
 
 **If your host has subagents (e.g. Claude's Task/Agent tool):** spawn **one subagent per
@@ -62,11 +93,19 @@ sub-query**, in parallel. Give each subagent its sub-query and tell it to:
    to its sub-query, as if excerpted from a Marin issue / Discord thread / weekly summary.
    Invent concrete-sounding specifics; this is **HyDE**, so the text only needs to sit in the
    right *semantic neighborhood*, not be true.
-2. Run `mum search "<sub-query>" --json --vec-text "<doc1>" --vec-text "<doc2>" --vec-text "<doc3>"`
+2. Run `mum search "<sub-query>" -k 50 --json --vec-text "<doc1>" --vec-text "<doc2>" --vec-text "<doc3>"`
    — the three docs are mean-pooled to drive the **semantic (vector)** leg, while the literal
    sub-query still drives the **keyword (FTS)** leg, so exact identifiers (`#1234`, run names)
    aren't diluted.
-3. `mum show <url>` on its **top ~20 best hits** to read full context.
+   **Pass `-k 50` explicitly** — `mum search` defaults to 10, and gold-citation recall on the
+   eval harness runs 32% @10 → 45% @20 → 58% @50. Raising `k` costs almost nothing: the vector
+   leg scores the whole corpus regardless of `k`, so this only lengthens the ranked list.
+   Add `--source` when the facet has an obvious home (see §1.5).
+3. `mum show <url>` on its **top ~20 best hits** to read full context. Keep this bound at ~20
+   even though you searched 50 — `show` expands a whole thread and is what actually consumes
+   context. The other 30 are not wasted: a search hit already carries `url`, `title`, `date`
+   and a snippet, so it is **citable as a lead** without being expanded. Expand for depth,
+   scan the tail for coverage.
 4. Return a short digest of findings **with URLs**.
 
 Collect the digests and **dedupe by URL** across sub-queries (overlap collapses the real
@@ -76,13 +115,15 @@ nails the identifier, so it's harmless — hence n=3 by default.
 
 **If single-process (no subagent framework):** use the built-in parallel primitive —
 ```
-mum search-multi "<sub-query 1>" "<sub-query 2>" "<sub-query 3>" … --json
+mum search-multi "<sub-query 1>" "<sub-query 2>" "<sub-query 3>" … -k 50 --total 60 --json
 ```
 It runs all queries concurrently and returns a merged, de-duplicated candidate set
-(each hit annotated with which sub-queries surfaced it). Then `mum show` the most
+(each hit annotated with which sub-queries surfaced it). `-k` is candidates **per query**
+(default 20) and `--total` caps the merged set (default 20) — raise both, or the merge
+throws away most of what you just paid to retrieve. Then `mum show` the most
 promising URLs. Note: `search-multi` doesn't take `--vec-text`, so this path is
 keyword+vector on the **literal** queries (no HyDE). To get HyDE without subagents, run
-individual `mum search "<sub-query>" --vec-text "<doc1>" --vec-text "<doc2>" --vec-text "<doc3>"`
+individual `mum search "<sub-query>" -k 50 --vec-text "<doc1>" --vec-text "<doc2>" --vec-text "<doc3>"`
 calls instead.
 
 ## 3. Verify (for load-bearing claims)
