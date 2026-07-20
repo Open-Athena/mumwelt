@@ -25,6 +25,13 @@ SUMMARIES = CACHE / "summaries"             # weekly-summary HTML pages
 SUMMARIES_INDEX = SUMMARIES / "index.html"  # the mws.oa.dev landing page (link source)
 
 # --- search ------------------------------------------------------------------
+# FALLBACK ONLY — not the contract. The corpus states which model produced its vectors
+# (`meta.spaces`, or legacy `meta.model`), and corpus.py reads it from there at query
+# time. These values are used only when an index predates that metadata entirely.
+#
+# Do not "fix" a model mismatch by editing these: embedding queries with a model other
+# than the one that built the vectors does not error, it silently returns plausible
+# nonsense, because the FTS leg keeps working and only the cosine scores are garbage.
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 EMBED_DIM = 384
 RRF_K = 60                                  # reciprocal-rank-fusion constant

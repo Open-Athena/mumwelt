@@ -128,7 +128,13 @@ def main() -> int:
         import numpy as np
         from fastembed import TextEmbedding
         os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
-        model = TextEmbedding(config.EMBED_MODEL, threads=os.cpu_count())
+        # Only github (a prose source) is re-embedded here, so the prose space's model is
+        # the right one — read off the source freeze rather than assumed, so a freeze
+        # built with a different encoder re-embeds consistently with its own vectors.
+        prose_model = ((json.loads(src_meta.get("spaces") or "{}")
+                        .get(config.PROSE_SPACE) or {}).get("model")
+                       or src_meta.get("model") or config.EMBED_MODEL)
+        model = TextEmbedding(prose_model, threads=os.cpu_count())
         t0 = time.time()
         texts = [t for _, t in to_embed]
         done = 0
@@ -149,15 +155,19 @@ def main() -> int:
     w = sqlite3.connect(tmp)
     w.executescript(SCHEMA_DDL)
     ins = ("INSERT INTO chunks(source,kind,ref,parent,title,author,date,url,text,hash,"
-           "embedding,part,n_parts) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)")
+           "embedding,embed_space,part,n_parts) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
     per_source: dict[str, int] = {}
     n = embedded_n = 0
     # Deterministic row order so a rebuild is byte-comparable run to run.
     all_rows = sorted(passthrough + reused + [r for r, _ in to_embed],
                       key=lambda t: (t[0]["source"], t[0]["kind"], t[0]["ref"], t[3]))
     for d, h, blob, part, n_parts in all_rows:
+        # Carry the source's vector space through. A freeze taken before spaces existed
+        # has no such column, and every embedded row in one belongs to the single legacy
+        # prose space — leaving it NULL would make the vector leg match nothing.
+        space = (d.get("embed_space") or config.PROSE_SPACE) if blob is not None else None
         w.execute(ins, (d["source"], d["kind"], d["ref"], d["parent"], d["title"],
-                        d["author"], d["date"], d["url"], d["text"], h, blob,
+                        d["author"], d["date"], d["url"], d["text"], h, blob, space,
                         part, n_parts))
         n += 1
         embedded_n += blob is not None
