@@ -43,6 +43,9 @@ def cmd_status(a):
             note = (f" (STALE — built {ah / 24:.1f}d ago, past {config.MAX_AGE_HOURS / 24:.0f}d max; "
                     "run `mum refresh`)")
         print(f"corpus:    {m.get('chunks', '?')} chunks, built {ah:.0f}h ago{note}")
+        sp = corpus.spaces(m)
+        print("  vectors:  " + ", ".join(
+            f"{n} {s.get('dim')}d ({s.get('model')})" for n, s in sorted(sp.items())))
     else:
         print("corpus:    not downloaded — run `mum refresh`")
     periods = summaries.list_periods()
@@ -52,8 +55,38 @@ def cmd_status(a):
         print(f"server:    built {_age_h(sm['built_at_epoch']):.0f}h ago, "
               f"{sm['corpus_index']['bytes'] // 1048576} MB")
         _print_source_health(sm.get("sources") or {})
+        _check_embed_spaces(sm)
     except (client.AuthError, client.ClientError) as e:
         print(f"server:    {e}", file=sys.stderr)
+
+
+def _check_embed_spaces(sm: dict) -> None:
+    """Warn if the server's index needs an encoder this client cannot load.
+
+    Model identity is read off the corpus at query time (``corpus.spaces``), so a
+    server-side model change can never silently mis-score here — but it CAN leave this
+    client unable to score a space at all, which shows up as quietly worse recall. Saying
+    so at refresh/status time surfaces it while the user is already thinking about the
+    corpus, rather than mid-question.
+    """
+    advertised = sm.get("embed_spaces") or {}
+    if not advertised:
+        return
+    try:
+        from fastembed import TextEmbedding
+        supported = {m["model"] for m in TextEmbedding.list_supported_models()}
+    except Exception:                            # noqa: BLE001 — advisory check only
+        return
+    missing = sorted((n, (s or {}).get("model")) for n, s in advertised.items()
+                     if (s or {}).get("model") and s["model"] not in supported)
+    if not missing:
+        return
+    print("  ⚠ this corpus uses embedding model(s) your fastembed cannot load:",
+          file=sys.stderr)
+    for name, model in missing:
+        print(f"      space {name}: {model}", file=sys.stderr)
+    print("    Those spaces are skipped — keyword search still works, semantic search "
+          "for them does not. Fix: pip install -U fastembed mumwelt", file=sys.stderr)
 
 
 def _print_source_health(sources: dict) -> None:
@@ -83,6 +116,7 @@ def cmd_refresh(a):
     # 1. corpus (manifest-gated)
     try:
         sm = client.manifest()
+        _check_embed_spaces(sm)
         want = sm["corpus_index"]["sha256"]
         have = None
         if config.CORPUS_MANIFEST.exists():
@@ -125,15 +159,45 @@ def _print_hits(hits):
 
 def cmd_search(a):
     _require_corpus()
-    hits = corpus.search(a.query, k=a.k, source=_csv(a.source), kind=_csv(a.kind),
-                         since=a.since, until=a.until, fts_only=a.fts_only,
-                         vec_text=getattr(a, "vec_text", None))
-    print(json.dumps(hits, indent=2)) if a.json else _print_hits(hits)
+    src = _csv(a.source)
+    kw = dict(kind=_csv(a.kind), since=a.since, until=a.until, fts_only=a.fts_only,
+              vec_text=getattr(a, "vec_text", None))
+    hits = corpus.search(a.query, k=a.k, source=src, **kw)
+
+    # The code lanes run alongside every unfiltered search rather than competing with it.
+    # An explicit --source already says what the caller wants, so don't second-guess it.
+    code = branches = []
+    lanes = src is None and not a.no_code
+    if lanes:
+        code = corpus.search_code(a.query, k=a.code_k, branches=False, **kw)
+        branches = corpus.search_code(a.query, k=a.branch_k, branches=True, **kw)
+
+    if a.json:
+        print(json.dumps({"hits": hits, "code": code, "branches": branches}
+                         if lanes else hits, indent=2))
+        return
+    _print_hits(hits)
+    if lanes:
+        # Two lanes, not one: main is how it works, a branch is what someone is trying.
+        # Cite accordingly — a branch symbol is not evidence of current behavior.
+        print(f"--- code · main ({len(code)}) "
+              f"{'—' if code else '— nothing relevant found'} ---\n")
+        if code:
+            _print_hits(code)
+        print(f"--- code · in-flight branches ({len(branches)}) "
+              f"{'—' if branches else '— nothing relevant found'} ---\n")
+        if branches:
+            _print_hits(branches)
 
 
 def cmd_search_multi(a):
     _require_corpus()
-    corpus._model() if not a.fts_only else None   # warm the model once before fan-out
+    if not a.fts_only:
+        # Warm only the encoders this fan-out will actually use: an unfiltered
+        # search-multi is prose-only now, so it must not pay to load the code model.
+        _src = _csv(a.source)
+        corpus.warm(source=_src,
+                    exclude_source=None if _src else corpus.code_sources())
     kw = dict(k=a.k, source=_csv(a.source), kind=_csv(a.kind), fts_only=a.fts_only)
     with ThreadPoolExecutor(max_workers=min(8, len(a.queries))) as ex:
         results = list(ex.map(lambda q: corpus.search(q, **kw), a.queries))
@@ -338,6 +402,14 @@ def main(argv=None):
                        help="HyDE: hypothetical-answer doc to drive the vector leg; "
                             "repeat for N-doc averaging. FTS leg still uses the literal query.")
         p.add_argument("--json", action="store_true")
+        # The code lane is separate, not fused: code never competes for the prose slots,
+        # so asking for it costs those results nothing.
+        p.add_argument("--code-k", type=int, default=25,
+                       help="hits in the code·main lane (default 25)")
+        p.add_argument("--branch-k", type=int, default=10,
+                       help="hits in the code·in-flight-branches lane (default 10)")
+        p.add_argument("--no-code", action="store_true",
+                       help="skip both code lanes entirely")
 
     p = sub.add_parser("search"); p.add_argument("query"); add_search_flags(p)
     p.set_defaults(fn=cmd_search)

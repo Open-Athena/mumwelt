@@ -79,7 +79,7 @@ about — "Iris cross-cluster federation", "vLLM GrugMoE serving" — and send i
 | *why* / *what happened* — any subject   | `github,discord` | decisions and events live in threads     |
 | *what did the run produce* (numbers)    | `wandb`          | config + final numbers                   |
 | *what happened this week* / orient      | `narrative`      | recency-structured, vocabulary-rich      |
-| *how is X implemented* (only)           | `code`           | see the carve-out below                  |
+| *how is X implemented* (only)           | `code` (`-k 30`) | see the carve-out below                  |
 
 **Never spend a facet slot on `--source code` for a "what happened" question.** Measured
 on a live A/B of "what happened in June and July": routing two of eight facets to `code`
@@ -96,6 +96,35 @@ test, the unrouted arm retrieved **53 code documents and cited zero**; the ones 
 saw graded 6 noise / 1 marginal / 0 valuable (auth tests, a controller `main.py`). Code that
 turns up as a by-product of a mixed search is buried at ranks nobody reads. The routed arm
 retrieved 46 and cited 5, four of them judged solid.
+
+**This is now enforced by the tool, not left to your discipline.** `mum search` no longer
+mixes code into the main results at all — code and prose are ranked separately and never
+compete for the same slots. Two consequences:
+
+- **Every `mum search` already gives you the code lanes, free.** Output ends with
+  `--- code · main (25) ---` and `--- code · in-flight branches (10) ---`. You do not
+  have to spend a facet slot to *see* whether code has anything; you only spend one when
+  it does. Read those sections and judge them yourself — no relevance threshold gates
+  them, which is deliberate, because you can tell "this symbol answers the question" from
+  "this merely contains the word `gpu`" and a cosine score cannot.
+
+- **main and branches are separate lanes because they have different truth status.**
+  `main` is how the system works. A branch symbol is what someone is *trying* — it may
+  never land. Answering "how does X work" from branch code is not a worse answer, it is a
+  **wrong** one. Cite `main` for how things work; cite a branch **only** for claims about
+  what is in flight, and say so explicitly. They are budgeted separately because branch
+  symbols exist only when they *differ* from the merge base, so the corpus selects for
+  actively-edited code and they crowd: measured, 39% of code chunks but 48–84% of an
+  undifferentiated top-25, and 21 of 25 on "how do we compute MFU".
+- **When the question really is about code, go deep:** `mum search "<subject>" --source
+  code -k 30`. With an explicit `--source code` the code lane is primary and gets the
+  whole budget, so 20–30 hits is the right ask, not 10.
+
+Why they were separated: fusing the two rankings is zero-sum for a fixed result budget, and
+measured across all 9 harness questions, code in the mixed ranking cost **1.9pp of gold
+recall at both @10 and @20** while adding nothing at @50. It also could never *gain*
+anything on that metric — which counts only issue/PR citations — so mixing cost prose and
+could not be credited for code. Split, code costs prose exactly zero.
 
 So run **one** extra subagent (two only if the question genuinely spans systems) alongside
 the facet agents — in parallel, fanning in to synthesis like any other digest. Do NOT make
