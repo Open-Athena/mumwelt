@@ -1,11 +1,11 @@
 ---
-name: marin-publish
-description: Publish a finished research answer (Markdown with inline URL citations) to a private GitHub gist, rendered as a LaTeX-styled HTML document, and return a one-click htmlpreview.github.io link for easy sharing. Use after marin-research to hand someone a clean, readable, link-preserving writeup.
+name: mumwelt-publish
+description: Publish a finished research answer (Markdown with inline URL citations) to a private GitHub gist, rendered as a LaTeX-styled HTML document, and return a one-click htmlpreview.github.io link for easy sharing. Use after mumwelt to hand someone a clean, readable, link-preserving writeup.
 ---
 
-# marin-publish — share a research writeup as a typeset, linkable page
+# mumwelt-publish — share a research writeup as a typeset, linkable page
 
-You've synthesized an answer (e.g. via **marin-research**) — structured Markdown where
+You've synthesized an answer (e.g. via **mumwelt**) — structured Markdown where
 **every claim cites a URL**. This skill turns that into something shareable: a clean,
 LaTeX-looking HTML page (serif typeset body, rendered math), stored in a **secret gist**,
 with a **htmlpreview.github.io** link anyone can open in a browser. The capability is
@@ -47,14 +47,14 @@ Useful flags:
 ## Conventions
 
 - **Write the report first, publish second.** Keep the inline URL citations from
-  marin-research intact — they become clickable links and are the whole point.
+  mumwelt intact — they become clickable links and are the whole point.
 - A leading `# Title` line is lifted into the page header (so it isn't shown twice). Use
   `##`/`###` for the section structure.
 - Math: inline `$x$`, display `$$…$$` — rendered by MathJax in the preview.
 
 ## Provenance footer
 
-If the Markdown contains a `<!--provenance-->` sentinel (marin-research emits one — the
+If the Markdown contains a `<!--provenance-->` sentinel (mumwelt emits one — the
 data-freshness + query-trace trailer), everything after it is split out and rendered as a
 muted `<footer>`: small, gray, set off by a hairline rule, with its links and blockquote
 inheriting the gray so it reads as a footnote rather than body copy. The redundant `---`
