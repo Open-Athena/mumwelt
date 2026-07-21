@@ -17,6 +17,7 @@ does not fail, it just silently returns plausible nonsense.
 """
 from __future__ import annotations
 
+import functools
 import json
 import os
 import re
@@ -61,6 +62,53 @@ def spaces(m: dict | None = None) -> dict[str, dict]:
     return {DEFAULT_SPACE: {"model": m.get("model") or config.EMBED_MODEL,
                             "dim": int(m.get("dim") or config.EMBED_DIM),
                             "sources": []}}
+
+
+@functools.lru_cache(maxsize=1)
+def _supported_models() -> frozenset[str] | None:
+    """Model names the installed fastembed can load — ``None`` if fastembed is absent.
+
+    A cheap pre-flight: it lists supported models rather than constructing one, so no
+    weights are downloaded. That lets a search command flag a missing encoder *before*
+    running a query that would otherwise fall back to keyword-only for that space with
+    nothing in the results to say the semantic leg never ran.
+    """
+    try:
+        from fastembed import TextEmbedding
+    except Exception:                            # noqa: BLE001 — any import failure ⇒ absent
+        return None
+    try:
+        return frozenset(m["model"] for m in TextEmbedding.list_supported_models())
+    except Exception:                            # noqa: BLE001 — advisory only
+        return frozenset()
+
+
+def install_hint() -> str:
+    """The exact command that fixes a missing encoder, tailored to what is wrong."""
+    if _supported_models() is None:
+        return "pip install -U fastembed   # fastembed is not installed"
+    return "pip install -U fastembed mumwelt   # upgrade fastembed to one that ships this model"
+
+
+def unavailable_spaces(source=None, exclude_source=None) -> list[tuple[str, str]]:
+    """``(space, model)`` pairs the corpus needs but this client cannot encode for.
+
+    Honors the same source filter the search itself uses, so it reports only the spaces a
+    given query would actually touch — an unfiltered prose search never flags the code
+    encoder, and ``--source code`` never flags the prose one. Empty when everything loads.
+    """
+    supported = _supported_models()
+    out: list[tuple[str, str]] = []
+    for name, spec in sorted(spaces().items()):
+        srcs = spec.get("sources") or []
+        if source and srcs and set(srcs).isdisjoint(source):
+            continue
+        if exclude_source and srcs and set(srcs).issubset(exclude_source):
+            continue
+        model = spec.get("model") or config.EMBED_MODEL
+        if supported is None or model not in supported:
+            out.append((name, model))
+    return out
 
 
 def _literal_tokens(q: str) -> list[str]:
@@ -198,8 +246,8 @@ def _model(name: str):
             _MODEL_WARNED.add(name)
             print(f"  ⚠ corpus was built with embedding model {name!r}, which this "
                   f"client cannot load ({type(e).__name__}: {e}). That vector space is "
-                  f"being skipped — results fall back to keyword search for it. "
-                  f"Upgrading mumwelt usually fixes this.", file=sys.stderr)
+                  f"being skipped — results fall back to keyword search for it.\n"
+                  f"    Fix: {install_hint()}", file=sys.stderr)
         _MODELS[name] = None
     return _MODELS[name]
 

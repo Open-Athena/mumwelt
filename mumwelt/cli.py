@@ -86,7 +86,29 @@ def _check_embed_spaces(sm: dict) -> None:
     for name, model in missing:
         print(f"      space {name}: {model}", file=sys.stderr)
     print("    Those spaces are skipped — keyword search still works, semantic search "
-          "for them does not. Fix: pip install -U fastembed mumwelt", file=sys.stderr)
+          f"for them does not. Fix: {corpus.install_hint()}", file=sys.stderr)
+
+
+def _flag_missing_encoders(source=None, *, exclude_source=None, primary=False) -> bool:
+    """Flag any vector space the *local* corpus needs but this client cannot encode for.
+
+    Returns True if something is missing. ``primary`` means the caller explicitly asked
+    for those spaces (e.g. ``--source code``): a missing encoder then means the search
+    they asked for cannot run, so the caller should refuse rather than hand back
+    keyword-only hits that look semantic. Incidental spaces (the code lanes riding along
+    an unfiltered prose search) warn and let the rest proceed.
+    """
+    missing = corpus.unavailable_spaces(source=source, exclude_source=exclude_source)
+    if not missing:
+        return False
+    label = ", ".join(f"{n} ({m})" for n, m in missing)
+    print(f"  ⚠ semantic search needs an embedding model this client cannot load: {label}",
+          file=sys.stderr)
+    print(f"    Fix: {corpus.install_hint()}", file=sys.stderr)
+    if primary:
+        print("    Refusing to return keyword-only results for an explicit semantic "
+              "request — rerun with --fts-only to force keyword search.", file=sys.stderr)
+    return True
 
 
 def _print_source_health(sources: dict) -> None:
@@ -160,6 +182,10 @@ def _print_hits(hits):
 def cmd_search(a):
     _require_corpus()
     src = _csv(a.source)
+    # An explicit --source whose encoder is missing must not silently degrade to keyword
+    # hits dressed as semantic results. (--fts-only is the explicit keyword opt-out.)
+    if src and not a.fts_only and _flag_missing_encoders(src, primary=True):
+        sys.exit(3)
     kw = dict(kind=_csv(a.kind), since=a.since, until=a.until, fts_only=a.fts_only,
               vec_text=getattr(a, "vec_text", None))
     hits = corpus.search(a.query, k=a.k, source=src, **kw)
@@ -168,6 +194,10 @@ def cmd_search(a):
     # An explicit --source already says what the caller wants, so don't second-guess it.
     code = branches = []
     lanes = src is None and not a.no_code
+    if lanes and not a.fts_only and _flag_missing_encoders(corpus.code_sources()):
+        # Can't encode code: say so loudly and drop the lanes, rather than returning
+        # keyword hits that read as a full semantic code search.
+        lanes = False
     if lanes:
         code = corpus.search_code(a.query, k=a.code_k, branches=False, **kw)
         branches = corpus.search_code(a.query, k=a.branch_k, branches=True, **kw)
@@ -192,10 +222,12 @@ def cmd_search(a):
 
 def cmd_search_multi(a):
     _require_corpus()
+    _src = _csv(a.source)
+    if _src and not a.fts_only and _flag_missing_encoders(_src, primary=True):
+        sys.exit(3)
     if not a.fts_only:
         # Warm only the encoders this fan-out will actually use: an unfiltered
         # search-multi is prose-only now, so it must not pay to load the code model.
-        _src = _csv(a.source)
         corpus.warm(source=_src,
                     exclude_source=None if _src else corpus.code_sources())
     kw = dict(k=a.k, source=_csv(a.source), kind=_csv(a.kind), fts_only=a.fts_only)

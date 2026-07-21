@@ -16,6 +16,16 @@ summaries at [`mws.oa.dev`](https://mws.oa.dev).
 pip install -e .          # brings in fastembed + numpy for hybrid (keyword+semantic) search
 ```
 
+The corpus carries **two embedding spaces** and the client encodes queries with whichever
+model the corpus names for each (read from `meta.spaces` at query time — the index, not the
+client, is authoritative): prose (`github`/`discord`/`wandb`/`narrative`) uses
+`BAAI/bge-small-en-v1.5` (384-d); `code` uses `jinaai/jina-embeddings-v2-base-code` (768-d),
+which needs a reasonably recent `fastembed`. If your `fastembed` can't load a model the
+corpus uses, `mum` **says so and tells you how to fix it** rather than quietly returning
+keyword-only hits — `mum status` flags it up front, an explicit `mum search --source code`
+whose encoder is missing refuses (rerun with `--fts-only` to force keyword search), and the
+fix is always printed: `pip install -U fastembed mumwelt`.
+
 Token: `mum` authenticates to marinmirror with a GitHub token belonging to an **Open-Athena**
 member (`read:org`), resolved from `MARINMIRROR_TOKEN` → `gh auth token` →
 `~/.config/marin/token`. The weekly summaries are public (no token).
@@ -91,5 +101,8 @@ marinmirror.exe.xyz                         mws.oa.dev
 ```
 
 The agent (any LLM) reasons and synthesizes; `mum` does retrieval. Search fuses FTS5
-keyword search with cosine over the corpus's 384-d `BAAI/bge-small-en-v1.5` embeddings
-via reciprocal-rank fusion — so identifiers and natural-language intent both hit.
+keyword search with cosine over the corpus's vector spaces — prose in 384-d
+`BAAI/bge-small-en-v1.5`, code in 768-d `jinaai/jina-embeddings-v2-base-code` — each scored
+separately (the widths differ) and combined by reciprocal-rank fusion, so identifiers and
+natural-language intent both hit and code is matched by a code-trained encoder rather than
+an English one.
