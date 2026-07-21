@@ -20,7 +20,7 @@ _LINK_RE = re.compile(r'href="(summaries/summary-(\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-
 
 def _fetch(path: str) -> bytes:
     req = urllib.request.Request(config.MWS_URL + path, headers={"User-Agent": "mumwelt"})
-    with urllib.request.urlopen(req, timeout=60) as r:
+    with urllib.request.urlopen(req, timeout=60, context=config.ssl_context()) as r:
         return r.read()
 
 

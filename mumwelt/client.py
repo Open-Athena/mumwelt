@@ -35,7 +35,7 @@ def _open(path: str, headers: dict | None = None, timeout: int = 30):
     req = urllib.request.Request(config.MARINMIRROR_URL + path,
                                  headers={**_headers(), **(headers or {})})
     try:
-        return urllib.request.urlopen(req, timeout=timeout)
+        return urllib.request.urlopen(req, timeout=timeout, context=config.ssl_context())
     except urllib.error.HTTPError as e:
         if e.code in (401, 403):
             raise AuthError(f"{e.code}: not authorized — Open-Athena membership required "
