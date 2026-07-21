@@ -52,11 +52,14 @@ Local cache lives under `~/.cache/marin/` (`corpus-index.db` + `summaries/`).
 
 ## Skills
 
-Two skills, shipped in Claude's `SKILL.md` format and as a portable [`AGENTS.md`](AGENTS.md):
+Three skills, shipped in Claude's `SKILL.md` format and as a portable [`AGENTS.md`](AGENTS.md):
 
-- **`marin-research`** — decompose a broad question → fan out parallel searches across
+- **`mumwelt-code`** — a single "where is X / how is Y implemented" lookup: search the
+  embeddings-backed code lane first, and escalate to `mumwelt` only if a clear, citable
+  answer doesn't emerge.
+- **`mumwelt`** — decompose a broad question → fan out parallel searches across
   subagents (or `mum search-multi`) → verify → synthesize a cited answer.
-- **`marin-publish`** — turn a finished, cited writeup into a LaTeX-styled HTML page in a
+- **`mumwelt-publish`** — turn a finished, cited writeup into a LaTeX-styled HTML page in a
   secret gist, and hand back an `htmlpreview.github.io` link for easy sharing.
 
 ```bash
@@ -81,7 +84,7 @@ marinmirror.exe.xyz                         mws.oa.dev
    (FTS5 ∪ vector, RRF)       (overview + link-leads)
         │
         ▼
-   agents (marin-research skill)
+   agents (mumwelt skill)
         │
         ▼
    mum publish ──► secret gist (LaTeX-styled HTML) ──► htmlpreview.github.io link

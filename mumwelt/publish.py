@@ -163,7 +163,7 @@ def _fallback_md(md: str) -> str:
 # ---- provenance footer ------------------------------------------------------
 
 # Sentinel a writeup uses to mark the start of its provenance trailer (data freshness +
-# query trace, per the marin-research skill). Everything after it renders as a muted
+# query trace, per the mumwelt skill). Everything after it renders as a muted
 # <footer>. It's an HTML comment, so it's invisible if the Markdown is shown raw, too.
 PROVENANCE_MARKER = "<!--provenance-->"
 _TRAILING_RULE = re.compile(r"(?:\n[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*)+\s*$")

@@ -1,9 +1,9 @@
 ---
-name: marin-research
-description: Answer a broad, ambiguous, or multi-part question about Marin by decomposing it into parallel searches (across subagents) over the local marinmirror corpus and weekly summaries, then synthesizing a cited answer. Use for "give me the full picture of X", literature-review-style asks, retros, or anything one search query won't cover.
+name: mumwelt
+description: Answer a broad, ambiguous, or multi-part question about Marin by decomposing it into parallel searches (across subagents) over the local marinmirror corpus and weekly summaries, then synthesizing a cited answer. Use for "give me the full picture of X", literature-review-style asks, retros, or anything one search query won't cover. For a single "where is X / how is Y implemented" code lookup, reach for the lighter mumwelt-code first.
 ---
 
-# marin-research — multi-subagent research over the Marin corpus
+# mumwelt — multi-subagent research over the Marin corpus
 
 For questions too broad or multi-faceted for a single `mum search`. The pattern is
 **decompose → fan out → verify → synthesize**. *You* (the agent) do the reasoning and
@@ -283,7 +283,7 @@ again if you didn't). Two parts:
 
 Render it after a `---` rule using a small/dim style: a blockquote of italic text, which
 the host shows muted in a terminal. Prefix it with the `<!--provenance-->` sentinel —
-invisible when the Markdown is rendered, but it tells **marin-publish** where the trailer
+invisible when the Markdown is rendered, but it tells **mumwelt-publish** where the trailer
 starts so it can style the whole block as gray footnote text (and drop the duplicate rule).
 Put a blank `>` line between the three parts so each lands on its own line. Shape:
 
