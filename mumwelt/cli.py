@@ -16,6 +16,7 @@ import argparse
 import json
 import sys
 import time
+import webbrowser
 from concurrent.futures import ThreadPoolExecutor
 
 from . import client, config, context, corpus, summaries
@@ -27,6 +28,51 @@ def _csv(v):
 
 def _age_h(epoch) -> float:
     return (time.time() - int(epoch or 0)) / 3600
+
+
+# ---- auth -------------------------------------------------------------------
+
+def _auth_help(e: client.AuthError, *, open_browser: bool = False) -> None:
+    """Explain an authorization failure, and open the sign-in page only if asked to.
+
+    Two situations, and the fix differs entirely: no token was found (local, immediate) or
+    a token was refused (upstream, needs a browser and someone else's approval). Printing
+    one generic "not authorized" for both used to send people to re-check a token that was
+    fine, so this splits them and quotes the server's own reason for the second.
+
+    It deliberately does not prompt. `mum refresh` is mostly run by an agent on a user's
+    behalf rather than by a person at a terminal, so a TTY question would hang a caller
+    that cannot answer it, and launching a browser unasked is worse — it puts a window in
+    front of someone who never requested one, possibly on a machine they are not sitting
+    at. Instead this states the situation and hands the agent an explicit next step to put
+    to the user, leaving the decision with the person whose browser it is.
+    """
+    url = config.authorize_url()
+    if e.status is None:                    # nothing was sent — there was no token to send
+        print("  No API token found. Provide one, then re-run:", file=sys.stderr)
+        print("      gh auth login                     (mum reads `gh auth token`)",
+              file=sys.stderr)
+        print("      export MARINMIRROR_TOKEN=<token>  (or write ~/.config/marin/token)",
+              file=sys.stderr)
+        return
+    print("  Your token was rejected — it is not authorized for this corpus.",
+          file=sys.stderr)
+    if e.detail:
+        print(f"      server: {e.detail}", file=sys.stderr)
+    print("  Authorization is a one-time browser step:", file=sys.stderr)
+    print(f"      1. open {url}", file=sys.stderr)
+    print("      2. sign in and submit an access request", file=sys.stderr)
+    print("      3. once it is approved, re-run `mum refresh`", file=sys.stderr)
+    if open_browser:
+        print(f"  opening {url} …", file=sys.stderr)
+        try:
+            webbrowser.open(url)
+        except Exception as exc:            # noqa: BLE001 — headless box, no browser, etc.
+            print(f"  could not open a browser ({exc}) — visit {url} manually",
+                  file=sys.stderr)
+        return
+    print("  AGENT: do not open this yourself. Tell the user the above, and offer to run "
+          "`mum refresh --open`, which opens that page for them.", file=sys.stderr)
 
 
 # ---- status / refresh -------------------------------------------------------
@@ -56,7 +102,10 @@ def cmd_status(a):
               f"{sm['corpus_index']['bytes'] // 1048576} MB")
         _print_source_health(sm.get("sources") or {})
         _check_embed_spaces(sm)
-    except (client.AuthError, client.ClientError) as e:
+    except client.AuthError as e:
+        print(f"server:    {e}", file=sys.stderr)
+        _auth_help(e, open_browser=getattr(a, "open", False))
+    except client.ClientError as e:
         print(f"server:    {e}", file=sys.stderr)
 
 
@@ -152,7 +201,10 @@ def cmd_refresh(a):
             print(f"corpus:    updated → {corpus.meta().get('chunks', '?')} chunks")
         else:
             print("corpus:    already current")
-    except (client.AuthError, client.ClientError) as e:
+    except client.AuthError as e:
+        print(f"corpus:    SKIPPED — {e}", file=sys.stderr)
+        _auth_help(e, open_browser=a.open)
+    except client.ClientError as e:
         print(f"corpus:    SKIPPED — {e}", file=sys.stderr)
     # 2. weekly summaries (public, index-diff)
     try:
@@ -345,7 +397,11 @@ def cmd_run(a):
         sys.exit("usage: mum run <project>/<run>  (or a wandb.ai run URL)")
     try:
         d = client.wandb_config(project, run)
-    except (client.AuthError, client.ClientError) as e:
+    except client.AuthError as e:
+        print(str(e), file=sys.stderr)
+        _auth_help(e)
+        sys.exit(1)
+    except client.ClientError as e:
         sys.exit(str(e))
     if a.json:
         print(json.dumps(d, indent=2))
@@ -415,9 +471,14 @@ def main(argv=None):
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
 
-    sub.add_parser("status").set_defaults(fn=cmd_status)
+    p = sub.add_parser("status")
+    p.add_argument("--open", action="store_true",
+                   help="if the token is unauthorized, open the sign-in page in a browser")
+    p.set_defaults(fn=cmd_status)
 
     p = sub.add_parser("refresh"); p.add_argument("--force", action="store_true")
+    p.add_argument("--open", action="store_true",
+                   help="if the token is unauthorized, open the sign-in page in a browser")
     p.set_defaults(fn=cmd_refresh)
 
     # k=50: gold-citation recall on the eval harness runs 32% @10 -> 45% @20 -> 58% @50,

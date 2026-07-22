@@ -26,9 +26,22 @@ keyword-only hits — `mum status` flags it up front, an explicit `mum search --
 whose encoder is missing refuses (rerun with `--fts-only` to force keyword search), and the
 fix is always printed: `pip install -U fastembed mumwelt`.
 
-Token: `mum` authenticates to marinmirror with a GitHub token belonging to an **Open-Athena**
-member (`read:org`), resolved from `MARINMIRROR_TOKEN` → `gh auth token` →
-`~/.config/marin/token`. The weekly summaries are public (no token).
+Token: `mum` authenticates to marinmirror with a GitHub bearer token, resolved from
+`MARINMIRROR_TOKEN` → `gh auth token` → `~/.config/marin/token`. The weekly summaries are
+public (no token).
+
+Your first `mum refresh` lands in one of three places, and it tells you which:
+
+1. **No token found** — nothing was sent. Run `gh auth login` (`mum` picks the token up
+   from `gh auth token`), or set `MARINMIRROR_TOKEN`, or write `~/.config/marin/token`.
+2. **Token found but not authorized** — the server refused it, and `mum` prints the
+   server's own reason. Authorizing is a one-time browser step: open
+   [marinmirror](https://marinmirror.exe.xyz/), sign in, submit an access request, and
+   re-run `mum refresh` once it's approved. `mum refresh --open` opens that page for you.
+3. **Authorized** — the corpus downloads.
+
+In every case the public weekly summaries still refresh, so an unauthorized install is
+partially useful rather than dead.
 
 ## The `mum` CLI
 

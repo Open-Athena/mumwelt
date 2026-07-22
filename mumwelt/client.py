@@ -14,7 +14,17 @@ from . import config
 
 
 class AuthError(RuntimeError):
-    pass
+    """Authorization failed. ``status`` separates the two cases a user can act on:
+
+    ``None``    — no token was found locally, so nothing was sent. The fix is local.
+    401 / 403   — a token was sent and the server refused it. The fix is upstream, and
+                  ``detail`` carries the server's own words for why.
+    """
+
+    def __init__(self, msg: str, *, status: int | None = None, detail: str | None = None):
+        super().__init__(msg)
+        self.status = status
+        self.detail = detail
 
 
 class ClientError(RuntimeError):
@@ -26,9 +36,38 @@ def _headers() -> dict:
     if not tok:
         raise AuthError(
             "no marinmirror token found. Set MARINMIRROR_TOKEN, run `gh auth login`, or "
-            "write ~/.config/marin/token. Needs a GitHub token of an Open-Athena member "
-            "(read:org scope).")
+            "write ~/.config/marin/token.")
     return {"Authorization": f"Bearer {tok}", "User-Agent": "mumwelt"}
+
+
+def _error_detail(e: urllib.error.HTTPError) -> str | None:
+    """The server's own explanation of a failure, if it sent one.
+
+    marinmirror answers with FastAPI-shaped JSON (``{"detail": ...}``), and its message is
+    strictly better than anything inferable here: it knows *why* a token was refused,
+    where this client only knows that it was. Relaying it also means the server can change
+    the authorization story — new states, new wording — and users hear about it without a
+    client release. Best-effort by construction: a body that is missing, truncated, or not
+    JSON must never mask the HTTP error already being reported.
+    """
+    try:
+        raw = e.read().decode("utf-8", "replace").strip()
+    except Exception:                              # noqa: BLE001 — advisory read only
+        return None
+    if not raw:
+        return None
+    try:
+        body = json.loads(raw)
+    except ValueError:
+        return raw[:300]
+    if isinstance(body, dict):
+        for key in ("detail", "message", "error"):
+            v = body.get(key)
+            if isinstance(v, str) and v.strip():
+                return v.strip()[:300]
+            if v is not None:
+                return json.dumps(v)[:300]
+    return raw[:300]
 
 
 def _open(path: str, headers: dict | None = None, timeout: int = 30):
@@ -37,10 +76,12 @@ def _open(path: str, headers: dict | None = None, timeout: int = 30):
     try:
         return urllib.request.urlopen(req, timeout=timeout, context=config.ssl_context())
     except urllib.error.HTTPError as e:
+        detail = _error_detail(e)
+        suffix = f" — {detail}" if detail else ""
         if e.code in (401, 403):
-            raise AuthError(f"{e.code}: not authorized — Open-Athena membership required "
-                            f"(token owner must be a member, read:org)") from e
-        raise ClientError(f"{e.code} {e.reason} for {path}") from e
+            raise AuthError(f"{e.code}: not authorized{suffix}",
+                            status=e.code, detail=detail) from e
+        raise ClientError(f"{e.code} {e.reason} for {path}{suffix}") from e
     except urllib.error.URLError as e:
         raise ClientError(f"cannot reach {config.MARINMIRROR_URL}: {e.reason}") from e
 

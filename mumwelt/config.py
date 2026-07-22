@@ -54,6 +54,17 @@ def ssl_context() -> ssl.SSLContext:
     return ctx
 
 
+def authorize_url() -> str:
+    """Where a person signs in and requests access — the marinmirror web app itself.
+
+    Deliberately the app root rather than an API path: authorization is a browser flow
+    (GitHub sign-in, then an access request), and the app is what knows the current shape
+    of it. ``mum`` only ever points at this page; it never drives the flow, because the
+    bearer token it holds is not the session the flow establishes.
+    """
+    return MARINMIRROR_URL + "/"
+
+
 def token() -> str | None:
     """Resolve a marinmirror bearer token: env → gh CLI → token file.
 

@@ -32,6 +32,13 @@ If the corpus is missing, `mum refresh` (required). If it's **>1 day old**, refr
 relying on it; within a day, proceed as-is (or ask, if the question is time-sensitive). Honor
 "don't repull". (Window configurable via `MARIN_MAX_AGE_DAYS`.)
 
+**If refresh reports an auth failure**, stop and tell the user what it printed — either no
+token was found (`gh auth login`, or `MARINMIRROR_TOKEN`, then re-run) or the token was
+rejected (a one-time browser sign-in and access request at the marinmirror site, then
+re-run once approved). **Never open the browser yourself** — offer `mum refresh --open`
+and let them decide. Without a corpus there is no code lane, so say so instead of falling
+back to a guess.
+
 ## 1. Search the code lane — deliberately, with the whole budget
 
 ```
