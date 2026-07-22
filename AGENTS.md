@@ -61,6 +61,15 @@ URL. The capability is the `mum` CLI; shell out to it.
   unlisted but anyone with the link can read it — don't publish anything sensitive.
 
 ## Auth
-`mum` talks to marinmirror with a GitHub bearer token (any Open-Athena org member,
-`read:org`). It resolves the token from `MARINMIRROR_TOKEN`, then `gh auth token`, then
-`~/.config/marin/token`. The weekly summaries (mws.oa.dev) are public — no token.
+`mum` talks to marinmirror with a GitHub bearer token, resolved from `MARINMIRROR_TOKEN`,
+then `gh auth token`, then `~/.config/marin/token`. The weekly summaries (mws.oa.dev) are
+public — no token.
+
+If `mum refresh` or `mum status` reports an auth failure, it distinguishes two cases and
+prints the fix for each. **No token found**: tell the user to run `gh auth login` (or set
+`MARINMIRROR_TOKEN`), then re-run. **Token rejected**: authorization is a one-time browser
+step at the marinmirror site — sign in, submit an access request, and re-run once approved.
+**Do not open the browser yourself, and do not run `--open` unattended.** Relay the
+situation to the user and *offer* `mum refresh --open`, which opens the page for them; it's
+their browser and their decision. Either way the public summaries still refresh, so you can
+keep working from those and say plainly that corpus-backed answers are unavailable.

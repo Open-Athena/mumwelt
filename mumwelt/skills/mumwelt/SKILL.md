@@ -19,6 +19,16 @@ relying on it. **Within 1 day, don't auto-pull** — proceed as-is, or *ask* the
 when the question is time-sensitive. If the user says "don't repull", honor that and use
 what's on disk. (The 1-day window is configurable via `MARIN_MAX_AGE_DAYS`.)
 
+**If refresh reports an auth failure**, stop and bring it to the user — the command prints
+which of two cases it is. *No token found*: they need `gh auth login` (or
+`MARINMIRROR_TOKEN`), then a re-run. *Token rejected*: authorization is a one-time browser
+step — sign in at the marinmirror site, submit an access request, re-run once approved.
+**Never open the browser yourself**; explain the situation and *offer* to run
+`mum refresh --open`, which opens the page for them. The public weekly summaries refresh
+either way, so you can still answer from those — say explicitly that you're doing so and
+that corpus-backed sources are unavailable, rather than presenting a thinner answer as
+though it were complete.
+
 ## 1. Orient, then decompose
 
 **Orient first — it's a vocabulary bootstrap, not a formality.** A generic question ("how is
