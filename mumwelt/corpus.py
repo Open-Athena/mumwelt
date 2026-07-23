@@ -440,7 +440,10 @@ def search(query: str, k: int = 10, source=None, kind=None, since=None, until=No
         con.close()
 
 
-BRANCH_KIND = "branch-symbol"
+# In-flight branch chunks. "branch-window" is the current kind (fixed line windows);
+# "branch-symbol" is the pre-2026-07 ast-symbol kind, kept so this client still splits the
+# lane correctly against an older corpus. Both are filtered together.
+BRANCH_KINDS = ["branch-window", "branch-symbol"]
 
 
 def search_code(query: str, k: int = 25, branches: bool | None = None, **kw) -> list[dict]:
@@ -471,9 +474,9 @@ def search_code(query: str, k: int = 25, branches: bool | None = None, **kw) -> 
     """
     kw.pop("source", None)
     if branches is True:
-        kw["kind"] = [BRANCH_KIND]
+        kw["kind"] = list(BRANCH_KINDS)
     elif branches is False:
-        kw["exclude_kind"] = [BRANCH_KIND]
+        kw["exclude_kind"] = list(BRANCH_KINDS)
     return search(query, k=k, source=code_sources(), **kw)
 
 
