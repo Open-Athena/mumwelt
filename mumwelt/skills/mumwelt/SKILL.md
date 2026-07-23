@@ -166,7 +166,7 @@ are usually ahead of both the threads and the weekly summaries. The code lane sh
 explicitly mine them:
 
 ```
-mum search "<subject>" --source code --kind branch-symbol
+mum search "<subject>" --source code --kind branch-window
 ```
 
 Each hit carries the **branch name** and its **last committer**, and the set of files a
@@ -178,7 +178,7 @@ branch touches sketches what it is trying to do. Three things to exploit:
 - **Who is committing** tells you who owns the work right now, which the thread may not.
 - **Which files changed** tells you the shape of the change before any of it is written up.
 
-**Always attribute it as in-flight.** `kind=branch-symbol` is work on someone's branch, not
+**Always attribute it as in-flight.** `kind=branch-window` is work on someone's branch, not
 what `main` does — say "on branch `x`, <person> is doing Y". Reporting a branch symbol as
 current behaviour is the §3 temporal trap in a new costume.
 

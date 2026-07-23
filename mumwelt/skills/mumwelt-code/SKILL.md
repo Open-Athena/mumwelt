@@ -48,7 +48,7 @@ With an explicit `--source code`, the code lane is **primary and gets the whole 
 20–30 hits is the right ask. Two lanes come back, and they have **different truth status**:
 
 - **`code · main`** — how the system works **now**. Cite this for how things work.
-- **`code · in-flight branches`** (`kind=branch-symbol`) — what someone is *trying* on a
+- **`code · in-flight branches`** (`kind=branch-window`) — what someone is *trying* on a
   branch; it may never land. Each hit carries the **branch name** and its **last committer**.
   Cite a branch **only** for a claim about in-flight work, and say so: "on branch `x`,
   \<person\> is doing Y". Never report a branch symbol as current behaviour.
