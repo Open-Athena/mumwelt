@@ -3,28 +3,22 @@
 *Written with human hands*
 
 > There are not only the manifolds in space and time in which things can be spread out. There is also the manifold of environments, in which things repeat themselves in always new forms.
-- Jakob von Uexküll, *A Forday into the World of Animals and Humans*
+- Jakob von Uexküll, *A Foray into the World of Animals and Humans*
 
 mumwelt provides the environment for an agent to effectively commune with the Marin project.
 
 It is
 - A CLI (`mum`), which queries and explores (via link expansion) the corpus of data around the Marin project (hosted on marinmirror.xyz.exe)
 - This corpus includes GitHub issues, PRs, comments, code (and recent branches), Weights & Biases data, summaries of the week's learnings, and text from the public Discord server
-- A set of skills to answer broad questions about the how and why of Marin, and specific questions about the code (in main and branches)
+- A set of skills to answer broad questions about the how and why of Marin, and specific questions about the code (in `main` and in branches), and publish formatted HTML gists to share
 
 With it, you, a human, can better understand how Marin works, why it is the way it is, and more quickly contribute to the program if you so desire. 
-
-**AN agent's *Umwelt* for Marin** — the slice of Marin's world an LLM agent can perceive
-and act on. A small client toolkit (`mum`) plus portable skills that let any shell-capable
-agent keep a fresh local mirror of Marin's activity, search it well, pull W&B run facts,
-read the weekly summaries, run multi-subagent research, and publish the writeup — all
-citable by URL.
 
 It is the **client** to [`marinmirror`](https://marinmirror.exe.xyz) (the hosted, indexed, embedded, pre-processed corpus described above). 
 
 ## Install
 
-Realistically, you can just point your agent at this Repo and ask it to set things up.
+Realistically, you can just point your agent at this repo and ask it to set things up.
 
 Note that you will need access granted to your GitHub account via OAuth to [`marinmirror`](https://marinmirror.exe.xyz). You can apply for access here (which is gated on Marin Discord access), and Open Athena will manually review and approve your application.
 
