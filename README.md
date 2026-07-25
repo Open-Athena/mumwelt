@@ -8,7 +8,7 @@
 mumwelt provides the environment for an agent to effectively commune with the Marin project.
 
 It is
-- A CLI (`mum`), which queries and explores (via link expansion) the corpus of data around the Marin project (hosted on marinmirror.xyz.exe)
+- A CLI (`mum`), which queries and explores (via link expansion) the corpus of data around the Marin project (hosted on marinmirror.exe.xyz)
 - This corpus includes GitHub issues, PRs, comments, code (and recent branches), Weights & Biases data, summaries of the week's learnings, and text from the public Discord server
 - A set of skills to answer broad questions about the how and why of Marin, and specific questions about the code (in `main` and in branches), and publish formatted HTML gists to share
 
