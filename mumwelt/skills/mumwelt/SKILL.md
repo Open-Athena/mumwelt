@@ -253,6 +253,10 @@ modes that bite hardest:**
   reported as a GPU result is a classic inversion).
 - **Quote-or-omit.** If you can't tie a specific number / run-name / issue# to a quoted line
   in a source, **drop it** rather than paraphrase it into existence.
+- **Quoted speech must link to its source.** When you quote someone ("Larry said X"), the
+  quoted text must be a markdown link to the specific message — Discord URL, GitHub comment,
+  etc. An attribution-by-name without a URL is not a citation. If you can't find the source
+  URL for a quote, paraphrase the claim with a link to the thread instead, or drop it.
 - **Temporal / staleness.** Establish *when* each fact was true and prefer the **latest**
   state. A status true a week or two ago may be superseded (a run "still blocked on GPU" last
   week may have **moved to TPU** since) — chase the close-out / most-recent comment before
@@ -264,6 +268,13 @@ modes that bite hardest:**
   showed a reformulated version **winning** at every matched checkpoint. Before reporting any
   failure, dead end, or null result, **read to the END of the thread** and check for a pivot,
   a reformulation, or a retry. Report the failure *and* what happened next.
+
+**Pre-publish self-check.** Before finalizing the writeup, scan your own draft for quoted
+speech (text in `"..."`) that is not a markdown link. Every such quote must either become
+`["quoted text"](url)` linking to the specific message, or be rewritten as a paraphrase
+with a link to the thread, or be dropped. Do not leave bare attributed quotes ("Larry said
+X") — the publish pipeline will warn about them, but by then it is too late to retrieve the
+URLs. Fix them while you still have the corpus open.
 
 ## 4. Synthesize
 
@@ -308,8 +319,35 @@ Put a blank `>` line between the three parts so each lands on its own line. Shap
 > *Sub-queries: "<sub-query 1>" · "<sub-query 2>" · "<sub-query 3>" · …*
 ```
 
-Keep it terse — it's a trailer, not a section. If a sub-query returned nothing useful,
-still list it (a dry facet is signal too).
+# Prose guidelines
+
+**Key writing principles**: Please use Orwell's writing tips:
+
+A scrupulous writer, in every sentence that he writes, will ask himself at least four questions, thus:
+
+1. What am I trying to say?
+2. What words will express it?
+3. What image or idiom will make it clearer? [do not overdo this!]
+4. Is this image fresh enough to have an effect?
+
+And he will probably ask himself two more:
+
+1. Could I put it more shortly?
+2. Have I said anything that is avoidably ugly?
+
+One can often be in doubt about the effect of a word or a phrase, and one needs rules that one can rely on when instinct fails. I think the following rules will cover most cases:
+
+1. Never use a metaphor, simile, or other figure of speech which you are used to seeing in print.
+2. Never use a long word where a short one will do.
+3. If it is possible to cut a word out, always cut it out.
+4. Never use the passive where you can use the active.
+5. Never use a foreign phrase, a scientific word, or a jargon word if you can think of an everyday English equivalent.
+
+Break any of these rules sooner than say anything outright barbarous.
+
+Otherwise, Williams' Style: Lessons in Clarity and Grace should be a model for our work.
+
+Further, avoid constrative sentences like "it's not this, it's that", and avoid the phrases "load-bearing", "smoking gun".
 
 ---
 

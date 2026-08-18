@@ -553,6 +553,8 @@ def main(argv=None):
     p.add_argument("--description", help="gist description (default: the title)")
     p.add_argument("--filename", help="HTML filename in the gist (default: slug of title)")
     p.add_argument("--public", action="store_true", help="public gist (default: secret/unlisted)")
+    p.add_argument("--query", help="research question shown in a prompt box at the top")
+    p.add_argument("--corpus-time", help="corpus build timestamp (UTC) for provenance footer")
     p.add_argument("--no-date", action="store_true", help="omit today's date from the header")
     p.add_argument("--open", action="store_true", help="open the preview link in a browser")
     p.add_argument("--json", action="store_true")

@@ -312,7 +312,13 @@ def _vec(con, texts, flt, params, limit, source=None, exclude_source=None) -> li
     evenly, silently produces a garbage matrix. Filtering by ``embed_space`` first is
     what makes that impossible rather than merely unlikely.
     """
-    import numpy as np
+    try:
+        import numpy as np
+    except ImportError:
+        raise SystemExit(
+            "mumwelt: numpy not found. Use `mum` (installed via `uv tool install mumwelt`) "
+            "or `uv run python -m mumwelt.cli` instead of bare `python3 -m mumwelt.cli`."
+        )
 
     all_spaces = spaces()
     tagged = _has_space_col(con)
