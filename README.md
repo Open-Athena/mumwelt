@@ -18,7 +18,7 @@ It is the **client** to [`marinmirror`](https://marinmirror.exe.xyz) (the hosted
 
 ## Install
 
-Realistically, you can just point your agent at this repo and ask it to set things up.
+Realistically, you can just point your agent at this repo and ask questions.
 
 Note that you will need access granted to your GitHub account via OAuth to [`marinmirror`](https://marinmirror.exe.xyz). You can apply for access here (which is gated on Marin Discord access), and Open Athena will manually review and approve your application.
 
