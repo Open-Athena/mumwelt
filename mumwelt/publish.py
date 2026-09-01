@@ -275,6 +275,25 @@ def _fallback_md(md: str) -> str:
 # Sentinel a writeup uses to mark the start of its provenance trailer (data freshness +
 # query trace, per the mumwelt skill). Everything after it renders as a muted
 # <footer>. It's an HTML comment, so it's invisible if the Markdown is shown raw, too.
+# `<a\b[^>]*?` tolerates pandoc's line-wrapped output (`<a\nhref="..."`) and
+# any attributes preceding href; re.S lets the tag span lines.
+_FRAGMENT_ANCHOR = re.compile(r'(<a\b[^>]*?)href="(https?://[^"]*#[^"]*)"', re.S)
+
+
+def _stamp_fragment_links(html: str) -> str:
+    """Duplicate fragment-carrying absolute hrefs into data-orig-href.
+
+    htmlpreview.github.io's loader treats ANY link whose URL contains '#' as an
+    in-page anchor and rewrites it to '//htmlpreview.github.io/?<doc>#<frag>'
+    (htmlpreview.js, the `href.indexOf('#') > 0` branch), which destroys
+    external citations like GitHub issue-comment links. htmlpreview re-executes
+    this page's inline script AFTER that rewrite, so the restore pass in
+    HOVER_JS can undo it using the data-orig-href stamped here.
+    """
+    return _FRAGMENT_ANCHOR.sub(
+        lambda m: f'{m.group(1)}data-orig-href="{m.group(2)}" href="{m.group(2)}"', html)
+
+
 PROVENANCE_MARKER = "<!--provenance-->"
 _TRAILING_RULE = re.compile(r"(?:\n[ \t]*(?:-{3,}|\*{3,}|_{3,})[ \t]*)+\s*$")
 
@@ -647,7 +666,25 @@ a.cite:hover .cite-card { opacity: 1; }
 
 
 HOVER_JS = """\
-document.addEventListener('DOMContentLoaded', function() {
+(function() {
+function __mumInit() {
+  // Restore external links that htmlpreview.github.io's loader rewrote to
+  // in-page anchors (it treats any href containing '#' as a local anchor).
+  // Runs now (htmlpreview re-executes this script after its rewrite), again
+  // after delays, and on click as a last line of defense.
+  function restoreOrigHrefs() {
+    document.querySelectorAll('a[data-orig-href]').forEach(function(a) {
+      var orig = a.getAttribute('data-orig-href');
+      if (orig && a.getAttribute('href') !== orig) a.setAttribute('href', orig);
+    });
+  }
+  restoreOrigHrefs();
+  setTimeout(restoreOrigHrefs, 100);
+  setTimeout(restoreOrigHrefs, 1000);
+  document.addEventListener('click', function(e) {
+    var t = e.target && e.target.closest ? e.target.closest('a[data-orig-href]') : null;
+    if (t) { var o = t.getAttribute('data-orig-href'); if (o && t.getAttribute('href') !== o) t.setAttribute('href', o); }
+  }, true);
   var vt = document.getElementById('viewing-time');
   if (vt) {
     function pad(n) { return n < 10 ? '0' + n : n; }
@@ -710,7 +747,10 @@ document.addEventListener('DOMContentLoaded', function() {
       a.appendChild(card);
     }
   });
-});"""
+}
+if (document.readyState !== 'loading') { __mumInit(); }
+else { document.addEventListener('DOMContentLoaded', __mumInit); }
+})();"""
 
 
 _QUOTED_SPEECH = re.compile(r'"[^"]{4,}"|“[^”]{4,}”')
@@ -749,6 +789,7 @@ def render_html(md: str, title: str, author: str, date: str,
     body = _restore_math(
         _inject_hover_attrs(_restore_stashed(_md_to_body(body_md), stash), hovers),
         math_stash)
+    body = _stamp_fragment_links(body)
     katex_style = _katex_css()
     ts_parts = []
     if corpus_time:
@@ -758,7 +799,7 @@ def render_html(md: str, title: str, author: str, date: str,
     timestamps = "<p><em>" + " &middot; ".join(ts_parts) + "</em></p>\n"
     footer = ""
     if prov_md.strip():
-        footer = f'\n<footer class="provenance">\n{timestamps}{_md_to_body(prov_md)}\n</footer>'
+        footer = f'\n<footer class="provenance">\n{timestamps}{_stamp_fragment_links(_md_to_body(prov_md))}\n</footer>'
     else:
         footer = f'\n<footer class="provenance">\n{timestamps}</footer>'
     meta_parts = []
