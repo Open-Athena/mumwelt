@@ -37,6 +37,12 @@ mum publish report.md --title "Marin MoE data-mix retro"
 
 Useful flags:
 - `--title "…"` — document title (default: a leading `# H1` in the Markdown, else "Research report").
+- `--query "…"` — the research question. Rendered as a styled prompt box at the top of the
+  page (large ghosted "?" with the question in italic). **Always pass this** — it's the
+  user's original question (lightly cleaned up for grammar/spelling). Without it the page
+  opens cold with no context.
+- `--corpus-time "…"` — corpus build timestamp (UTC) for the provenance footer's "Corpus:"
+  line. Pull it from `mum status` output.
 - `--author "…"` — header byline (default: your `gh` login).
 - `--public` — make it a public gist instead of secret.
 - `--no-date` — omit today's date from the header.
@@ -72,3 +78,33 @@ sensitive. Use `--public` only when you actually want it discoverable.
 Requires the `gh` CLI, authenticated (`gh auth status`; `gh auth login` if not). The gist
 is created on that account. (htmlpreview.github.io is a public renderer — it fetches the
 gist's raw HTML at view time; no token involved.)
+
+## Update check
+
+Before publishing, check whether the local mumwelt install is behind the remote — unless
+the user has opted out. The opt-out flag lives in `~/.config/marin/config.json`:
+
+```bash
+python3 -c "import json, pathlib; c=pathlib.Path.home()/'.config'/'marin'/'config.json'; print(json.loads(c.read_text()).get('skip_update_check', False) if c.exists() else False)"
+```
+
+If that prints `True`, skip the check entirely. Otherwise, compare local vs remote:
+
+```bash
+git -C "$(python3 -c 'import mumwelt, pathlib; print(pathlib.Path(mumwelt.__file__).parent.parent)')" \
+  log --oneline -1 --format="%H"
+```
+
+```bash
+gh api repos/Open-Athena/mumwelt/commits/main --jq '.sha'
+```
+
+If they differ, tell the user: "Your mumwelt is behind `main` — the remote has newer
+commits. Want me to update it (`git -C <path> pull`)?" Offer three choices:
+1. **Update now** — pull and proceed.
+2. **Skip for now** — publish with the current version.
+3. **Never ask again** — write `{"skip_update_check": true}` to
+   `~/.config/marin/config.json` (merge with existing keys if the file exists) and proceed.
+
+Do not update without confirmation. If the check fails (no network, not a git install,
+etc.), skip silently and proceed.
