@@ -1,0 +1,54 @@
+name: release
+
+# Build sdist + wheel and publish to PyPI on a version tag, via PyPI Trusted
+# Publishing (OIDC) — no long-lived API token in the repo. Cut a release by pushing
+# a tag that matches the project version, e.g. `git tag v0.1.1 && git push origin v0.1.1`.
+#
+# One-time setup by a maintainer (see issue about releases/cadence):
+#   1. Create the `mumwelt` project + a Trusted Publisher on PyPI pointing at this repo,
+#      workflow `release.yml`, and environment `pypi`
+#      (https://docs.pypi.org/trusted-publishers/).
+#   2. Create a GitHub environment named `pypi` for this repo.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build sdist + wheel
+        run: |
+          python -m pip install --upgrade build
+          python -m build
+      - name: Check the built distributions
+        run: |
+          python -m pip install --upgrade twine
+          python -m twine check dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write   # OIDC token for PyPI Trusted Publishing
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

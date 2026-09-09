@@ -30,6 +30,25 @@ def _age_h(epoch) -> float:
     return (time.time() - int(epoch or 0)) / 3600
 
 
+def _version() -> str:
+    """The installed mumwelt version, falling back to the in-tree ``__version__``.
+
+    ``importlib.metadata`` reflects what's actually installed (so ``mum --version``
+    tells a user whether they're behind a release); a source checkout with no dist
+    installed falls back to the package constant.
+    """
+    try:
+        from importlib.metadata import PackageNotFoundError, version
+        try:
+            return version("mumwelt")
+        except PackageNotFoundError:
+            pass
+    except Exception:
+        pass
+    from . import __version__
+    return __version__
+
+
 # ---- auth -------------------------------------------------------------------
 
 def _auth_help(e: client.AuthError, *, open_browser: bool = False) -> None:
@@ -78,6 +97,7 @@ def _auth_help(e: client.AuthError, *, open_browser: bool = False) -> None:
 # ---- status / refresh -------------------------------------------------------
 
 def cmd_status(a):
+    print(f"mumwelt:   {_version()}")
     if corpus.exists():
         m = corpus.meta()
         ah = _age_h(m.get("built_at_epoch"))
@@ -469,6 +489,8 @@ def cmd_publish(a):
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="mum", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--version", action="version", version=f"mum {_version()}",
+                    help="print the mumwelt version and exit")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("status")
