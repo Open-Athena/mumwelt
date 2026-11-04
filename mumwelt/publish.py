@@ -8,7 +8,8 @@ browser, for easy sharing.
 
 No third-party Python deps: Markdown→HTML uses ``pandoc`` if it's on PATH (GFM, best
 fidelity) and otherwise a small built-in converter covering the subset research reports
-use (headings, lists, blockquotes, code, links, bold/italic, rules, math passthrough).
+use (headings, lists, blockquotes, code, links, bold/italic, rules, pipe tables, math
+passthrough).
 
 Auth/transport is ``gh`` (GitHub CLI) — already how this toolkit gets its token. A "secret"
 gist is unlisted, **not** truly private: anyone with the link (or the htmlpreview link) can
@@ -137,6 +138,30 @@ _BOLD = re.compile(r"\*\*([^*]+)\*\*")
 _ITALIC = re.compile(r"(?<![\*\w])[*_]([^*_\n]+)[*_](?![\*\w])")
 _BARE_URL = re.compile(r"(?<![\"(>=])\bhttps?://[^\s<>)\]]+")
 _BLOCK_IMAGE = re.compile(r"^!\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)\s*$")
+# GFM table delimiter row: `|---|:--:|---:|` (leading/trailing pipes optional).
+_TABLE_DELIM = re.compile(r"^\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)*\|?\s*$")
+
+
+def _split_table_row(line: str) -> list[str]:
+    """Split a pipe-table row into cells, honouring `\\|` escapes."""
+    body = line.strip()
+    if body.startswith("|"):
+        body = body[1:]
+    if body.endswith("|") and not body.endswith("\\|"):
+        body = body[:-1]
+    cells = re.split(r"(?<!\\)\|", body)
+    return [c.replace("\\|", "|").strip() for c in cells]
+
+
+def _table_align(delim_cell: str) -> str:
+    c = delim_cell.strip()
+    if c.startswith(":") and c.endswith(":"):
+        return "center"
+    if c.endswith(":"):
+        return "right"
+    if c.startswith(":"):
+        return "left"
+    return ""
 
 
 def _inline(text: str) -> str:
@@ -245,6 +270,34 @@ def _fallback_md(md: str) -> str:
                 i += 1
             out.append("\n".join(buf))
             continue
+        # GFM pipe table: a header row, a delimiter row of dashes (with optional
+        # colons for alignment), then body rows until a blank line.
+        if (stripped.startswith("|") and i + 1 < n
+                and _TABLE_DELIM.match(lines[i + 1].strip())):
+            close_lists()
+            header = _split_table_row(stripped)
+            aligns = [_table_align(c) for c in _split_table_row(lines[i + 1].strip())]
+            i += 2
+            rows: list[list[str]] = []
+            while i < n and lines[i].strip().startswith("|"):
+                rows.append(_split_table_row(lines[i].strip()))
+                i += 1
+            ncols = len(header)
+
+            def cell(tag: str, idx: int, text: str) -> str:
+                style = f' style="text-align:{aligns[idx]}"' if idx < len(aligns) and aligns[idx] else ""
+                return f"<{tag}{style}>{_inline(text)}</{tag}>"
+
+            out.append("<table>")
+            out.append("<thead><tr>" + "".join(cell("th", j, c) for j, c in enumerate(header)) + "</tr></thead>")
+            if rows:
+                out.append("<tbody>")
+                for r in rows:
+                    r = (r + [""] * ncols)[:ncols]
+                    out.append("<tr>" + "".join(cell("td", j, c) for j, c in enumerate(r)) + "</tr>")
+                out.append("</tbody>")
+            out.append("</table>")
+            continue
         m_ul = re.match(r"^[-*+]\s+(.*)$", stripped)
         m_ol = re.match(r"^\d+[.)]\s+(.*)$", stripped)
         if m_ul or m_ol:
@@ -261,7 +314,7 @@ def _fallback_md(md: str) -> str:
         buf = [stripped]
         i += 1
         while i < n and lines[i].strip() and not re.match(
-                r"^(#{1,6}\s|>|[-*+]\s|\d+[.)]\s|```|\$\$|-{3,}$|\*{3,}$|_{3,}$)",
+                r"^(#{1,6}\s|>|[-*+]\s|\d+[.)]\s|```|\$\$|\||-{3,}$|\*{3,}$|_{3,}$)",
                 lines[i].strip()):
             buf.append(lines[i].strip())
             i += 1
