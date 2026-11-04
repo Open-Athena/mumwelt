@@ -931,6 +931,51 @@ def create_gist(filename: str, content: str, description: str, public: bool) -> 
     return json.loads(r.stdout)
 
 
+def _gist_id(ref: str) -> str:
+    """Accept a bare gist id or any gist.github.com / gist.githubusercontent.com URL."""
+    m = re.search(r"([0-9a-f]{20,})", ref)
+    if not m:
+        sys.exit(f"publish: --update expects a gist id or URL, got {ref!r}")
+    return m.group(1)
+
+
+def update_gist(gist_id: str, filename: str, content: str, description: str | None) -> dict:
+    """Replace a file in an existing gist (PATCH) and return the parsed response.
+
+    If the gist currently holds exactly one file under a different name, that file is
+    renamed to `filename` so the gist doesn't accumulate stale copies.
+    """
+    if not shutil.which("gh"):
+        sys.exit("publish: `gh` (GitHub CLI) not found — install it and `gh auth login`.")
+    cur = subprocess.run(["gh", "api", f"/gists/{gist_id}"], capture_output=True, text=True, timeout=60)
+    if cur.returncode != 0:
+        sys.exit(f"publish: cannot read gist {gist_id} — {cur.stderr.strip()[:300]}")
+    existing = list(json.loads(cur.stdout).get("files", {}))
+    files: dict = {}
+    if len(existing) == 1 and existing[0] != filename:
+        files[existing[0]] = {"filename": filename, "content": content}
+    else:
+        files[filename] = {"content": content}
+    payload: dict = {"files": files}
+    if description:
+        payload["description"] = description
+    r = subprocess.run(["gh", "api", "-X", "PATCH", f"/gists/{gist_id}", "--input", "-"],
+                       input=json.dumps(payload), capture_output=True, text=True, timeout=60)
+    if r.returncode != 0:
+        sys.exit(f"publish: gist update failed — {r.stderr.strip()[:300]}")
+    return json.loads(r.stdout)
+
+
+# A gist's API `raw_url` is pinned to one revision (`/raw/<sha>/<file>`), so a link built
+# from it goes stale the moment the gist is edited. Dropping the sha gives the
+# always-latest URL, which is what a shared link should be.
+_RAW_REV = re.compile(r"/raw/[0-9a-f]{40}/")
+
+
+def _unpinned(raw_url: str) -> str:
+    return _RAW_REV.sub("/raw/", raw_url)
+
+
 # ---- command ----------------------------------------------------------------
 
 def _slug(title: str) -> str:
@@ -961,18 +1006,23 @@ def cmd_publish(a) -> None:
     doc = render_html(raw, title, author, date,
                       query=getattr(a, "query", "") or "",
                       corpus_time=getattr(a, "corpus_time", "") or "")
-    gist = create_gist(filename, doc, a.description or title, public=a.public)
+    update = getattr(a, "update", None)
+    if update:
+        gist = update_gist(_gist_id(update), filename, doc, a.description)
+    else:
+        gist = create_gist(filename, doc, a.description or title, public=a.public)
 
-    raw_url = gist["files"][filename]["raw_url"]
+    raw_url = _unpinned(gist["files"][filename]["raw_url"])
     preview = HTMLPREVIEW + raw_url
     result = {"gist": gist["html_url"], "raw": raw_url, "preview": preview,
-              "public": bool(gist.get("public")), "filename": filename}
+              "public": bool(gist.get("public")), "filename": filename,
+              "updated": bool(update)}
 
     if a.json:
         print(json.dumps(result, indent=2))
     else:
         kind = "public" if result["public"] else "secret (unlisted — anyone with the link can view)"
-        print(f"published {kind} gist:")
+        print(f"{'updated' if update else 'published'} {kind} gist:")
         print(f"  gist:    {result['gist']}")
         print(f"  preview: {preview}")
     if a.open:

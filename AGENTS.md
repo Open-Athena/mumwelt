@@ -57,7 +57,8 @@ URL. The capability is the `mum` CLI; shell out to it.
 - `mum publish [file] --title "…"` — render a Markdown report (file arg or **stdin**) to a
   LaTeX-styled HTML page (latex.css + MathJax, all `[text](url)` links preserved), drop it
   in a **secret** gist via `gh`, and print a `htmlpreview.github.io` link to share. Flags:
-  `--public`, `--author`, `--filename`, `--no-date`, `--open`, `--json`. A "secret" gist is
+  `--update <gist>` (republish in place; the shared link keeps working), `--public`,
+  `--author`, `--filename`, `--no-date`, `--open`, `--json`. A "secret" gist is
   unlisted but anyone with the link can read it — don't publish anything sensitive.
 
 ## Auth

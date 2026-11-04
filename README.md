@@ -75,7 +75,8 @@ branch and its last committer). Identifier search splits camelCase in both direc
 `ExecutorStep`, `executor_step`, and "executor step" all reach each other.
 
 `mum publish` flags: `--title`, `--author`, `--description`, `--filename`, `--public`
-(default: secret/unlisted), `--no-date`, `--open`, `--json`. Renders via `pandoc` if
+(default: secret/unlisted), `--update <gist id or URL>` (republish into an existing gist so
+its links keep working), `--no-date`, `--open`, `--json`. Renders via `pandoc` if
 present, else a built-in converter — no extra Python deps. Requires the `gh` CLI.
 
 Local cache lives under `~/.cache/marin/` (`corpus-index.db` + `summaries/`).

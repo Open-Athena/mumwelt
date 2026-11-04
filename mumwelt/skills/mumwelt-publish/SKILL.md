@@ -44,11 +44,18 @@ Useful flags:
 - `--corpus-time "…"` — corpus build timestamp (UTC) for the provenance footer's "Corpus:"
   line. Pull it from `mum status` output.
 - `--author "…"` — header byline (default: your `gh` login).
+- `--update <gist id or URL>` — republish into an existing gist instead of creating a new
+  one. The gist page link and the preview link stay the same, so use this whenever you are
+  fixing or revising a page someone already has the link to.
 - `--public` — make it a public gist instead of secret.
 - `--no-date` — omit today's date from the header.
 - `--filename name.html` — name the file in the gist (default: a slug of the title).
 - `--open` — also open the preview link in your browser.
-- `--json` — emit `{gist, raw, preview, public, filename}` for scripting.
+- `--json` — emit `{gist, raw, preview, public, filename, updated}` for scripting.
+
+The printed `raw` and `preview` links are **unpinned** (no revision hash in the path), so
+they always serve the gist's latest version and survive a later `--update`. A link that
+contains a 40-character hash after `/raw/` is frozen to that revision and cannot be changed.
 
 ## Conventions
 
